@@ -156,16 +156,12 @@ func _profile_card(parent: Control) -> void:
 	# Avatar + Name row
 	var top_row := UI.hbox(card_vbox, 14)
 
-	# Avatar circle
-	var avatar := PanelContainer.new()
-	avatar.custom_minimum_size = Vector2(48, 48)
-	avatar.add_theme_stylebox_override("panel", UI.style(
-		UITheme.PRIMARY, UITheme.RADIUS_PILL
-	))
+	# Avatar component
+	var avatar := UIAvatar.new()
+	avatar.initials = "JD"
+	avatar.bg_color = UITheme.PRIMARY
+	avatar.avatar_size = UIAvatar.AvatarSize.MD
 	top_row.add_child(avatar)
-	var avatar_center := CenterContainer.new()
-	avatar.add_child(avatar_center)
-	avatar_center.add_child(UI.label("JD", UITheme.FONT_BASE, Color.WHITE))
 
 	# Name + role
 	var name_v := VBoxContainer.new()
