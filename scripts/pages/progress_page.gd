@@ -21,12 +21,12 @@ func build(parent: Control) -> void:
 func _basic_progress(parent: Control) -> void:
 	UI.section(parent, "Basic Progress")
 	var card_v := UI.card(parent, 24, 20)
-	var v := UI.vbox(card_v, 16)
-	_progress_row(v, "0%", 0.0, UITheme.PRIMARY)
-	_progress_row(v, "25%", 0.25, UITheme.PRIMARY)
-	_progress_row(v, "50%", 0.5, UITheme.PRIMARY)
-	_progress_row(v, "75%", 0.75, UITheme.PRIMARY)
-	_progress_row(v, "100%", 1.0, UITheme.PRIMARY)
+	var v := UI.vbox(card_v, 14)
+	_labeled_bar(v, "Initializing",  0.0,  UITheme.PRIMARY)
+	_labeled_bar(v, "Uploading",     0.25, UITheme.PRIMARY)
+	_labeled_bar(v, "Processing",    0.50, UITheme.PRIMARY)
+	_labeled_bar(v, "Verifying",     0.75, UITheme.PRIMARY)
+	_labeled_bar(v, "Complete",      1.0,  UITheme.SUCCESS)
 
 
 func _progress_row(parent: Control, label_text: String, value: float, color: Color, height: int = 8) -> void:
