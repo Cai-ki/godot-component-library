@@ -10,6 +10,7 @@ func build(parent: Control) -> void:
 	_form_modal(parent)
 	_confirm_modal(parent)
 	_info_modal(parent)
+	_toast_section(parent)
 
 
 # =============================================
@@ -236,3 +237,47 @@ func _info_modal(parent: Control) -> void:
 	accept_btn.pressed.connect(func(): tos_modal.hide_modal())
 
 	UI.solid_btn(demo_card4, "⊟  Open ToS Modal", UITheme.SECONDARY).pressed.connect(func(): tos_modal.show_modal())
+
+
+# =============================================
+# TOAST NOTIFICATIONS
+# =============================================
+
+func _toast_section(parent: Control) -> void:
+	UI.section(parent, "Toast Notifications  (UIToast)")
+
+	var demo_card := UI.card(parent, 24, 20)
+	demo_card.add_child(UI.label(
+		"Non-blocking notifications that auto-dismiss after 3 seconds. "
+		+ "Reparents to the viewport root on first call.",
+		UITheme.FONT_SM, UITheme.TEXT_SECONDARY
+	))
+
+	# UIToast instance — added to parent, reparents itself on first show
+	var toast := UIToast.new()
+	parent.add_child(toast)
+
+	# Type buttons
+	var btns := UI.hbox(demo_card, 12)
+	UI.solid_btn(btns, "ℹ  Info", UITheme.INFO).pressed.connect(
+		func(): toast.show_toast("This is an info notification.", UIToast.ToastType.INFO)
+	)
+	UI.solid_btn(btns, "✓  Success", UITheme.SUCCESS, UITheme.TEXT_INVERSE).pressed.connect(
+		func(): toast.show_toast("Operation completed successfully!", UIToast.ToastType.SUCCESS)
+	)
+	UI.solid_btn(btns, "⚠  Warning", UITheme.WARNING, UITheme.TEXT_INVERSE).pressed.connect(
+		func(): toast.show_toast("Please review before continuing.", UIToast.ToastType.WARNING)
+	)
+	UI.solid_btn(btns, "✕  Error", UITheme.DANGER).pressed.connect(
+		func(): toast.show_toast("Connection failed. Please retry.", UIToast.ToastType.ERROR)
+	)
+	UI.h_expand(btns)
+
+	# Stack demo
+	var stack_row := UI.hbox(demo_card, 12)
+	UI.outline_btn(stack_row, "Stack 3 Toasts", UITheme.PRIMARY).pressed.connect(func():
+		toast.show_toast("First notification", UIToast.ToastType.INFO)
+		toast.show_toast("Second notification", UIToast.ToastType.SUCCESS)
+		toast.show_toast("Third notification", UIToast.ToastType.WARNING)
+	)
+	UI.h_expand(stack_row)
