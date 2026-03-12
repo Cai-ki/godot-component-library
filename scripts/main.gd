@@ -117,9 +117,10 @@ func _build_sidebar(parent: Control) -> void:
 	UI.spacer(vbox, 4)
 
 	var pages3: Array = [
-		["themes",  "◆  Themes"],
-		["shapes",  "◇  Shapes"],
-		["layouts", "▦  Layouts"],
+		["themes",     "◆  Themes"],
+		["shapes",     "◇  Shapes"],
+		["layouts",    "▦  Layouts"],
+		["animations", "◎  Animations"],
 	]
 	for page_data in pages3:
 		_add_nav_button(vbox, page_data[0], page_data[1])
@@ -248,3 +249,5 @@ func _navigate_to(page_id: String) -> void:
 			ShapesPage.new().build(content_container)
 		"layouts":
 			LayoutsPage.new().build(content_container)
+		"animations":
+			AnimationsPage.new().build(content_container)
