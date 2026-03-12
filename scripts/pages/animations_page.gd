@@ -11,6 +11,7 @@ func build(parent: Control) -> void:
 	_slide_section(parent)
 	_stagger_section(parent)
 	_easing_section(parent)
+	_counter_section(parent)
 
 
 # =============================================
@@ -248,3 +249,98 @@ func _easing_section(parent: Control) -> void:
 		"tween.set_parallel(true)  →  tween_property(fill, \"anchor_right\", 0.92, 1.6).set_trans(TRANS_XXX)",
 		UITheme.FONT_XS, UITheme.TEXT_MUTED
 	))
+
+
+# =============================================
+# 5. NUMBER COUNTER
+# =============================================
+
+func _counter_section(parent: Control) -> void:
+	UI.section(parent, "Number Counter  (tween_method)")
+	var card_v := UI.card(parent, 24, 20)
+
+	var counters := [
+		["12,847", 12847.0, "Total Users",   UITheme.PRIMARY, "◆"],
+		["$48.2K", 48200.0, "Revenue",       UITheme.SUCCESS, "◈"],
+		["98.7%",  98.7,    "Uptime",        UITheme.INFO,    "◉"],
+	]
+
+	var stat_row := UI.hbox(card_v, 16)
+	var labels: Array[Label] = []
+	var targets: Array[float] = []
+	var formats: Array[String] = []
+
+	for c: Array in counters:
+		var panel := PanelContainer.new()
+		panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		panel.add_theme_stylebox_override("panel", UI.style(
+			UITheme.SURFACE_3, UITheme.RADIUS_LG, 0, Color.TRANSPARENT,
+			0, Color.TRANSPARENT, Vector2.ZERO, 20, 18
+		))
+		stat_row.add_child(panel)
+
+		var v := VBoxContainer.new()
+		v.add_theme_constant_override("separation", 6)
+		v.alignment = BoxContainer.ALIGNMENT_CENTER
+		panel.add_child(v)
+
+		var accent: Color = c[3]
+		v.add_child(UI.label(c[4] as String, UITheme.FONT_LG, Color(accent.r, accent.g, accent.b, 0.5)))
+
+		var val_lbl := UI.label("0", UITheme.FONT_3XL, UITheme.TEXT_PRIMARY)
+		val_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		v.add_child(val_lbl)
+
+		var title_lbl := UI.label(c[2] as String, UITheme.FONT_SM, UITheme.TEXT_MUTED)
+		title_lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		v.add_child(title_lbl)
+
+		labels.append(val_lbl)
+		targets.append(c[1] as float)
+		formats.append(c[0] as String)
+
+	var btn_row := UI.hbox(card_v, 10)
+	var btn := UI.solid_btn(btn_row, "↺  Replay Counters", UITheme.PRIMARY)
+	UI.h_expand(btn_row)
+
+	btn.pressed.connect(func():
+		for lbl in labels:
+			lbl.text = "0"
+		var tween := btn.create_tween()
+		tween.set_parallel(true)
+		for i in labels.size():
+			var lbl := labels[i]
+			var target := targets[i]
+			var fmt := formats[i]
+			tween.tween_method(func(val: float):
+				if fmt.begins_with("$"):
+					lbl.text = "$" + _format_number(val / 1000.0, 1) + "K"
+				elif fmt.ends_with("%"):
+					lbl.text = _format_number(val, 1) + "%"
+				else:
+					lbl.text = _format_int(int(val))
+			, 0.0, target, 2.0) \
+				.set_trans(Tween.TRANS_EXPO).set_ease(Tween.EASE_OUT) \
+				.set_delay(i * 0.15)
+	)
+
+	card_v.add_child(UI.label(
+		"tween.tween_method(update_label, 0.0, target, 2.0).set_trans(Tween.TRANS_EXPO)",
+		UITheme.FONT_XS, UITheme.TEXT_MUTED
+	))
+
+
+static func _format_int(n: int) -> String:
+	var s := str(n)
+	var result := ""
+	for i in s.length():
+		if i > 0 and (s.length() - i) % 3 == 0:
+			result += ","
+		result += s[i]
+	return result
+
+
+static func _format_number(n: float, decimals: int) -> String:
+	var int_part := int(n)
+	var dec_part := int(abs(n - int_part) * pow(10, decimals))
+	return _format_int(int_part) + "." + str(dec_part)
