@@ -103,6 +103,7 @@ func _build_sidebar(parent: Control) -> void:
 		["navigation", "⊡  Navigation"],
 		["data",       "⊤  Data & Display"],
 		["modals",     "⊞  Modals"],
+		["forms",      "⊟  Form Validation"],
 	]
 	for page_data in pages2:
 		_add_nav_button(vbox, page_data[0], page_data[1])
@@ -239,6 +240,8 @@ func _navigate_to(page_id: String) -> void:
 			DataPage.new().build(content_container)
 		"modals":
 			ModalsPage.new().build(content_container)
+		"forms":
+			FormsPage.new().build(content_container)
 		"themes":
 			ThemesPage.new().build(content_container)
 		"shapes":
