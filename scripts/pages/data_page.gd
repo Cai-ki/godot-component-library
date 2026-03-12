@@ -38,6 +38,26 @@ func _table_section(parent: Control) -> void:
 	for row in rows:
 		table.add_row(row)
 
+	# Pagination below the table
+	UI.sep(card_v, 4)
+	var pag_row := HBoxContainer.new()
+	pag_row.add_theme_constant_override("separation", 0)
+	pag_row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	card_v.add_child(pag_row)
+
+	var pag_info := UI.label("Showing page 1 of 10", UITheme.FONT_SM, UITheme.TEXT_MUTED)
+	pag_row.add_child(pag_info)
+	UI.h_expand(pag_row)
+
+	var pagination := UIPagination.new()
+	pagination.total_pages = 10
+	pagination.current_page = 1
+	pag_row.add_child(pagination)
+
+	pagination.page_changed.connect(func(page: int):
+		pag_info.text = "Showing page " + str(page) + " of 10"
+	)
+
 
 # =============================================
 # AVATARS
