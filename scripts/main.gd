@@ -107,6 +107,22 @@ func _build_sidebar(parent: Control) -> void:
 	for page_data in pages2:
 		_add_nav_button(vbox, page_data[0], page_data[1])
 
+	# Section divider: Design
+	UI.spacer(vbox, 8)
+	UI.sep(vbox, 0)
+	UI.spacer(vbox, 8)
+	var section3 := UI.label("DESIGN", UITheme.FONT_XS, UITheme.TEXT_MUTED)
+	vbox.add_child(section3)
+	UI.spacer(vbox, 4)
+
+	var pages3: Array = [
+		["themes",  "◆  Themes"],
+		["shapes",  "◇  Shapes"],
+		["layouts", "▦  Layouts"],
+	]
+	for page_data in pages3:
+		_add_nav_button(vbox, page_data[0], page_data[1])
+
 
 func _build_logo(parent: Control) -> void:
 	var logo_v := VBoxContainer.new()
@@ -223,3 +239,9 @@ func _navigate_to(page_id: String) -> void:
 			DataPage.new().build(content_container)
 		"modals":
 			ModalsPage.new().build(content_container)
+		"themes":
+			ThemesPage.new().build(content_container)
+		"shapes":
+			ShapesPage.new().build(content_container)
+		"layouts":
+			LayoutsPage.new().build(content_container)
