@@ -4,9 +4,10 @@ extends RefCounted
 
 func build(parent: Control) -> void:
 	UI.page_header(parent, "Data & Display",
-		"UITable, UIAvatar, UIDivider, UITag, UISkeletonLoader — data and decoration components.")
+		"UITable, UIAvatar, UIDivider, UITag, UISkeletonLoader, UIContextMenu — data and decoration components.")
 
 	_table_section(parent)
+	_context_menu_section(parent)
 	_avatar_section(parent)
 	_divider_section(parent)
 	_tag_section(parent)
@@ -252,3 +253,69 @@ func _skeleton_section(parent: Control) -> void:
 			sl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 			sl.custom_minimum_size.x = 0
 			iv.add_child(sl)
+
+
+# =============================================
+# CONTEXT MENU
+# =============================================
+
+func _context_menu_section(parent: Control) -> void:
+	UI.section(parent, "Context Menu  (UIContextMenu)")
+
+	var toast := UIToast.new()
+	parent.add_child(toast)
+
+	var card_v := UI.card(parent, 24, 20)
+	card_v.add_child(UI.label(
+		"Right-click any row to open its context menu. "
+		+ "Add UIContextMenu as a child node, build items, then call attach() or show_at().",
+		UITheme.FONT_SM, UITheme.TEXT_SECONDARY
+	))
+
+	var files := [
+		["◆", UITheme.PRIMARY,   "design_system.gd",     "12 KB"],
+		["◈", UITheme.INFO,      "ui_button.gd",         "4 KB"],
+		["◇", UITheme.SUCCESS,   "helpers.gd",           "8 KB"],
+		["◉", UITheme.WARNING,   "ui_modal.gd",          "6 KB"],
+		["⊞", UITheme.SECONDARY, "animations_page.gd",   "9 KB"],
+	]
+
+	var list_v := UI.vbox(card_v, 0)
+
+	for i in files.size():
+		var f: Array = files[i]
+		var row := PanelContainer.new()
+		row.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		row.mouse_filter = Control.MOUSE_FILTER_STOP
+
+		var normal_s := UI.style(UITheme.SURFACE_2,   UITheme.RADIUS_MD, 0, Color.TRANSPARENT, 0, Color.TRANSPARENT, Vector2.ZERO, 14, 10)
+		var hover_s  := UI.style(UITheme.SURFACE_3,   UITheme.RADIUS_MD, 0, Color.TRANSPARENT, 0, Color.TRANSPARENT, Vector2.ZERO, 14, 10)
+		row.add_theme_stylebox_override("panel", normal_s)
+		row.mouse_entered.connect(func(): row.add_theme_stylebox_override("panel", hover_s))
+		row.mouse_exited.connect(func():  row.add_theme_stylebox_override("panel", normal_s))
+
+		var h := HBoxContainer.new()
+		h.add_theme_constant_override("separation", 12)
+		h.alignment = BoxContainer.ALIGNMENT_CENTER
+		row.add_child(h)
+
+		h.add_child(UI.label(f[0] as String, UITheme.FONT_MD, f[1] as Color))
+		var name_lbl := UI.label(f[2] as String, UITheme.FONT_MD, UITheme.TEXT_PRIMARY)
+		name_lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		h.add_child(name_lbl)
+		h.add_child(UI.label(f[3] as String, UITheme.FONT_SM, UITheme.TEXT_MUTED))
+
+		list_v.add_child(row)
+		if i < files.size() - 1:
+			UI.sep(list_v, 0)
+
+		# Build context menu for this row
+		var menu := UIContextMenu.new()
+		parent.add_child(menu)
+		var fname: String = f[2] as String
+		menu.add_item("⊕  Open",       func(): toast.show_toast("Opened " + fname, UIToast.ToastType.INFO))
+		menu.add_item("✎  Rename",     func(): toast.show_toast("Rename: " + fname, UIToast.ToastType.INFO))
+		menu.add_item("⊞  Duplicate",  func(): toast.show_toast("Duplicated " + fname, UIToast.ToastType.SUCCESS))
+		menu.add_separator()
+		menu.add_item("✕  Delete",     func(): toast.show_toast("Deleted " + fname, UIToast.ToastType.ERROR), true)
+		menu.attach(row)
