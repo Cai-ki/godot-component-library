@@ -20,7 +20,8 @@ func build(parent: Control) -> void:
 
 func _solid_section(parent: Control) -> void:
 	UI.section(parent, "Solid Variants")
-	var row := UI.hbox(parent, 12)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 12)
 	UI.solid_btn(row, "Primary", UITheme.PRIMARY)
 	UI.solid_btn(row, "Secondary", UITheme.SECONDARY)
 	UI.solid_btn(row, "Success", UITheme.SUCCESS, UITheme.TEXT_INVERSE)
@@ -36,7 +37,8 @@ func _solid_section(parent: Control) -> void:
 
 func _outline_section(parent: Control) -> void:
 	UI.section(parent, "Outline Variants")
-	var row := UI.hbox(parent, 12)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 12)
 	UI.outline_btn(row, "Primary", UITheme.PRIMARY)
 	UI.outline_btn(row, "Secondary", UITheme.SECONDARY)
 	UI.outline_btn(row, "Success", UITheme.SUCCESS)
@@ -52,7 +54,8 @@ func _outline_section(parent: Control) -> void:
 
 func _soft_section(parent: Control) -> void:
 	UI.section(parent, "Soft / Tint Variants")
-	var row := UI.hbox(parent, 12)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 12)
 	UI.soft_btn(row, "Primary", UITheme.PRIMARY)
 	UI.soft_btn(row, "Secondary", UITheme.SECONDARY)
 	UI.soft_btn(row, "Success", UITheme.SUCCESS)
@@ -68,7 +71,8 @@ func _soft_section(parent: Control) -> void:
 
 func _ghost_section(parent: Control) -> void:
 	UI.section(parent, "Ghost / Text Variants")
-	var row := UI.hbox(parent, 12)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 12)
 	UI.ghost_btn(row, "Primary", UITheme.PRIMARY)
 	UI.ghost_btn(row, "Secondary", UITheme.SECONDARY)
 	UI.ghost_btn(row, "Success", UITheme.SUCCESS)
@@ -84,7 +88,8 @@ func _ghost_section(parent: Control) -> void:
 
 func _sizes_section(parent: Control) -> void:
 	UI.section(parent, "Size Variants")
-	var row := UI.hbox(parent, 12)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 12)
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 
 	UI.solid_btn(row, "XS", UITheme.PRIMARY, Color.WHITE, UITheme.RADIUS_SM, 12, 4, UITheme.FONT_XS)
@@ -101,9 +106,10 @@ func _sizes_section(parent: Control) -> void:
 
 func _special_section(parent: Control) -> void:
 	UI.section(parent, "Special Buttons")
+	var card1 := UI.card(parent, 24, 20)
 
 	# Row 1: Icon + Text, Pill shape
-	var row1 := UI.hbox(parent, 12)
+	var row1 := UI.hbox(card1, 12)
 	UI.solid_btn(row1, "⊕  Add Item", UITheme.PRIMARY)
 	UI.solid_btn(row1, "⟳  Refresh", UITheme.SECONDARY)
 	UI.solid_btn(row1, "✓  Confirm", UITheme.SUCCESS, UITheme.TEXT_INVERSE)
@@ -120,11 +126,10 @@ func _special_section(parent: Control) -> void:
 	UI.soft_btn(row1, "Pill Soft", UITheme.PRIMARY, UITheme.RADIUS_PILL)
 	UI.h_expand(row1)
 
-	UI.spacer(parent, 4)
-
 	# Row 2: Disabled buttons
 	UI.section(parent, "Disabled State")
-	var row2 := UI.hbox(parent, 12)
+	var card2 := UI.card(parent, 24, 20)
+	var row2 := UI.hbox(card2, 12)
 	var d1 := UI.solid_btn(row2, "Disabled Solid", UITheme.PRIMARY)
 	d1.disabled = true
 	var d2 := UI.outline_btn(row2, "Disabled Outline", UITheme.PRIMARY)
@@ -139,11 +144,10 @@ func _special_section(parent: Control) -> void:
 	loading.disabled = true
 	UI.h_expand(row2)
 
-	UI.spacer(parent, 4)
-
 	# Row 3: Button group demo
 	UI.section(parent, "Button Group")
-	var row3 := UI.hbox(parent, 0)
+	var card3 := UI.card(parent, 24, 20)
+	var row3 := UI.hbox(card3, 0)
 
 	_group_btn(row3, "Day", true, true, false)
 	_group_btn(row3, "Week", false, false, false)

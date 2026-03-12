@@ -19,20 +19,21 @@ func build(parent: Control) -> void:
 
 func _standard_alerts(parent: Control) -> void:
 	UI.section(parent, "Standard Alerts")
+	var card_v := UI.card(parent, 24, 20)
 
-	UI.alert(parent, "ℹ", "Information",
+	UI.alert(card_v, "ℹ", "Information",
 		"This is an informational alert. Use it to provide helpful context to the user.",
 		UITheme.INFO)
 
-	UI.alert(parent, "✓", "Success",
+	UI.alert(card_v, "✓", "Success",
 		"Operation completed successfully. Your changes have been saved.",
 		UITheme.SUCCESS)
 
-	UI.alert(parent, "⚠", "Warning",
+	UI.alert(card_v, "⚠", "Warning",
 		"Please review your input. Some fields may require attention before proceeding.",
 		UITheme.WARNING)
 
-	UI.alert(parent, "✕", "Error",
+	UI.alert(card_v, "✕", "Error",
 		"Something went wrong. Please try again or contact support if the issue persists.",
 		UITheme.DANGER)
 
@@ -43,11 +44,12 @@ func _standard_alerts(parent: Control) -> void:
 
 func _compact_alerts(parent: Control) -> void:
 	UI.section(parent, "Compact Alerts (Single Line)")
+	var card_v := UI.card(parent, 24, 20)
 
-	_compact_alert(parent, "ℹ", "New version v4.3.1 is now available.", UITheme.INFO)
-	_compact_alert(parent, "✓", "File uploaded successfully.", UITheme.SUCCESS)
-	_compact_alert(parent, "⚠", "Your session will expire in 5 minutes.", UITheme.WARNING)
-	_compact_alert(parent, "✕", "Failed to connect to server.", UITheme.DANGER)
+	_compact_alert(card_v, "ℹ", "New version v4.3.1 is now available.", UITheme.INFO)
+	_compact_alert(card_v, "✓", "File uploaded successfully.", UITheme.SUCCESS)
+	_compact_alert(card_v, "⚠", "Your session will expire in 5 minutes.", UITheme.WARNING)
+	_compact_alert(card_v, "✕", "Failed to connect to server.", UITheme.DANGER)
 
 
 func _compact_alert(parent: Control, icon: String, text: String, color: Color) -> void:
@@ -76,12 +78,13 @@ func _compact_alert(parent: Control, icon: String, text: String, color: Color) -
 
 func _dismissable_alerts(parent: Control) -> void:
 	UI.section(parent, "Dismissable Alerts")
+	var card_v := UI.card(parent, 24, 20)
 
-	UI.alert(parent, "ℹ", "Tip",
+	UI.alert(card_v, "ℹ", "Tip",
 		"You can customize your dashboard layout by dragging widgets. Click the close button to dismiss this tip.",
 		UITheme.INFO, true)
 
-	UI.alert(parent, "⚠", "Maintenance Notice",
+	UI.alert(card_v, "⚠", "Maintenance Notice",
 		"Scheduled maintenance on March 15, 2026. Services may be temporarily unavailable.",
 		UITheme.WARNING, true)
 
@@ -92,9 +95,10 @@ func _dismissable_alerts(parent: Control) -> void:
 
 func _alert_with_actions(parent: Control) -> void:
 	UI.section(parent, "Alerts with Actions")
+	var card_v := UI.card(parent, 24, 20)
 
 	# Update alert
-	var update_panel := _action_alert_base(parent, "⟳", "Update Available",
+	var update_panel := _action_alert_base(card_v, "⟳", "Update Available",
 		"A new version of the component library is available. Would you like to update now?",
 		UITheme.PRIMARY)
 	var update_actions := UI.hbox(update_panel, 8)
@@ -102,7 +106,7 @@ func _alert_with_actions(parent: Control) -> void:
 	UI.ghost_btn(update_actions, "Later", UITheme.TEXT_SECONDARY, UITheme.RADIUS_SM, 14, 6, UITheme.FONT_SM)
 
 	# Error with retry
-	var error_panel := _action_alert_base(parent, "✕", "Connection Error",
+	var error_panel := _action_alert_base(card_v, "✕", "Connection Error",
 		"Unable to reach the server. Please check your network connection and try again.",
 		UITheme.DANGER)
 	var error_actions := UI.hbox(error_panel, 8)
@@ -110,7 +114,7 @@ func _alert_with_actions(parent: Control) -> void:
 	UI.ghost_btn(error_actions, "Dismiss", UITheme.TEXT_SECONDARY, UITheme.RADIUS_SM, 14, 6, UITheme.FONT_SM)
 
 	# Confirm action
-	var confirm_panel := _action_alert_base(parent, "⚠", "Confirm Deletion",
+	var confirm_panel := _action_alert_base(card_v, "⚠", "Confirm Deletion",
 		"This action cannot be undone. Are you sure you want to delete all selected items?",
 		UITheme.WARNING)
 	var confirm_actions := UI.hbox(confirm_panel, 8)
@@ -156,11 +160,12 @@ func _action_alert_base(parent: Control, icon: String, title: String,
 
 func _banner_alerts(parent: Control) -> void:
 	UI.section(parent, "Full-Width Banners")
+	var card_v := UI.card(parent, 24, 20)
 
-	_banner(parent, "✓  Changes saved successfully", UITheme.SUCCESS)
-	_banner(parent, "ℹ  System is undergoing maintenance — some features may be slow", UITheme.INFO)
-	_banner(parent, "⚠  Your storage is almost full (92% used)", UITheme.WARNING)
-	_banner(parent, "✕  Payment failed — please update your billing information", UITheme.DANGER)
+	_banner(card_v, "✓  Changes saved successfully", UITheme.SUCCESS)
+	_banner(card_v, "ℹ  System is undergoing maintenance — some features may be slow", UITheme.INFO)
+	_banner(card_v, "⚠  Your storage is almost full (92% used)", UITheme.WARNING)
+	_banner(card_v, "✕  Payment failed — please update your billing information", UITheme.DANGER)
 
 
 func _banner(parent: Control, text: String, color: Color) -> void:

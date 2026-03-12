@@ -22,7 +22,8 @@ func build(parent: Control) -> void:
 
 func _filled_badges(parent: Control) -> void:
 	UI.section(parent, "Filled Badges")
-	var row := UI.hbox(parent, 8)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 8)
 	UI.badge(row, "Primary", UITheme.PRIMARY)
 	UI.badge(row, "Secondary", UITheme.SECONDARY)
 	UI.badge(row, "Success", UITheme.SUCCESS, UITheme.TEXT_INVERSE)
@@ -39,7 +40,8 @@ func _filled_badges(parent: Control) -> void:
 
 func _outline_badges(parent: Control) -> void:
 	UI.section(parent, "Outline Badges")
-	var row := UI.hbox(parent, 8)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 8)
 	UI.outline_badge(row, "Primary", UITheme.PRIMARY)
 	UI.outline_badge(row, "Secondary", UITheme.SECONDARY)
 	UI.outline_badge(row, "Success", UITheme.SUCCESS)
@@ -56,7 +58,8 @@ func _outline_badges(parent: Control) -> void:
 
 func _soft_badges(parent: Control) -> void:
 	UI.section(parent, "Soft / Tint Badges")
-	var row := UI.hbox(parent, 8)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 8)
 	UI.soft_badge(row, "Primary", UITheme.PRIMARY)
 	UI.soft_badge(row, "Secondary", UITheme.SECONDARY)
 	UI.soft_badge(row, "Success", UITheme.SUCCESS)
@@ -72,7 +75,8 @@ func _soft_badges(parent: Control) -> void:
 
 func _pill_badges(parent: Control) -> void:
 	UI.section(parent, "Pill Shape")
-	var row := UI.hbox(parent, 8)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 8)
 	UI.badge(row, "Active", UITheme.SUCCESS, UITheme.TEXT_INVERSE, UITheme.RADIUS_PILL, 14, 4)
 	UI.badge(row, "Pending", UITheme.WARNING, UITheme.TEXT_INVERSE, UITheme.RADIUS_PILL, 14, 4)
 	UI.badge(row, "Inactive", UITheme.DANGER, Color.WHITE, UITheme.RADIUS_PILL, 14, 4)
@@ -88,7 +92,8 @@ func _pill_badges(parent: Control) -> void:
 
 func _size_variants(parent: Control) -> void:
 	UI.section(parent, "Size Variants")
-	var row := UI.hbox(parent, 12)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 12)
 	row.alignment = BoxContainer.ALIGNMENT_CENTER
 
 	UI.badge(row, "Small", UITheme.PRIMARY, Color.WHITE, UITheme.RADIUS_XS, 6, 2, UITheme.FONT_XS)
@@ -103,7 +108,8 @@ func _size_variants(parent: Control) -> void:
 
 func _dot_indicators(parent: Control) -> void:
 	UI.section(parent, "Dot Indicators")
-	var row := UI.hbox(parent, 20)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 20)
 
 	_dot_item(row, "Online", UITheme.SUCCESS)
 	_dot_item(row, "Away", UITheme.WARNING)
@@ -130,7 +136,8 @@ func _dot_item(parent: Control, text: String, color: Color) -> void:
 
 func _count_badges(parent: Control) -> void:
 	UI.section(parent, "Notification Counters")
-	var row := UI.hbox(parent, 24)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 24)
 
 	_count_item(row, "Messages", "3", UITheme.PRIMARY)
 	_count_item(row, "Alerts", "12", UITheme.DANGER)

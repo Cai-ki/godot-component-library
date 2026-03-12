@@ -21,7 +21,8 @@ func build(parent: Control) -> void:
 
 func _text_inputs(parent: Control) -> void:
 	UI.section(parent, "Text Inputs")
-	var row := UI.hbox(parent, 24)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 24)
 
 	# Default input
 	var v1 := UI.vbox(row, 6)
@@ -64,7 +65,8 @@ func _text_inputs(parent: Control) -> void:
 
 func _input_states(parent: Control) -> void:
 	UI.section(parent, "Validation States")
-	var row := UI.hbox(parent, 24)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 24)
 
 	# Normal
 	_state_input(row, "Default", "Normal input", Color.TRANSPARENT, "")
@@ -103,7 +105,8 @@ func _state_input(parent: Control, lbl: String, placeholder: String,
 
 func _textarea_section(parent: Control) -> void:
 	UI.section(parent, "Textarea")
-	var row := UI.hbox(parent, 24)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 24)
 
 	var v := UI.vbox(row, 6)
 	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -159,7 +162,8 @@ func _textarea_section(parent: Control) -> void:
 
 func _select_section(parent: Control) -> void:
 	UI.section(parent, "Dropdown Select")
-	var row := UI.hbox(parent, 24)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 24)
 
 	# Default dropdown
 	var v1 := UI.vbox(row, 6)
@@ -218,7 +222,8 @@ func _select_section(parent: Control) -> void:
 
 func _checkbox_section(parent: Control) -> void:
 	UI.section(parent, "Checkboxes")
-	var row := UI.hbox(parent, 32)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 32)
 
 	var checks := [
 		["Accept Terms of Service", false],
@@ -247,7 +252,8 @@ func _checkbox_section(parent: Control) -> void:
 
 func _toggle_section(parent: Control) -> void:
 	UI.section(parent, "Toggle Switches")
-	var row := UI.hbox(parent, 32)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 32)
 
 	var toggles := [
 		["Dark Mode", true],
@@ -275,7 +281,8 @@ func _toggle_section(parent: Control) -> void:
 
 func _slider_section(parent: Control) -> void:
 	UI.section(parent, "Range Sliders")
-	var grid := UI.vbox(parent, 20)
+	var card_v := UI.card(parent, 24, 20)
+	var grid := UI.vbox(card_v, 20)
 
 	_labeled_slider(grid, "Volume", 75, "%")
 	_labeled_slider(grid, "Brightness", 50, "%")

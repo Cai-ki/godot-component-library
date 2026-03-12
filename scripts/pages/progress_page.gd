@@ -20,8 +20,8 @@ func build(parent: Control) -> void:
 
 func _basic_progress(parent: Control) -> void:
 	UI.section(parent, "Basic Progress")
-
-	var v := UI.vbox(parent, 16)
+	var card_v := UI.card(parent, 24, 20)
+	var v := UI.vbox(card_v, 16)
 	_progress_row(v, "0%", 0.0, UITheme.PRIMARY)
 	_progress_row(v, "25%", 0.25, UITheme.PRIMARY)
 	_progress_row(v, "50%", 0.5, UITheme.PRIMARY)
@@ -47,8 +47,8 @@ func _progress_row(parent: Control, label_text: String, value: float, color: Col
 
 func _color_variants(parent: Control) -> void:
 	UI.section(parent, "Color Variants")
-
-	var v := UI.vbox(parent, 12)
+	var card_v := UI.card(parent, 24, 20)
+	var v := UI.vbox(card_v, 12)
 
 	_labeled_bar(v, "Primary", 0.65, UITheme.PRIMARY)
 	_labeled_bar(v, "Success", 0.80, UITheme.SUCCESS)
@@ -76,8 +76,8 @@ func _labeled_bar(parent: Control, title: String, value: float, color: Color) ->
 
 func _size_variants(parent: Control) -> void:
 	UI.section(parent, "Size Variants")
-
-	var v := UI.vbox(parent, 16)
+	var card_v := UI.card(parent, 24, 20)
+	var v := UI.vbox(card_v, 16)
 
 	var h1 := UI.hbox(v, 12)
 	h1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
