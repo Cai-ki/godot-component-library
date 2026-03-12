@@ -17,23 +17,22 @@ func build(parent: Control) -> void:
 func _tabs_section(parent: Control) -> void:
 	UI.section(parent, "Tabs Component  (UITabs)")
 
+	var card_v := UI.card(parent, 24, 20)
 	var tabs := UITabs.new()
 	tabs.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	parent.add_child(tabs)
+	card_v.add_child(tabs)
 
 	tabs.add_tab("Overview",   _tab_overview())
 	tabs.add_tab("Analytics",  _tab_analytics())
 	tabs.add_tab("Team",       _tab_team())
 	tabs.add_tab("Settings",   _tab_settings())
 
-	UI.spacer(parent, UITheme.SP_4)
-
 	# Underlined style note
 	var note_panel := PanelContainer.new()
 	note_panel.add_theme_stylebox_override("panel", UI.style(
 		UITheme.SURFACE_3, UITheme.RADIUS_MD, 1, UITheme.BORDER
 	))
-	parent.add_child(note_panel)
+	card_v.add_child(note_panel)
 	var nm := MarginContainer.new()
 	nm.add_theme_constant_override("margin_left", 16)
 	nm.add_theme_constant_override("margin_right", 16)
@@ -175,10 +174,11 @@ func _tab_settings() -> Control:
 
 func _accordion_section(parent: Control) -> void:
 	UI.section(parent, "Accordion Component  (UIAccordion)")
+	var card_v := UI.card(parent, 24, 20)
 
 	var acc := UIAccordion.new()
 	acc.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	parent.add_child(acc)
+	card_v.add_child(acc)
 
 	var items := [
 		["What is a component library?",
@@ -198,14 +198,13 @@ func _accordion_section(parent: Control) -> void:
 		body_v.add_child(body_l)
 		acc.add_item(items[i][0], body_v, i == 0)
 
-	UI.spacer(parent, UITheme.SP_4)
-
 	# Allow-multiple variant
 	UI.section(parent, "Allow Multiple Open  (allow_multiple = true)")
+	var card_v2 := UI.card(parent, 24, 20)
 	var acc2 := UIAccordion.new()
 	acc2.allow_multiple = true
 	acc2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	parent.add_child(acc2)
+	card_v2.add_child(acc2)
 
 	for title in ["Section Alpha", "Section Beta", "Section Gamma"]:
 		var c := VBoxContainer.new()

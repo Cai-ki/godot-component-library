@@ -19,10 +19,11 @@ func build(parent: Control) -> void:
 
 func _table_section(parent: Control) -> void:
 	UI.section(parent, "Data Table  (UITable)")
+	var card_v := UI.card(parent, 24, 20)
 
 	var table := UITable.new()
 	table.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	parent.add_child(table)
+	card_v.add_child(table)
 
 	table.set_columns(PackedStringArray(["Name", "Role", "Status", "Joined"]))
 	var rows := [
