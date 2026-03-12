@@ -1,13 +1,13 @@
 extends Node
 
-var current_page: String = "buttons"
+var current_page: String = "home"
 var nav_buttons: Dictionary = {}
 var content_container: VBoxContainer
 
 
 func _ready() -> void:
 	_build_shell()
-	_navigate_to("buttons")
+	_navigate_to("home")
 
 
 # =============================================
@@ -67,7 +67,11 @@ func _build_sidebar(parent: Control) -> void:
 
 	# Logo area
 	_build_logo(vbox)
-	UI.spacer(vbox, 16)
+	UI.spacer(vbox, 12)
+
+	# Home
+	_add_nav_button(vbox, "home", "⬡  Overview")
+	UI.spacer(vbox, 4)
 
 	# Separator
 	UI.sep(vbox, 0)
@@ -223,6 +227,8 @@ func _navigate_to(page_id: String) -> void:
 	# Load page
 	current_page = page_id
 	match page_id:
+		"home":
+			HomePage.new().build(content_container)
 		"buttons":
 			ButtonsPage.new().build(content_container)
 		"cards":
