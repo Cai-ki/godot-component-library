@@ -208,51 +208,143 @@ func _skeleton_section(parent: Control) -> void:
 	UI.section(parent, "Skeleton Loader  (UISkeletonLoader)")
 
 	var skel_card := UI.card(parent, 24, 20)
+	skel_card.add_child(UI.label(
+		"Click \"Load Content\" to see the skeleton → content transition.",
+		UITheme.FONT_SM, UITheme.TEXT_SECONDARY
+	))
 
-	# Card skeleton mockup
-	skel_card.add_child(UI.label("Loading state simulation:", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
-
-	# Two side-by-side skeleton cards
-	var row := UI.hbox(skel_card, 16)
+	# ── Skeleton row (visible initially) ──
+	var skeleton_row := UI.hbox(skel_card, 16)
 	for _i in 2:
-		var cv := VBoxContainer.new()
-		cv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		cv.add_theme_constant_override("separation", 10)
-		row.add_child(cv)
-		var card_panel := PanelContainer.new()
-		card_panel.add_theme_stylebox_override("panel", UI.style(UITheme.SURFACE_2, UITheme.RADIUS_LG, 1, UITheme.BORDER))
-		cv.add_child(card_panel)
-		var cm := MarginContainer.new()
-		for side in ["margin_left", "margin_right", "margin_top", "margin_bottom"]:
-			cm.add_theme_constant_override(side, 20)
-		card_panel.add_child(cm)
-		var iv := VBoxContainer.new()
-		iv.add_theme_constant_override("separation", 10)
-		cm.add_child(iv)
+		_build_skeleton_card(skeleton_row)
 
-		# Avatar + name line
-		var top := UI.hbox(iv, 12)
-		var av_skel := UISkeletonLoader.new()
-		av_skel.min_width = 40; av_skel.min_height = 40; av_skel.radius = UITheme.RADIUS_PILL
-		top.add_child(av_skel)
-		var name_skel := VBoxContainer.new()
-		name_skel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		name_skel.add_theme_constant_override("separation", 6)
-		top.add_child(name_skel)
-		var s1 := UISkeletonLoader.new(); s1.min_height = 14; s1.min_width = 0
-		s1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		name_skel.add_child(s1)
-		var s2 := UISkeletonLoader.new(); s2.min_height = 10; s2.min_width = 0
-		s2.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN; s2.custom_minimum_size.x = 80
-		name_skel.add_child(s2)
+	# ── Content row (hidden initially) ──
+	var content_row := UI.hbox(skel_card, 16)
+	content_row.modulate.a = 0.0
+	content_row.visible = false
 
-		# Text lines
-		for h_pct in [1.0, 0.85, 0.7]:
-			var sl := UISkeletonLoader.new()
-			sl.min_height = 10; sl.min_width = 0
-			sl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			sl.custom_minimum_size.x = 0
-			iv.add_child(sl)
+	var people := [
+		["JD", UITheme.PRIMARY,   "Jane Doe",     "Lead Designer",
+		 "Crafts design systems and component libraries for Godot-based projects."],
+		["AS", UITheme.SUCCESS,   "Alex Smith",   "Frontend Dev",
+		 "Builds responsive UI layouts and interactive prototypes using GDScript."],
+	]
+	for p: Array in people:
+		_build_real_card(content_row, p[0], p[1], p[2], p[3], p[4])
+
+	# ── Controls ──
+	var btn_row := UI.hbox(skel_card, 12)
+	var load_btn  := UI.solid_btn(btn_row,   "▶  Load Content",  UITheme.PRIMARY)
+	var reset_btn := UI.outline_btn(btn_row,  "↺  Show Loading",  UITheme.TEXT_SECONDARY)
+	reset_btn.visible = false
+	UI.h_expand(btn_row)
+
+	load_btn.pressed.connect(func():
+		load_btn.visible = false
+		var t := skeleton_row.create_tween()
+		t.tween_property(skeleton_row, "modulate:a", 0.0, 0.3)
+		t.finished.connect(func():
+			skeleton_row.visible = false
+			content_row.visible = true
+			content_row.create_tween() \
+				.tween_property(content_row, "modulate:a", 1.0, 0.4) \
+				.set_trans(Tween.TRANS_SINE)
+			reset_btn.visible = true
+		)
+	)
+	reset_btn.pressed.connect(func():
+		reset_btn.visible = false
+		var t := content_row.create_tween()
+		t.tween_property(content_row, "modulate:a", 0.0, 0.3)
+		t.finished.connect(func():
+			content_row.visible = false
+			skeleton_row.visible = true
+			skeleton_row.create_tween() \
+				.tween_property(skeleton_row, "modulate:a", 1.0, 0.4)
+			load_btn.visible = true
+		)
+	)
+
+
+func _build_skeleton_card(parent: Control) -> void:
+	var cv := VBoxContainer.new()
+	cv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cv.add_theme_constant_override("separation", 10)
+	parent.add_child(cv)
+
+	var card_panel := PanelContainer.new()
+	card_panel.add_theme_stylebox_override("panel", UI.style(UITheme.SURFACE_2, UITheme.RADIUS_LG, 1, UITheme.BORDER))
+	cv.add_child(card_panel)
+
+	var cm := MarginContainer.new()
+	for side in ["margin_left", "margin_right", "margin_top", "margin_bottom"]:
+		cm.add_theme_constant_override(side, 20)
+	card_panel.add_child(cm)
+
+	var iv := VBoxContainer.new()
+	iv.add_theme_constant_override("separation", 10)
+	cm.add_child(iv)
+
+	# Avatar + name skeleton
+	var top := UI.hbox(iv, 12)
+	var av_skel := UISkeletonLoader.new()
+	av_skel.min_width = 40; av_skel.min_height = 40; av_skel.radius = UITheme.RADIUS_PILL
+	top.add_child(av_skel)
+	var name_skel := VBoxContainer.new()
+	name_skel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_skel.add_theme_constant_override("separation", 6)
+	top.add_child(name_skel)
+	var s1 := UISkeletonLoader.new(); s1.min_height = 14; s1.min_width = 0
+	s1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	name_skel.add_child(s1)
+	var s2 := UISkeletonLoader.new(); s2.min_height = 10; s2.min_width = 0
+	s2.size_flags_horizontal = Control.SIZE_SHRINK_BEGIN; s2.custom_minimum_size.x = 80
+	name_skel.add_child(s2)
+
+	# Text line skeletons
+	for _j in 3:
+		var sl := UISkeletonLoader.new()
+		sl.min_height = 10; sl.min_width = 0
+		sl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		iv.add_child(sl)
+
+
+func _build_real_card(parent: Control, initials: String, color: Color,
+		person_name: String, role: String, bio: String) -> void:
+	var cv := VBoxContainer.new()
+	cv.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	cv.add_theme_constant_override("separation", 10)
+	parent.add_child(cv)
+
+	var card_panel := PanelContainer.new()
+	card_panel.add_theme_stylebox_override("panel", UI.style(UITheme.SURFACE_2, UITheme.RADIUS_LG, 1, UITheme.BORDER))
+	cv.add_child(card_panel)
+
+	var cm := MarginContainer.new()
+	for side in ["margin_left", "margin_right", "margin_top", "margin_bottom"]:
+		cm.add_theme_constant_override(side, 20)
+	card_panel.add_child(cm)
+
+	var iv := VBoxContainer.new()
+	iv.add_theme_constant_override("separation", 10)
+	cm.add_child(iv)
+
+	# Avatar + name
+	var top := UI.hbox(iv, 12)
+	var av := UIAvatar.new()
+	av.initials = initials; av.bg_color = color; av.avatar_size = UIAvatar.AvatarSize.SM
+	top.add_child(av)
+	var name_v := VBoxContainer.new()
+	name_v.add_theme_constant_override("separation", 2)
+	name_v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	top.add_child(name_v)
+	name_v.add_child(UI.label(person_name, UITheme.FONT_MD, UITheme.TEXT_PRIMARY))
+	name_v.add_child(UI.label(role, UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+
+	# Bio text
+	var bio_lbl := UI.label(bio, UITheme.FONT_SM, UITheme.TEXT_SECONDARY)
+	bio_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD
+	iv.add_child(bio_lbl)
 
 
 # =============================================
