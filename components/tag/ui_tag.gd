@@ -1,7 +1,7 @@
 ## UITag — Standalone Component
 ## Dependencies: scripts/theme.gd (UITheme)
 class_name UITag
-extends Control
+extends PanelContainer
 
 signal removed(tag_text: String)
 
@@ -19,21 +19,17 @@ signal removed(tag_text: String)
 
 var _lbl:       Label
 var _close_btn: Button
-var _panel:     PanelContainer
 
 func _ready() -> void:
 	size_flags_horizontal = Control.SIZE_SHRINK_BEGIN
 	_build()
 
 func _build() -> void:
-	_panel = PanelContainer.new()
-	_panel.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	add_child(_panel)
-	_apply_panel_style()
+	_apply_style()
 
 	var h := HBoxContainer.new()
 	h.add_theme_constant_override("separation", 5)
-	_panel.add_child(h)
+	add_child(h)
 
 	_lbl = Label.new()
 	_lbl.text = tag_text
@@ -52,19 +48,18 @@ func _build() -> void:
 	_close_btn.pressed.connect(func(): removed.emit(tag_text); queue_free())
 	h.add_child(_close_btn)
 
-func _apply_panel_style() -> void:
-	if not _panel: return
-	var r   := UITheme.RADIUS_PILL if pill_shape else UITheme.RADIUS_SM
-	var bg  := Color(tag_color.r, tag_color.g, tag_color.b, 0.12)
-	var s   := StyleBoxFlat.new()
+func _apply_style() -> void:
+	var r  := UITheme.RADIUS_PILL if pill_shape else UITheme.RADIUS_SM
+	var bg := Color(tag_color.r, tag_color.g, tag_color.b, 0.12)
+	var s  := StyleBoxFlat.new()
 	s.bg_color = bg
 	s.corner_radius_top_left     = r; s.corner_radius_top_right    = r
 	s.corner_radius_bottom_left  = r; s.corner_radius_bottom_right = r
 	s.content_margin_left = 10; s.content_margin_right  = 6
 	s.content_margin_top  = 5;  s.content_margin_bottom = 5
-	_panel.add_theme_stylebox_override("panel", s)
+	add_theme_stylebox_override("panel", s)
 
 func _rebuild() -> void:
 	for c in get_children(): c.queue_free()
-	_lbl = null; _close_btn = null; _panel = null
+	_lbl = null; _close_btn = null
 	_build()
