@@ -222,28 +222,43 @@ func _select_section(parent: Control) -> void:
 
 func _checkbox_section(parent: Control) -> void:
 	UI.section(parent, "Checkboxes")
-	var card_v := UI.card(parent, 24, 20)
-	var row := UI.hbox(card_v, 32)
+	var card_v := UI.card(parent, 24, 0)
+	card_v.add_theme_constant_override("separation", 0)
 
 	var checks := [
-		["Accept Terms of Service", false],
-		["Subscribe to newsletter", true],
-		["Enable notifications", true],
-		["Public profile", false],
+		["Accept Terms of Service",  "Required to create an account and use the platform.", false],
+		["Subscribe to newsletter",  "Get weekly updates, tips, and community highlights.", true],
+		["Enable notifications",     "Receive alerts for new activity and messages.", true],
+		["Public profile",           "Allow others to find and view your profile page.", false],
 	]
 
-	for data in checks:
+	for i in checks.size():
+		var m := MarginContainer.new()
+		m.add_theme_constant_override("margin_top", 14)
+		m.add_theme_constant_override("margin_bottom", 14)
+		card_v.add_child(m)
+
+		var v := VBoxContainer.new()
+		v.add_theme_constant_override("separation", 3)
+		m.add_child(v)
+
 		var cb := CheckBox.new()
-		cb.text = data[0]
-		cb.button_pressed = data[1]
+		cb.text = checks[i][0]
+		cb.button_pressed = checks[i][2]
 		cb.focus_mode = Control.FOCUS_NONE
 		cb.add_theme_color_override("font_color", UITheme.TEXT_PRIMARY)
 		cb.add_theme_color_override("font_hover_color", UITheme.TEXT_PRIMARY)
 		cb.add_theme_color_override("font_pressed_color", UITheme.TEXT_PRIMARY)
 		cb.add_theme_font_size_override("font_size", UITheme.FONT_MD)
-		row.add_child(cb)
+		v.add_child(cb)
 
-	UI.h_expand(row)
+		var desc_row := MarginContainer.new()
+		desc_row.add_theme_constant_override("margin_left", 26)
+		v.add_child(desc_row)
+		desc_row.add_child(UI.label(checks[i][1], UITheme.FONT_SM, UITheme.TEXT_MUTED))
+
+		if i < checks.size() - 1:
+			UI.sep(card_v, 0)
 
 
 # =============================================
@@ -252,27 +267,41 @@ func _checkbox_section(parent: Control) -> void:
 
 func _toggle_section(parent: Control) -> void:
 	UI.section(parent, "Toggle Switches")
-	var card_v := UI.card(parent, 24, 20)
-	var row := UI.hbox(card_v, 32)
+	var card_v := UI.card(parent, 24, 0)
+	card_v.add_theme_constant_override("separation", 0)
 
 	var toggles := [
-		["Dark Mode", true],
-		["Auto Save", true],
-		["Analytics", false],
-		["Two Factor Auth", false],
+		["Dark Mode",       "Switch between light and dark interface themes.", true],
+		["Auto Save",       "Automatically save changes every 30 seconds.", true],
+		["Analytics",       "Send anonymous usage data to help improve the product.", false],
+		["Two Factor Auth", "Add an extra layer of security to your account.", false],
 	]
 
-	for data in toggles:
-		var toggle := CheckButton.new()
-		toggle.text = data[0]
-		toggle.button_pressed = data[1]
-		toggle.focus_mode = Control.FOCUS_NONE
-		toggle.add_theme_color_override("font_color", UITheme.TEXT_PRIMARY)
-		toggle.add_theme_color_override("font_hover_color", UITheme.TEXT_PRIMARY)
-		toggle.add_theme_font_size_override("font_size", UITheme.FONT_MD)
-		row.add_child(toggle)
+	for i in toggles.size():
+		var m := MarginContainer.new()
+		m.add_theme_constant_override("margin_top", 14)
+		m.add_theme_constant_override("margin_bottom", 14)
+		card_v.add_child(m)
 
-	UI.h_expand(row)
+		var h := HBoxContainer.new()
+		h.add_theme_constant_override("separation", 16)
+		h.alignment = BoxContainer.ALIGNMENT_CENTER
+		m.add_child(h)
+
+		var text_v := VBoxContainer.new()
+		text_v.add_theme_constant_override("separation", 3)
+		text_v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		h.add_child(text_v)
+		text_v.add_child(UI.label(toggles[i][0], UITheme.FONT_MD, UITheme.TEXT_PRIMARY))
+		text_v.add_child(UI.label(toggles[i][1], UITheme.FONT_SM, UITheme.TEXT_MUTED))
+
+		var toggle := CheckButton.new()
+		toggle.button_pressed = toggles[i][2]
+		toggle.focus_mode = Control.FOCUS_NONE
+		h.add_child(toggle)
+
+		if i < toggles.size() - 1:
+			UI.sep(card_v, 0)
 
 
 # =============================================
