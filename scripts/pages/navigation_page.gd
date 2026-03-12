@@ -27,19 +27,10 @@ func _tabs_section(parent: Control) -> void:
 	tabs.add_tab("Team",       _tab_team())
 	tabs.add_tab("Settings",   _tab_settings())
 
-	# Underlined style note
-	var note_panel := PanelContainer.new()
-	note_panel.add_theme_stylebox_override("panel", UI.style(
-		UITheme.SURFACE_3, UITheme.RADIUS_MD, 1, UITheme.BORDER
-	))
-	card_v.add_child(note_panel)
-	var nm := MarginContainer.new()
-	nm.add_theme_constant_override("margin_left", 16)
-	nm.add_theme_constant_override("margin_right", 16)
-	nm.add_theme_constant_override("margin_top", 12)
-	nm.add_theme_constant_override("margin_bottom", 12)
-	note_panel.add_child(nm)
-	nm.add_child(UI.label("ℹ  Copy components/tabs/ui_tabs.gd + scripts/theme.gd to use in your project.", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	# Usage note
+	UI.alert(card_v, "ℹ", "Usage",
+		"Copy components/tabs/ui_tabs.gd + scripts/theme.gd to use in your project.",
+		UITheme.INFO)
 
 
 func _tab_content(text: String) -> Control:
