@@ -12,6 +12,7 @@ func build(parent: Control) -> void:
 	_ghost_section(parent)
 	_sizes_section(parent)
 	_special_section(parent)
+	_tooltip_section(parent)
 
 
 # =============================================
@@ -201,3 +202,52 @@ func _group_btn(parent: Control, text: String, active: bool, first: bool, last: 
 
 	parent.add_child(btn)
 	return btn
+
+
+# =============================================
+# TOOLTIPS
+# =============================================
+
+func _tooltip_section(parent: Control) -> void:
+	UI.section(parent, "Tooltips  (UITooltip)")
+	var card_v := UI.card(parent, 24, 20)
+	card_v.add_child(UI.label(
+		"Hover over buttons to see contextual tooltips. "
+		+ "Add UITooltip as a child of any Control and set tip_text.",
+		UITheme.FONT_SM, UITheme.TEXT_SECONDARY
+	))
+
+	var row := UI.hbox(card_v, 12)
+
+	var b1 := UI.solid_btn(row, "⊕  Save", UITheme.PRIMARY)
+	_tip(b1, "Save all pending changes to disk")
+
+	var b2 := UI.outline_btn(row, "Export", UITheme.SECONDARY)
+	_tip(b2, "Export project as a .zip archive")
+
+	var b3 := UI.soft_btn(row, "⟳  Sync", UITheme.INFO)
+	_tip(b3, "Pull latest changes from remote")
+
+	var b4 := UI.solid_btn(row, "✕", UITheme.DANGER)
+	_tip(b4, "Permanently delete selected items")
+
+	var b5 := UI.ghost_btn(row, "⚙", UITheme.TEXT_SECONDARY)
+	_tip(b5, "Open settings panel")
+
+	UI.h_expand(row)
+
+	# Below variant
+	var row2 := UI.hbox(card_v, 12)
+	row2.add_child(UI.label("tip_position = Below:", UITheme.FONT_SM, UITheme.TEXT_MUTED))
+	var b6 := UI.outline_btn(row2, "Details", UITheme.PRIMARY)
+	var t6 := UITooltip.new()
+	t6.tip_text = "View full details for this item"
+	t6.tip_position = 1  # Below
+	b6.add_child(t6)
+	UI.h_expand(row2)
+
+
+func _tip(target: Control, text: String) -> void:
+	var tip := UITooltip.new()
+	tip.tip_text = text
+	target.add_child(tip)
