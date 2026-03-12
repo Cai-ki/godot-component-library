@@ -23,10 +23,11 @@ func build(parent: Control) -> void:
 func _shape_section(parent: Control, name: String, radius: int, bw: int, desc: String) -> void:
 	UI.section(parent, name + " — radius " + str(radius) + "px, border " + str(bw) + "px")
 
-	# Outer demo card
+	# Outer demo card — always use normal card radius for the container
+	var card_radius := UITheme.RADIUS_LG
 	var card_panel := PanelContainer.new()
 	card_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	var cs := UI.style(UITheme.SURFACE_2, radius, bw, UITheme.BORDER, 4, Color(0,0,0,0.15), Vector2(0,2))
+	var cs := UI.style(UITheme.SURFACE_2, card_radius, 1, UITheme.BORDER, 4, Color(0,0,0,0.15), Vector2(0,2))
 	card_panel.add_theme_stylebox_override("panel", cs)
 	parent.add_child(card_panel)
 
