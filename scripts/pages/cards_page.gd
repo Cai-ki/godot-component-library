@@ -22,19 +22,16 @@ func _basic_cards(parent: Control) -> void:
 
 	# Default card
 	var c1 := UI.card(row, 24, 20, 0)
-	c1.get_parent().get_parent().size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	c1.add_child(UI.label("Default Card", UITheme.FONT_BASE, UITheme.TEXT_PRIMARY))
 	c1.add_child(UI.label("Subtle shadow with border.\nGood for most content sections.", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
 
 	# Elevated card
 	var c2 := UI.card(row, 24, 20, 1)
-	c2.get_parent().get_parent().size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	c2.add_child(UI.label("Elevated Card", UITheme.FONT_BASE, UITheme.TEXT_PRIMARY))
 	c2.add_child(UI.label("Stronger shadow for emphasis.\nDraws attention to important items.", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
 
 	# High elevation card
 	var c3 := UI.card(row, 24, 20, 2)
-	c3.get_parent().get_parent().size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	c3.add_child(UI.label("High Elevation", UITheme.FONT_BASE, UITheme.TEXT_PRIMARY))
 	c3.add_child(UI.label("Maximum shadow depth.\nUse for modals or floating elements.", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
 
@@ -75,7 +72,6 @@ func _stat_cards(parent: Control) -> void:
 func _stat_card(parent: Control, icon: String, accent: Color, value: String,
 		title: String, trend: String, trend_color: Color) -> void:
 	var card_vbox := UI.card(parent, 24, 20)
-	card_vbox.get_parent().get_parent().size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	# Icon chip
 	var icon_row := UI.hbox(card_vbox, 0)
@@ -117,7 +113,6 @@ func _feature_cards(parent: Control) -> void:
 func _feature_card(parent: Control, icon: String, accent: Color,
 		title: String, desc: String) -> void:
 	var card_vbox := UI.hoverable_card(parent, accent)
-	card_vbox.get_parent().get_parent().size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	# Icon area
 	var icon_panel := PanelContainer.new()
@@ -157,7 +152,6 @@ func _content_cards(parent: Control) -> void:
 
 func _profile_card(parent: Control) -> void:
 	var card_vbox := UI.card(parent, 24, 24)
-	card_vbox.get_parent().get_parent().size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
 	# Avatar + Name row
 	var top_row := UI.hbox(card_vbox, 14)
@@ -201,7 +195,6 @@ func _profile_card(parent: Control) -> void:
 
 func _action_card(parent: Control) -> void:
 	var card_vbox := UI.card(parent, 0, 0)
-	card_vbox.get_parent().get_parent().size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	card_vbox.add_theme_constant_override("separation", 0)
 
 	# Header
