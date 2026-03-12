@@ -257,8 +257,17 @@ static func page_header(parent: Control, title: String, desc: String = "") -> vo
 
 static func section(parent: Control, title: String) -> void:
 	spacer(parent, UITheme.SP_4)
-	var l := label(title.to_upper(), UITheme.FONT_SM, UITheme.TEXT_MUTED)
-	parent.add_child(l)
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 8)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+	parent.add_child(row)
+
+	var accent := PanelContainer.new()
+	accent.custom_minimum_size = Vector2(3, 13)
+	accent.add_theme_stylebox_override("panel", style(UITheme.PRIMARY, UITheme.RADIUS_PILL))
+	row.add_child(accent)
+
+	row.add_child(label(title.to_upper(), UITheme.FONT_SM, UITheme.TEXT_MUTED))
 
 # =============================================
 # CARD FACTORY
