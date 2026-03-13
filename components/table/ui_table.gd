@@ -5,11 +5,14 @@ extends VBoxContainer
 
 @export var striped:     bool = true
 @export var show_border: bool = true
+@export var sortable:    bool = false
 
 var _columns:   PackedStringArray = []
 var _rows_data: Array = []
 var _header_h:  HBoxContainer
 var _body_v:    VBoxContainer
+var _sort_col:  int  = -1
+var _sort_asc:  bool = true
 
 func _ready() -> void:
 	add_theme_constant_override("separation", 0)
@@ -75,13 +78,67 @@ func _build() -> void:
 
 func _rebuild_header() -> void:
 	for c in _header_h.get_children(): c.queue_free()
-	for col in _columns:
-		var l := Label.new()
-		l.text = col
-		l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-		l.add_theme_font_size_override("font_size", UITheme.FONT_SM)
-		l.add_theme_color_override("font_color", UITheme.TEXT_MUTED)
-		_header_h.add_child(l)
+	for i in _columns.size():
+		if sortable:
+			var btn := Button.new()
+			btn.flat = true
+			btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
+			btn.focus_mode = Control.FOCUS_NONE
+			btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND
+			var arrow := ""
+			if i == _sort_col:
+				arrow = "  ▲" if _sort_asc else "  ▼"
+			btn.text = _columns[i] + arrow
+			btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			btn.add_theme_font_size_override("font_size", UITheme.FONT_SM)
+			var fc := UITheme.TEXT_PRIMARY if i == _sort_col else UITheme.TEXT_MUTED
+			btn.add_theme_color_override("font_color", fc)
+			btn.add_theme_color_override("font_hover_color", UITheme.TEXT_PRIMARY)
+			var ns := StyleBoxFlat.new()
+			ns.bg_color = Color(0, 0, 0, 0)
+			btn.add_theme_stylebox_override("normal",  ns)
+			btn.add_theme_stylebox_override("hover",   ns)
+			btn.add_theme_stylebox_override("pressed", ns)
+			btn.add_theme_stylebox_override("focus",   ns)
+			var captured := i
+			btn.pressed.connect(func(): _sort_by(captured))
+			_header_h.add_child(btn)
+		else:
+			var l := Label.new()
+			l.text = _columns[i]
+			l.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			l.add_theme_font_size_override("font_size", UITheme.FONT_SM)
+			l.add_theme_color_override("font_color", UITheme.TEXT_MUTED)
+			_header_h.add_child(l)
+
+
+func _sort_by(col: int) -> void:
+	if col == _sort_col:
+		_sort_asc = !_sort_asc
+	else:
+		_sort_col = col
+		_sort_asc = true
+
+	var asc := _sort_asc
+	_rows_data.sort_custom(func(a: Array, b: Array) -> bool:
+		var sa := str(a[col])
+		var sb := str(b[col])
+		if sa.is_valid_float() and sb.is_valid_float():
+			return float(sa) < float(sb) if asc else float(sa) > float(sb)
+		return (sa < sb) if asc else (sa > sb)
+	)
+
+	_rebuild_header()
+	_rebuild_body()
+
+
+func _rebuild_body() -> void:
+	while _body_v.get_child_count() > 0:
+		var child := _body_v.get_child(0)
+		_body_v.remove_child(child)
+		child.queue_free()
+	for i in _rows_data.size():
+		_add_row_ui(_rows_data[i], i)
 
 func _add_row_ui(data: Array, row_idx: int) -> void:
 	var is_last := row_idx == _rows_data.size() - 1
