@@ -75,7 +75,7 @@ func _hero(parent: Control) -> void:
 func _stats(parent: Control) -> void:
 	var row := UI.hbox(parent, 16)
 
-	_stat(row, "17", "Components",  UITheme.PRIMARY, "◆")
+	_stat(row, "19", "Components",  UITheme.PRIMARY, "◆")
 	_stat(row, "16", "Pages",       UITheme.INFO,    "◈")
 	_stat(row, "5",  "Themes",      UITheme.SUCCESS, "◇")
 	_stat(row, "4",  "Overlays",    UITheme.WARNING, "◉")

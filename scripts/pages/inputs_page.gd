@@ -165,55 +165,29 @@ func _select_section(parent: Control) -> void:
 	var card_v := UI.card(parent, 24, 20)
 	var row := UI.hbox(card_v, 24)
 
-	# Default dropdown
-	var v1 := UI.vbox(row, 6)
-	v1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	v1.add_child(UI.label("Framework", UITheme.FONT_SM, UITheme.TEXT_PRIMARY))
+	# Default — no selection
+	var sel1 := UISelect.new()
+	sel1.label_text = "Framework"
+	sel1.placeholder = "Choose a framework..."
+	sel1.options = ["Godot 4.3", "Godot 4.2", "Godot 4.1", "Godot 3.5", "Unity 6", "Unreal 5"]
+	row.add_child(sel1)
 
-	var select := OptionButton.new()
-	select.add_item("Select a framework...")
-	select.add_item("Godot 4.3")
-	select.add_item("Godot 4.2")
-	select.add_item("Godot 4.1")
-	select.add_item("Godot 3.5")
-	select.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	select.focus_mode = Control.FOCUS_NONE
+	# Pre-selected value
+	var sel2 := UISelect.new()
+	sel2.label_text = "Region"
+	sel2.placeholder = "Select region..."
+	sel2.options = ["US East", "US West", "Europe (Frankfurt)", "Asia Pacific", "South America"]
+	sel2.selected_index = 0
+	row.add_child(sel2)
 
-	var n := UI.style(UITheme.SURFACE_2, UITheme.RADIUS_MD, 1, UITheme.BORDER, 0, Color.TRANSPARENT, Vector2.ZERO, 12, 10)
-	var h := UI.style(UITheme.SURFACE_3, UITheme.RADIUS_MD, 1, UITheme.BORDER_LIGHT, 0, Color.TRANSPARENT, Vector2.ZERO, 12, 10)
-	select.add_theme_stylebox_override("normal", n)
-	select.add_theme_stylebox_override("hover", h)
-	select.add_theme_stylebox_override("pressed", n)
-	select.add_theme_stylebox_override("focus", n)
-	select.add_theme_color_override("font_color", UITheme.TEXT_PRIMARY)
-	select.add_theme_color_override("font_hover_color", UITheme.TEXT_PRIMARY)
-	select.add_theme_font_size_override("font_size", UITheme.FONT_MD)
-	v1.add_child(select)
-
-	# Second dropdown
-	var v2 := UI.vbox(row, 6)
-	v2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	v2.add_child(UI.label("Region", UITheme.FONT_SM, UITheme.TEXT_PRIMARY))
-
-	var select2 := OptionButton.new()
-	select2.add_item("Select region...")
-	select2.add_item("US East")
-	select2.add_item("US West")
-	select2.add_item("Europe")
-	select2.add_item("Asia Pacific")
-	select2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	select2.focus_mode = Control.FOCUS_NONE
-	select2.add_theme_stylebox_override("normal", n.duplicate())
-	select2.add_theme_stylebox_override("hover", h.duplicate())
-	select2.add_theme_stylebox_override("pressed", n.duplicate())
-	select2.add_theme_stylebox_override("focus", n.duplicate())
-	select2.add_theme_color_override("font_color", UITheme.TEXT_PRIMARY)
-	select2.add_theme_color_override("font_hover_color", UITheme.TEXT_PRIMARY)
-	select2.add_theme_font_size_override("font_size", UITheme.FONT_MD)
-	v2.add_child(select2)
-
-	# Spacers
-	UI.h_expand(row)
+	# Disabled state
+	var sel3 := UISelect.new()
+	sel3.label_text = "Plan (Disabled)"
+	sel3.placeholder = "Enterprise"
+	sel3.options = ["Starter", "Pro", "Enterprise"]
+	sel3.selected_index = 2
+	sel3.disabled = true
+	row.add_child(sel3)
 
 
 # =============================================
