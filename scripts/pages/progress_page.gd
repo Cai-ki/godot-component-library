@@ -8,6 +8,7 @@ func build(parent: Control) -> void:
 
 	_basic_progress(parent)
 	_color_variants(parent)
+	_circular_progress(parent)
 	_size_variants(parent)
 	_labeled_progress(parent)
 	_step_indicator(parent)
@@ -68,6 +69,65 @@ func _labeled_bar(parent: Control, title: String, value: float, color: Color) ->
 	top.add_child(UI.label(str(int(value * 100)) + "%", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
 
 	UI.progress_bar(v, value, color)
+
+
+# =============================================
+# CIRCULAR PROGRESS
+# =============================================
+
+func _circular_progress(parent: Control) -> void:
+	UI.section(parent, "Circular Progress")
+	var card_v := UI.card(parent, 24, 24)
+
+	# Row of rings
+	var row := UI.hbox(card_v, 32)
+	row.alignment = BoxContainer.ALIGNMENT_CENTER
+
+	var items := [
+		["Design",  0.95, UITheme.SUCCESS,   80.0, 6.0],
+		["Code",    0.72, UITheme.PRIMARY,   80.0, 6.0],
+		["Docs",    0.35, UITheme.WARNING,   80.0, 6.0],
+		["Tests",   0.15, UITheme.DANGER,    80.0, 6.0],
+	]
+
+	for item in items:
+		var col := UI.vbox(row, 8)
+		col.alignment = BoxContainer.ALIGNMENT_CENTER
+
+		var center := CenterContainer.new()
+		col.add_child(center)
+
+		var ring := UIProgressRing.new()
+		ring.value = item[1]
+		ring.progress_color = item[2]
+		ring.ring_size = item[3]
+		ring.thickness = item[4]
+		center.add_child(ring)
+
+		var lbl := UI.label(item[0], UITheme.FONT_SM, UITheme.TEXT_SECONDARY)
+		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		col.add_child(lbl)
+
+	# Size variants row
+	UI.spacer(card_v, 8)
+	card_v.add_child(UI.label("Size Variants", UITheme.FONT_SM, UITheme.TEXT_MUTED))
+	var row2 := UI.hbox(card_v, 24)
+	row2.alignment = BoxContainer.ALIGNMENT_CENTER
+
+	var sizes := [
+		[48.0,  4.0, 0.6],
+		[64.0,  5.0, 0.6],
+		[96.0,  7.0, 0.6],
+		[120.0, 8.0, 0.6],
+	]
+	for sz in sizes:
+		var c := CenterContainer.new()
+		row2.add_child(c)
+		var ring := UIProgressRing.new()
+		ring.value = sz[2]
+		ring.ring_size = sz[0]
+		ring.thickness = sz[1]
+		c.add_child(ring)
 
 
 # =============================================
