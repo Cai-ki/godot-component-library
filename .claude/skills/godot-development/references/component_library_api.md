@@ -1,6 +1,6 @@
 # Component Library API
 
-> 项目：Godot 4.6 UI 组件库（Dark Indigo 设计系统，1440×900，18 页展示应用）
+> 项目：Godot 4.6 UI 组件库（Dark Indigo 设计系统，1440×900，20 页展示应用）
 > 依赖：所有组件仅依赖 `scripts/theme.gd (UITheme)`，不依赖 `UI helpers`
 > 导入方式：复制 `components/{name}/` + `scripts/theme.gd` 即可独立使用
 
@@ -172,7 +172,7 @@ var row := UI.hbox(parent, 12)
 
 ---
 
-## 组件 API（28 个）
+## 组件 API（36 个）
 
 ### UIButton `extends Button`
 
@@ -183,7 +183,7 @@ enum Size        { XS, SM, MD, LG, XL }
 
 @export var variant: Variant
 @export var color_scheme: ColorScheme
-@export var size: Size
+@export var button_size: Size   # ⚠️ 注意：不是 size（与原生 Button.size 冲突）
 @export var pill_shape: bool
 @export var is_loading: bool   # setter: 禁用按钮并在文字前加 ⟳
 
@@ -621,12 +621,22 @@ static func apply_midnight() -> void      # 更深蓝黑（#070A12 背景）
 ### Overlay 组件共同特征
 
 ```
-UIToast / UITooltip / UIContextMenu / UISelect / UIDrawer:
-- extends Node（不是 Control，本身无视觉）或 VBoxContainer（UISelect）
-- 在 get_tree().root 按需创建具名 CanvasLayer（层级 100/101/102/103/104）
+UIToast / UITooltip / UIContextMenu / UISelect / UIDrawer / UIDatePicker / UICommandPalette:
+- extends Node（不是 Control，本身无视觉）或 VBoxContainer（UISelect / UIDatePicker）
+- 在 get_tree().root 按需创建具名 CanvasLayer（层级 100~106）
 - 组件留在原场景树，随页面销毁自动清理
 - 内容面板动态创建在 CanvasLayer 中
 ```
+
+| 组件 | 继承 | CanvasLayer |
+|------|------|-------------|
+| UIToast | Node | `_UIToastLayer` (100) |
+| UITooltip | Node | `_UITooltipLayer` (101) |
+| UIContextMenu | Node | `_UIContextMenuLayer` (102) |
+| UISelect | VBoxContainer | `_UISelectLayer` (103) |
+| UIDrawer | Node | `_UIDrawerLayer` (104) |
+| UIDatePicker | VBoxContainer | `_UIDatePickerLayer` (105) |
+| UICommandPalette | Node | `_UICommandPaletteLayer` (106) |
 
 ### setter 守卫模式
 
@@ -659,4 +669,143 @@ container.add_child(inp)         # container 尚不在场景树中
 # ✅ 正确：确保祖先节点已在场景树后再赋值
 tabs.add_tab("Tab1", container)  # container 进入场景树，_ready() 触发
 inp.text = "Jordan"              # _input 已创建，赋值生效
+```
+
+---
+
+## 新增组件 API（8 个，Direction 1）
+
+### UIBreadcrumb `extends HBoxContainer`
+
+```gdscript
+signal segment_clicked(index: int)
+
+@export var items: PackedStringArray        # 路径段列表
+@export var separator: String = "›"        # 分隔符（也可用 "/" 或 "→"）
+@export var active_color: Color            # 末段颜色，默认 TEXT_PRIMARY
+@export var inactive_color: Color          # 前段颜色，默认 TEXT_SECONDARY
+@export var separator_color: Color         # 默认 TEXT_MUTED
+
+# 末段不可点击；前段 hover 有背景圆角；点击 emit segment_clicked(index)
+```
+
+### UIChip `extends PanelContainer`
+
+```gdscript
+signal toggled(value: bool)
+signal removed(chip_text: String)
+
+enum ColorScheme { PRIMARY, SECONDARY, SUCCESS, WARNING, DANGER, INFO, NEUTRAL }
+
+@export var chip_text: String
+@export var color_scheme: ColorScheme
+@export var selected: bool = false    # selected 时彩色边框 + 半透明背景
+@export var selectable: bool = false  # 启用点击 toggle
+@export var removable: bool = false   # 显示 ✕，点击 emit removed + queue_free
+@export var pill_shape: bool = true
+```
+
+### UINotificationBadge `extends Control`
+
+```gdscript
+@export var count: int = 0          # 0 = 红点模式（配合 show_zero=true）
+@export var badge_color: Color      # 默认 DANGER
+@export var max_count: int = 99     # 超出显示 "99+"
+@export var show_zero: bool = false # false 时 count=0 不显示
+
+# 用法：作为任意控件的子节点，自动定位右上角
+var badge := UINotificationBadge.new()
+badge.count = 5
+my_button.add_child(badge)
+```
+
+### UITimeline `extends VBoxContainer`
+
+```gdscript
+func add_item(
+    title: String,
+    description: String = "",
+    timestamp: String = "",
+    color: Color = UITheme.PRIMARY,
+    icon_text: String = ""    # 空 = 实心小圆点；非空 = 图标圆圈
+) -> void
+
+func clear_items() -> void
+
+# icon_text 示例："🚀" "✓" "✕" "📋"
+```
+
+### UITreeView `extends VBoxContainer`
+
+```gdscript
+signal node_selected(node_id: String)
+signal node_toggled(node_id: String, expanded: bool)
+
+@export var indent_size: int = 20
+
+func add_node(label_text: String, parent_id: String = "", is_folder: bool = false) -> String
+# parent_id 为空 = 根节点；返回 node_id 供后续引用
+
+func toggle_node(node_id: String) -> void
+func clear_nodes() -> void
+
+# 用法：
+var root := tree.add_node("src", "", true)
+var child := tree.add_node("main.gd", root)
+```
+
+### UIColorPicker `extends VBoxContainer`
+
+```gdscript
+signal color_changed(color: Color)
+
+@export var current_color: Color = UITheme.PRIMARY
+@export var show_hex_input: bool = true
+
+# 32 色预设色块 + HEX 输入框 + 当前色圆形预览
+# 点击色块或输入合法 HEX 后 emit color_changed
+```
+
+### UIDatePicker `extends VBoxContainer`
+
+```gdscript
+signal date_selected(date: Dictionary)   # {year, month, day}
+
+@export var label_text: String = ""
+@export var placeholder: String = "Select date..."
+
+func get_date() -> Dictionary    # 返回当前选中日期，未选则空 {}
+func clear_date() -> void
+
+# Overlay 模式：CanvasLayer(105) _UIDatePickerLayer
+# 月份导航 ◂/▸，Today 按钮，选中高亮，今天描边
+# ⚠️ 属性须在 add_child 后赋值（_ready 依赖）
+```
+
+### UICommandPalette `extends Node`
+
+```gdscript
+signal command_selected(command_id: String)
+
+func add_command(
+    label: String,
+    description: String = "",
+    icon: String = "",
+    group: String = ""
+) -> String   # 返回 command_id
+
+func clear_commands() -> void
+func show_palette() -> void
+func hide_palette() -> void
+
+# 快捷键：Ctrl+K 或 Meta+K 全局触发（set_process_input 自动监听）
+# Overlay 模式：CanvasLayer(106) _UICommandPaletteLayer
+# 支持键盘 ↑↓ 导航、Enter 选中、ESC 关闭、实时搜索过滤
+# 结果列表最多显示 MAX_VISIBLE=8 条，剩余可滚动
+
+# 用法：
+var palette := UICommandPalette.new()
+palette.add_command("Settings", "Open settings", "⚙", "Navigation")
+parent.add_child(palette)
+palette.command_selected.connect(func(id): _handle_command(id))
 ```

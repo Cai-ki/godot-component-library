@@ -149,6 +149,21 @@ func _build_sidebar(parent: Control) -> void:
 	for page_data in pages3:
 		_add_nav_button(vbox, page_data[0], page_data[1])
 
+	# Section divider: Extended
+	UI.spacer(vbox, 8)
+	UI.sep(vbox, 0)
+	UI.spacer(vbox, 8)
+	var section_ext := UI.label("EXTENDED", UITheme.FONT_XS, UITheme.TEXT_MUTED)
+	vbox.add_child(section_ext)
+	UI.spacer(vbox, 4)
+
+	var pages_ext: Array = [
+		["extended",  "◈  Extended"],
+		["advanced",  "◆  Advanced"],
+	]
+	for page_data in pages_ext:
+		_add_nav_button(vbox, page_data[0], page_data[1])
+
 	# Section divider: Scenes
 	UI.spacer(vbox, 8)
 	UI.sep(vbox, 0)
@@ -377,6 +392,10 @@ func _navigate_to(page_id: String) -> void:
 			DashboardScenePage.new().build(content_container)
 		"scene_settings":
 			SettingsScenePage.new().build(content_container)
+		"extended":
+			ExtendedPage.new().build(content_container)
+		"advanced":
+			AdvancedPage.new().build(content_container)
 
 
 # =============================================

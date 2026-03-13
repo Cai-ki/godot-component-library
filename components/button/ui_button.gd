@@ -14,8 +14,8 @@ enum Size { XS, SM, MD, LG, XL }
 @export var color_scheme: ColorScheme = ColorScheme.PRIMARY:
 	set(v): color_scheme = v; if is_inside_tree(): _apply_styles()
 
-@export var size: Size = Size.MD:
-	set(v): size = v; if is_inside_tree(): _apply_styles()
+@export var button_size: Size = Size.MD:
+	set(v): button_size = v; if is_inside_tree(): _apply_styles()
 
 @export var pill_shape: bool = false:
 	set(v): pill_shape = v; if is_inside_tree(): _apply_styles()
@@ -45,7 +45,7 @@ func _get_color() -> Color:
 		_: return UITheme.PRIMARY
 
 func _size_params() -> Array:  # [px, py, font_size]
-	match size:
+	match button_size:
 		Size.XS: return [12, 4,  UITheme.FONT_XS]
 		Size.SM: return [14, 6,  UITheme.FONT_SM]
 		Size.LG: return [24, 12, UITheme.FONT_BASE]
