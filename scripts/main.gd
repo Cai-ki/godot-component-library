@@ -375,6 +375,8 @@ func _navigate_to(page_id: String) -> void:
 			LoginScenePage.new().build(content_container)
 		"scene_dashboard":
 			DashboardScenePage.new().build(content_container)
+		"scene_settings":
+			SettingsScenePage.new().build(content_container)
 
 
 # =============================================
