@@ -172,7 +172,7 @@ var row := UI.hbox(parent, 12)
 
 ---
 
-## 组件 API（18 个）
+## 组件 API（24 个）
 
 ### UIButton `extends Button`
 
@@ -429,6 +429,92 @@ signal page_changed(page: int)
 # 页码计算：1 ... [start~end] ... total_pages，自动添加 ··· 省略号
 ```
 
+### UISelect `extends VBoxContainer`
+
+```gdscript
+signal selection_changed(index: int, value: String)
+
+@export var label_text: String       # 空 = 隐藏标签
+@export var placeholder: String = "Select..."
+@export var options: PackedStringArray
+@export var selected_index: int = -1  # -1 = 无选中
+@export var disabled: bool
+
+var selected_value: String   # 只读，返回当前选中项文本
+
+func clear_selection() -> void
+
+# Overlay 模式：CanvasLayer(103) _UISelectLayer
+# 点击外部自动关闭，淡入+下滑动画
+```
+
+### UISwitch `extends Control`
+
+```gdscript
+signal toggled(value: bool)
+
+@export var toggled_on: bool = false   # 滑块动画切换
+@export var disabled: bool
+@export var accent_color: Color        # 默认 PRIMARY
+
+# extends Control + _draw()
+# 44×24 尺寸，圆形滑块 0.2s EASE_OUT 动画
+```
+
+### UICheckbox `extends HBoxContainer`
+
+```gdscript
+signal toggled(value: bool)
+
+@export var checked: bool = false
+@export var label_text: String         # 空 = 隐藏标签
+@export var disabled: bool
+@export var accent_color: Color        # 默认 PRIMARY
+
+# 内部 Control + _draw() 绘制 20×20 复选框 + ✓
+```
+
+### UIProgressRing `extends Control`
+
+```gdscript
+@export var value: float = 0.5         # [0.0, 1.0]
+@export var progress_color: Color      # 默认 PRIMARY
+@export var ring_size: float = 80.0    # 直径（像素）
+@export var thickness: float = 6.0     # 环宽
+@export var show_label: bool = true    # 中心百分比文字
+
+func animate_to(target: float, duration: float = 0.5) -> void
+# extends Control + _draw()，使用 draw_arc() 绘制圆弧
+```
+
+### UIEmpty `extends VBoxContainer`
+
+```gdscript
+signal action_pressed
+
+@export var icon_text: String = "◇"        # 大号图标/emoji
+@export var title_text: String = "No data"
+@export var description_text: String       # 空 = 隐藏
+@export var action_label: String           # 空 = 隐藏按钮
+@export var accent_color: Color            # 操作按钮颜色，默认 PRIMARY
+```
+
+### UISteps `extends VBoxContainer`
+
+```gdscript
+signal step_clicked(index: int)
+
+@export var steps: PackedStringArray       # 步骤名称列表
+@export var current_step: int = 0          # setter 触发 _rebuild.call_deferred()
+@export var clickable: bool = false        # 允许点击圆圈跳转
+
+func next_step() -> void
+func prev_step() -> void
+
+# 状态：completed (< current) → ✓ 绿色，active (== current) → 数字蓝色，pending → 灰色
+# 连接线颜色跟随左侧步骤状态
+```
+
 ---
 
 ## 架构要点速查
@@ -436,9 +522,9 @@ signal page_changed(page: int)
 ### Overlay 组件共同特征
 
 ```
-UIToast / UITooltip / UIContextMenu:
-- extends Node（不是 Control，本身无视觉）
-- 在 get_tree().root 按需创建具名 CanvasLayer（层级 100/101/102）
+UIToast / UITooltip / UIContextMenu / UISelect:
+- extends Node（不是 Control，本身无视觉）或 VBoxContainer（UISelect）
+- 在 get_tree().root 按需创建具名 CanvasLayer（层级 100/101/102/103）
 - 组件留在原场景树，随页面销毁自动清理
 - 内容面板动态创建在 CanvasLayer 中
 ```
