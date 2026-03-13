@@ -1,6 +1,6 @@
 # Component Library API
 
-> 项目：Godot 4.6 UI 组件库（Dark Indigo 设计系统，1440×900）
+> 项目：Godot 4.6 UI 组件库（Dark Indigo 设计系统，1440×900，18 页展示应用）
 > 依赖：所有组件仅依赖 `scripts/theme.gd (UITheme)`，不依赖 `UI helpers`
 > 导入方式：复制 `components/{name}/` + `scripts/theme.gd` 即可独立使用
 
@@ -646,4 +646,17 @@ UIToast / UITooltip / UIContextMenu / UISelect / UIDrawer:
 2. mcp__godot__launch_editor()  ← 让编辑器扫描注册 class_name
 3. 等待 ~8 秒
 4. mcp__godot__run_project()
+```
+
+### UIInput/UISelect 属性在 add_child 前赋值无效
+
+```gdscript
+# ❌ 错误：子树不在场景树中时，_ready() 未被调用，_input 为 null
+var inp := UIInput.new()
+inp.text = "Jordan"              # 静默丢弃！
+container.add_child(inp)         # container 尚不在场景树中
+
+# ✅ 正确：确保祖先节点已在场景树后再赋值
+tabs.add_tab("Tab1", container)  # container 进入场景树，_ready() 触发
+inp.text = "Jordan"              # _input 已创建，赋值生效
 ```
