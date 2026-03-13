@@ -215,82 +215,37 @@ func _project_item(parent: Control, title: String, value: float, color: Color) -
 # =============================================
 
 func _step_indicator(parent: Control) -> void:
-	UI.section(parent, "Step Indicator")
+	UI.section(parent, "Step Indicator  (UISteps)")
 
 	var card_v := UI.card(parent, 32, 28)
 
-	var steps := ["Account", "Profile", "Settings", "Review", "Complete"]
-	var current_step := 2  # 0-indexed, "Settings" is current
+	# Static UISteps
+	var st := UISteps.new()
+	st.steps = PackedStringArray(["Account", "Profile", "Settings", "Review", "Complete"])
+	st.current_step = 2
+	card_v.add_child(st)
 
-	var h := HBoxContainer.new()
-	h.add_theme_constant_override("separation", 0)
-	h.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	h.alignment = BoxContainer.ALIGNMENT_CENTER
-	card_v.add_child(h)
+	# Interactive UISteps
+	UI.spacer(card_v, 8)
+	card_v.add_child(UI.label("Interactive (click steps or buttons)", UITheme.FONT_SM, UITheme.TEXT_MUTED))
+	UI.spacer(card_v, 4)
 
-	for i in steps.size():
-		# Step circle + label
-		var step_v := VBoxContainer.new()
-		step_v.add_theme_constant_override("separation", 8)
-		step_v.alignment = BoxContainer.ALIGNMENT_CENTER
-		h.add_child(step_v)
+	var st2 := UISteps.new()
+	st2.steps = PackedStringArray(["Cart", "Shipping", "Payment", "Confirm"])
+	st2.current_step = 0
+	st2.clickable = true
+	st2.step_clicked.connect(func(i: int): st2.current_step = i)
+	card_v.add_child(st2)
 
-		var circle_center := CenterContainer.new()
-		step_v.add_child(circle_center)
+	UI.spacer(card_v, 4)
+	var btn_row := UI.hbox(card_v, 12)
+	btn_row.alignment = BoxContainer.ALIGNMENT_CENTER
 
-		var circle := PanelContainer.new()
-		circle.custom_minimum_size = Vector2(36, 36)
+	var prev_btn := UI.outline_btn(btn_row, "◂  Previous", UITheme.TEXT_SECONDARY)
+	prev_btn.pressed.connect(func(): st2.prev_step())
 
-		var circle_color: Color
-		var text_color: Color
-		var label_color: Color
-
-		if i < current_step:
-			# Completed
-			circle_color = UITheme.SUCCESS
-			text_color = Color.WHITE
-			label_color = UITheme.SUCCESS
-		elif i == current_step:
-			# Current
-			circle_color = UITheme.PRIMARY
-			text_color = Color.WHITE
-			label_color = UITheme.PRIMARY
-		else:
-			# Future
-			circle_color = UITheme.SURFACE_3
-			text_color = UITheme.TEXT_MUTED
-			label_color = UITheme.TEXT_MUTED
-
-		circle.add_theme_stylebox_override("panel", UI.style(circle_color, UITheme.RADIUS_PILL))
-		circle_center.add_child(circle)
-
-		var num_center := CenterContainer.new()
-		circle.add_child(num_center)
-
-		var content_text := "✓" if i < current_step else str(i + 1)
-		num_center.add_child(UI.label(content_text, UITheme.FONT_SM, text_color))
-
-		# Step label
-		var step_label := UI.label(steps[i], UITheme.FONT_XS, label_color)
-		step_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-		step_v.add_child(step_label)
-
-		# Connector line (except last)
-		if i < steps.size() - 1:
-			var line_container := Control.new()
-			line_container.custom_minimum_size = Vector2(60, 2)
-			line_container.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-			h.add_child(line_container)
-
-			var line := ColorRect.new()
-			line.anchor_top = 0.3
-			line.anchor_bottom = 0.3
-			line.anchor_left = 0
-			line.anchor_right = 1
-			line.offset_top = 0
-			line.offset_bottom = 2
-			line.color = UITheme.SUCCESS if i < current_step else UITheme.SURFACE_3
-			line_container.add_child(line)
+	var next_btn := UI.solid_btn(btn_row, "Next  ▸", UITheme.PRIMARY)
+	next_btn.pressed.connect(func(): st2.next_step())
 
 
 # =============================================
