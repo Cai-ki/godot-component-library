@@ -1,8 +1,12 @@
 extends Node
 
 var current_page: String = "home"
+var _current_theme_id: String = "dark_indigo"
 var nav_buttons: Dictionary = {}
 var content_container: VBoxContainer
+var _bg: ColorRect
+var _main_hbox: HBoxContainer
+var _sidebar_node: PanelContainer
 
 
 func _ready() -> void:
@@ -19,10 +23,10 @@ func _build_shell() -> void:
 	add_child(canvas)
 
 	# Background
-	var bg := ColorRect.new()
-	bg.color = UITheme.BG
-	bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	canvas.add_child(bg)
+	_bg = ColorRect.new()
+	_bg.color = UITheme.BG
+	_bg.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	canvas.add_child(_bg)
 
 	# Root
 	var root := Control.new()
@@ -30,13 +34,13 @@ func _build_shell() -> void:
 	canvas.add_child(root)
 
 	# Main HBox
-	var main_hbox := HBoxContainer.new()
-	main_hbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	main_hbox.add_theme_constant_override("separation", 0)
-	root.add_child(main_hbox)
+	_main_hbox = HBoxContainer.new()
+	_main_hbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	_main_hbox.add_theme_constant_override("separation", 0)
+	root.add_child(_main_hbox)
 
-	_build_sidebar(main_hbox)
-	_build_content(main_hbox)
+	_build_sidebar(_main_hbox)
+	_build_content(_main_hbox)
 
 
 # =============================================
@@ -44,22 +48,22 @@ func _build_shell() -> void:
 # =============================================
 
 func _build_sidebar(parent: Control) -> void:
-	var sidebar := PanelContainer.new()
-	sidebar.custom_minimum_size.x = 240
-	sidebar.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	_sidebar_node = PanelContainer.new()
+	_sidebar_node.custom_minimum_size.x = 240
+	_sidebar_node.size_flags_vertical = Control.SIZE_EXPAND_FILL
 
 	var sidebar_style := UI.style(UITheme.SURFACE_1, 0, 0)
 	sidebar_style.border_width_right = 1
 	sidebar_style.border_color = UITheme.BORDER
-	sidebar.add_theme_stylebox_override("panel", sidebar_style)
-	parent.add_child(sidebar)
+	_sidebar_node.add_theme_stylebox_override("panel", sidebar_style)
+	parent.add_child(_sidebar_node)
 
 	var margin := MarginContainer.new()
 	margin.add_theme_constant_override("margin_left", 16)
 	margin.add_theme_constant_override("margin_right", 16)
 	margin.add_theme_constant_override("margin_top", 24)
-	margin.add_theme_constant_override("margin_bottom", 24)
-	sidebar.add_child(margin)
+	margin.add_theme_constant_override("margin_bottom", 16)
+	_sidebar_node.add_child(margin)
 
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 2)
@@ -128,6 +132,82 @@ func _build_sidebar(parent: Control) -> void:
 	]
 	for page_data in pages3:
 		_add_nav_button(vbox, page_data[0], page_data[1])
+
+	# ── Theme switcher (bottom) ──────────────────────────────────────────────
+	UI.h_expand(vbox)   # push theme switcher to bottom
+	UI.sep(vbox, 0)
+	UI.spacer(vbox, 12)
+	vbox.add_child(UI.label("THEME", UITheme.FONT_XS, UITheme.TEXT_MUTED))
+	UI.spacer(vbox, 6)
+	_build_theme_switcher(vbox)
+
+
+func _build_theme_switcher(parent: Control) -> void:
+	var row := HBoxContainer.new()
+	row.add_theme_constant_override("separation", 4)
+	parent.add_child(row)
+
+	var themes := [
+		["dark_indigo", "Indigo"],
+		["light",       "Light"],
+		["midnight",    "Night"],
+	]
+
+	for t in themes:
+		var tid: String = t[0]
+		var tlabel: String = t[1]
+		var btn := Button.new()
+		btn.text = tlabel
+		btn.flat = true
+		btn.focus_mode = Control.FOCUS_NONE
+		btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		btn.custom_minimum_size.y = 30
+		btn.add_theme_font_size_override("font_size", UITheme.FONT_XS)
+
+		var is_active := (tid == _current_theme_id)
+		_apply_theme_btn_style(btn, is_active)
+
+		btn.pressed.connect(func(): _switch_theme(tid))
+		row.add_child(btn)
+
+
+func _apply_theme_btn_style(btn: Button, active: bool) -> void:
+	var r := UITheme.RADIUS_SM
+	if active:
+		var s := StyleBoxFlat.new()
+		s.bg_color = UITheme.PRIMARY_SOFT
+		s.corner_radius_top_left     = r
+		s.corner_radius_top_right    = r
+		s.corner_radius_bottom_left  = r
+		s.corner_radius_bottom_right = r
+		s.border_width_top = 1; s.border_width_bottom = 1
+		s.border_width_left = 1; s.border_width_right = 1
+		s.border_color = UITheme.PRIMARY
+		btn.add_theme_stylebox_override("normal",  s)
+		btn.add_theme_stylebox_override("hover",   s)
+		btn.add_theme_stylebox_override("pressed", s)
+		btn.add_theme_stylebox_override("focus",   s)
+		btn.add_theme_color_override("font_color", UITheme.PRIMARY_LIGHT)
+		btn.add_theme_color_override("font_hover_color", UITheme.PRIMARY_LIGHT)
+	else:
+		var n := StyleBoxFlat.new()
+		n.bg_color = Color(0, 0, 0, 0)
+		n.corner_radius_top_left     = r
+		n.corner_radius_top_right    = r
+		n.corner_radius_bottom_left  = r
+		n.corner_radius_bottom_right = r
+		var h := StyleBoxFlat.new()
+		h.bg_color = UITheme.SURFACE_3
+		h.corner_radius_top_left     = r
+		h.corner_radius_top_right    = r
+		h.corner_radius_bottom_left  = r
+		h.corner_radius_bottom_right = r
+		btn.add_theme_stylebox_override("normal",  n)
+		btn.add_theme_stylebox_override("hover",   h)
+		btn.add_theme_stylebox_override("pressed", n)
+		btn.add_theme_stylebox_override("focus",   n)
+		btn.add_theme_color_override("font_color", UITheme.TEXT_MUTED)
+		btn.add_theme_color_override("font_hover_color", UITheme.TEXT_PRIMARY)
 
 
 func _build_logo(parent: Control) -> void:
@@ -257,3 +337,33 @@ func _navigate_to(page_id: String) -> void:
 			LayoutsPage.new().build(content_container)
 		"animations":
 			AnimationsPage.new().build(content_container)
+
+
+# =============================================
+# THEME SWITCHING
+# =============================================
+
+func _switch_theme(theme_id: String) -> void:
+	if _current_theme_id == theme_id: return
+	_current_theme_id = theme_id
+
+	# Apply color values
+	match theme_id:
+		"dark_indigo": UIThemePresets.apply_dark_indigo()
+		"light":       UIThemePresets.apply_light()
+		"midnight":    UIThemePresets.apply_midnight()
+
+	# Update background
+	_bg.color = UITheme.BG
+
+	# Rebuild sidebar (remove old, build new)
+	nav_buttons.clear()
+	_sidebar_node.queue_free()
+	_sidebar_node = null
+	await get_tree().process_frame
+	_build_sidebar(_main_hbox)
+	# Move sidebar before content (it was added after; reorder)
+	_main_hbox.move_child(_sidebar_node, 0)
+
+	# Rebuild current page
+	_navigate_to(current_page)

@@ -10,6 +10,7 @@ func build(parent: Control) -> void:
 	_form_modal(parent)
 	_confirm_modal(parent)
 	_info_modal(parent)
+	_drawer_section(parent)
 	_toast_section(parent)
 
 
@@ -237,6 +238,105 @@ func _info_modal(parent: Control) -> void:
 	accept_btn.pressed.connect(func(): tos_modal.hide_modal())
 
 	UI.solid_btn(demo_card4, "⊟  Open ToS Modal", UITheme.SECONDARY).pressed.connect(func(): tos_modal.show_modal())
+
+
+# =============================================
+# DRAWER
+# =============================================
+
+func _drawer_section(parent: Control) -> void:
+	UI.section(parent, "Drawer  (UIDrawer)")
+
+	var demo_card := UI.card(parent, 24, 20)
+	demo_card.add_child(UI.label(
+		"Slide-in panel from the right edge. "
+		+ "Dismiss by clicking the overlay or the ✕ button.",
+		UITheme.FONT_SM, UITheme.TEXT_SECONDARY
+	))
+
+	var btns := UI.hbox(demo_card, 12)
+
+	# Settings drawer
+	var settings_drawer := UIDrawer.new()
+	settings_drawer.title_text = "Settings"
+	settings_drawer.drawer_width = 380.0
+	parent.add_child(settings_drawer)
+	settings_drawer.opened.connect(func():
+		var body := settings_drawer.get_body()
+		if body.get_child_count() > 0: return
+		var sections := [
+			["Appearance",    ["Dark Mode", "Compact Sidebar", "Show Animations"]],
+			["Notifications", ["Email alerts", "Push notifications", "Weekly digest"]],
+			["Privacy",       ["Analytics", "Usage data", "Crash reports"]],
+		]
+		for sec in sections:
+			body.add_child(UI.label(sec[0], UITheme.FONT_SM, UITheme.TEXT_MUTED))
+			var opts: Array = sec[1]
+			for opt_name in opts:
+				var row := HBoxContainer.new()
+				row.add_theme_constant_override("separation", 12)
+				row.alignment = BoxContainer.ALIGNMENT_CENTER
+				body.add_child(row)
+				var lbl := UI.label(opt_name, UITheme.FONT_MD, UITheme.TEXT_PRIMARY)
+				lbl.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+				row.add_child(lbl)
+				var sw := UISwitch.new()
+				sw.toggled_on = true
+				row.add_child(sw)
+			var sep := ColorRect.new()
+			sep.color = UITheme.BORDER
+			sep.custom_minimum_size.y = 1
+			sep.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+			body.add_child(sep)
+	)
+	UI.solid_btn(btns, "⊟  Settings", UITheme.PRIMARY).pressed.connect(
+		func(): settings_drawer.show_drawer()
+	)
+
+	# Filter drawer
+	var filter_drawer := UIDrawer.new()
+	filter_drawer.title_text = "Filter Results"
+	filter_drawer.drawer_width = 360.0
+	parent.add_child(filter_drawer)
+	filter_drawer.opened.connect(func():
+		var body := filter_drawer.get_body()
+		if body.get_child_count() > 0: return
+		# Status group
+		body.add_child(UI.label("Status", UITheme.FONT_SM, UITheme.TEXT_MUTED))
+		var grp := UIRadioGroup.new()
+		grp.selected_index = 0
+		for opt in ["All", "Active", "Inactive", "Pending"]:
+			var r := UIRadio.new()
+			r.label_text = opt
+			grp.add_radio(r)
+		body.add_child(grp)
+		var sep2 := ColorRect.new()
+		sep2.color = UITheme.BORDER
+		sep2.custom_minimum_size.y = 1
+		sep2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		body.add_child(sep2)
+		# Date range
+		body.add_child(UI.label("Date Range", UITheme.FONT_SM, UITheme.TEXT_MUTED))
+		var grp2 := UIRadioGroup.new()
+		grp2.selected_index = 1
+		for opt in ["Last 7 days", "Last 30 days", "Last 90 days", "All time"]:
+			var r := UIRadio.new()
+			r.label_text = opt
+			grp2.add_radio(r)
+		body.add_child(grp2)
+		var sep3 := ColorRect.new()
+		sep3.color = UITheme.BORDER
+		sep3.custom_minimum_size.y = 1
+		sep3.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		body.add_child(sep3)
+		# Apply button
+		UI.solid_btn(body, "Apply Filters", UITheme.PRIMARY, Color.WHITE, UITheme.RADIUS_MD, 24, 12) \
+			.pressed.connect(func(): filter_drawer.hide_drawer())
+	)
+	UI.outline_btn(btns, "⊡  Filter", UITheme.PRIMARY).pressed.connect(
+		func(): filter_drawer.show_drawer()
+	)
+	UI.h_expand(btns)
 
 
 # =============================================

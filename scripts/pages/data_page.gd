@@ -25,6 +25,7 @@ func _table_section(parent: Control) -> void:
 
 	var table := UITable.new()
 	table.sortable = true
+	table.filterable = true
 	table.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	card_v.add_child(table)
 

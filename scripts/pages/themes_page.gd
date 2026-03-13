@@ -41,6 +41,8 @@ func build(parent: Control) -> void:
 		"Five distinct color palettes — each rendering the same components. "
 		+ "Switch your UITheme constants to adopt any palette project-wide.")
 
+	_live_theme_section(parent)
+
 	for theme in THEMES:
 		_theme_card(parent, theme)
 
@@ -57,6 +59,80 @@ func build(parent: Control) -> void:
 	_neon_glow(parent)
 	_paper_light(parent)
 	_frosted_matte(parent)
+
+
+# ── Live Theme Token Swatch ───────────────────────────────────────────────────
+
+func _live_theme_section(parent: Control) -> void:
+	UI.section(parent, "Live Theme Tokens")
+	var card_v := UI.card(parent, 24, 20)
+	card_v.add_child(UI.label(
+		"Switch themes using the sidebar buttons to see these tokens update in real time.",
+		UITheme.FONT_SM, UITheme.TEXT_SECONDARY
+	))
+	UI.spacer(card_v, 8)
+
+	# Surface colors
+	var surf_row := UI.hbox(card_v, 8)
+	var surfaces := [
+		["BG",        UITheme.BG],
+		["SURFACE 1", UITheme.SURFACE_1],
+		["SURFACE 2", UITheme.SURFACE_2],
+		["SURFACE 3", UITheme.SURFACE_3],
+		["SURFACE 4", UITheme.SURFACE_4],
+	]
+	for s in surfaces:
+		_color_chip(surf_row, s[0], s[1])
+	UI.h_expand(surf_row)
+
+	# Border colors
+	var border_row := UI.hbox(card_v, 8)
+	var borders := [
+		["BORDER",       UITheme.BORDER],
+		["BORDER LIGHT", UITheme.BORDER_LIGHT],
+		["BORDER STRONG",UITheme.BORDER_STRONG],
+	]
+	for b in borders:
+		_color_chip(border_row, b[0], b[1])
+	UI.h_expand(border_row)
+
+	# Text colors
+	var text_row := UI.hbox(card_v, 8)
+	var texts := [
+		["TEXT PRIMARY",   UITheme.TEXT_PRIMARY],
+		["TEXT SECONDARY", UITheme.TEXT_SECONDARY],
+		["TEXT MUTED",     UITheme.TEXT_MUTED],
+		["TEXT INVERSE",   UITheme.TEXT_INVERSE],
+	]
+	for t in texts:
+		_color_chip(text_row, t[0], t[1])
+	UI.h_expand(text_row)
+
+
+func _color_chip(parent: Control, label: String, color: Color) -> void:
+	var v := VBoxContainer.new()
+	v.add_theme_constant_override("separation", 4)
+	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	parent.add_child(v)
+
+	# Color swatch
+	var swatch := PanelContainer.new()
+	swatch.custom_minimum_size = Vector2(0, 40)
+	swatch.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var sw_s := StyleBoxFlat.new()
+	sw_s.bg_color = color
+	sw_s.corner_radius_top_left     = UITheme.RADIUS_SM
+	sw_s.corner_radius_top_right    = UITheme.RADIUS_SM
+	sw_s.corner_radius_bottom_left  = UITheme.RADIUS_SM
+	sw_s.corner_radius_bottom_right = UITheme.RADIUS_SM
+	sw_s.border_width_top = 1; sw_s.border_width_bottom = 1
+	sw_s.border_width_left = 1; sw_s.border_width_right = 1
+	sw_s.border_color = UITheme.BORDER_STRONG
+	swatch.add_theme_stylebox_override("panel", sw_s)
+	v.add_child(swatch)
+
+	v.add_child(UI.label(label, UITheme.FONT_XS, UITheme.TEXT_MUTED))
+	v.add_child(UI.label("#" + color.to_html(false).to_upper(), UITheme.FONT_XS, UITheme.TEXT_SECONDARY))
 
 
 func _theme_card(parent: Control, t: Dictionary) -> void:

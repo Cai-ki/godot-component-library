@@ -12,6 +12,7 @@ func build(parent: Control) -> void:
 	_select_section(parent)
 	_checkbox_section(parent)
 	_toggle_section(parent)
+	_radio_section(parent)
 	_slider_section(parent)
 
 
@@ -273,6 +274,67 @@ func _toggle_section(parent: Control) -> void:
 
 
 # =============================================
+# RADIO BUTTONS
+# =============================================
+
+func _radio_section(parent: Control) -> void:
+	UI.section(parent, "Radio Buttons")
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 40)
+
+	# Group 1: Default accent
+	var v1 := UI.vbox(row, 8)
+	v1.add_child(UI.label("Notification Frequency", UITheme.FONT_SM, UITheme.TEXT_PRIMARY))
+	UI.spacer(v1, 4)
+	var group1 := UIRadioGroup.new()
+	group1.selected_index = 1
+	for opt in ["Real-time", "Daily digest", "Weekly summary", "Never"]:
+		var r := UIRadio.new()
+		r.label_text = opt
+		group1.add_radio(r)
+	v1.add_child(group1)
+
+	# Group 2: Custom accent colors
+	var v2 := UI.vbox(row, 8)
+	v2.add_child(UI.label("Priority Level", UITheme.FONT_SM, UITheme.TEXT_PRIMARY))
+	UI.spacer(v2, 4)
+	var priorities := [
+		["Low",      UITheme.SUCCESS],
+		["Medium",   UITheme.WARNING],
+		["High",     UITheme.DANGER],
+		["Critical", UITheme.DANGER],
+	]
+	var group2 := UIRadioGroup.new()
+	group2.selected_index = 0
+	for p in priorities:
+		var r := UIRadio.new()
+		r.label_text = p[0]
+		r.accent_color = p[1]
+		group2.add_radio(r)
+	v2.add_child(group2)
+
+	# Group 3: With disabled radio
+	var v3 := UI.vbox(row, 8)
+	v3.add_child(UI.label("Plan (some disabled)", UITheme.FONT_SM, UITheme.TEXT_PRIMARY))
+	UI.spacer(v3, 4)
+	var group3 := UIRadioGroup.new()
+	group3.selected_index = 0
+	var plan_data := [
+		["Free",       false],
+		["Pro",        false],
+		["Enterprise", true],
+	]
+	for pd in plan_data:
+		var r := UIRadio.new()
+		r.label_text = pd[0]
+		r.disabled = pd[1]
+		group3.add_radio(r)
+	v3.add_child(group3)
+
+	UI.h_expand(row)
+
+
+# =============================================
 # SLIDERS
 # =============================================
 
@@ -293,34 +355,13 @@ func _labeled_slider(parent: Control, title: String, value: float, suffix: Strin
 
 	h.add_child(UI.label(title, UITheme.FONT_MD, UITheme.TEXT_PRIMARY))
 
-	var slider := HSlider.new()
+	var slider := UISlider.new()
 	slider.min_value = min_val
 	slider.max_value = max_val
 	slider.step = step
 	slider.value = value
 	slider.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	slider.custom_minimum_size = Vector2(200, 20)
-
-	var track_style := UI.style(UITheme.SURFACE_3, UITheme.RADIUS_SM)
-	var fill_style := UI.style(UITheme.PRIMARY, UITheme.RADIUS_SM)
-	var grabber_style := StyleBoxFlat.new()
-	grabber_style.bg_color = UITheme.PRIMARY
-	grabber_style.corner_radius_top_left = UITheme.RADIUS_PILL
-	grabber_style.corner_radius_top_right = UITheme.RADIUS_PILL
-	grabber_style.corner_radius_bottom_left = UITheme.RADIUS_PILL
-	grabber_style.corner_radius_bottom_right = UITheme.RADIUS_PILL
-	grabber_style.content_margin_left = 8
-	grabber_style.content_margin_right = 8
-	grabber_style.content_margin_top = 8
-	grabber_style.content_margin_bottom = 8
-
-	var grabber_hover := grabber_style.duplicate()
-	grabber_hover.bg_color = UITheme.PRIMARY_LIGHT
-
-	slider.add_theme_stylebox_override("slider", track_style)
-	slider.add_theme_stylebox_override("grabber_area", fill_style)
-	slider.add_theme_stylebox_override("grabber_area_highlight", fill_style)
-
+	slider.custom_minimum_size = Vector2(200, 28)
 	h.add_child(slider)
 
 	var value_label := UI.label(str(int(value)) + suffix, UITheme.FONT_MD, UITheme.TEXT_SECONDARY)

@@ -6,9 +6,13 @@ extends VBoxContainer
 @export var striped:     bool = true
 @export var show_border: bool = true
 @export var sortable:    bool = false
+@export var filterable:  bool = false
 
-var _columns:   PackedStringArray = []
-var _rows_data: Array = []
+var _columns:       PackedStringArray = []
+var _rows_data:     Array = []
+var _filtered_data: Array = []
+var _search_text:   String = ""
+var _search_input:  LineEdit
 var _header_h:  HBoxContainer
 var _body_v:    VBoxContainer
 var _sort_col:  int  = -1
@@ -26,20 +30,59 @@ func set_columns(cols: PackedStringArray) -> void:
 
 func add_row(data: Array) -> void:
 	_rows_data.append(data)
-	_add_row_ui(data, _rows_data.size() - 1)
+	_apply_filter()
+	_rebuild_body()
 
 func clear_rows() -> void:
 	_rows_data.clear()
+	_filtered_data.clear()
 	for c in _body_v.get_children():
 		c.queue_free()
 
 func set_data(cols: PackedStringArray, rows: Array) -> void:
 	set_columns(cols)
 	for row in rows:
-		add_row(row)
+		_rows_data.append(row)
+	_apply_filter()
+	_rebuild_body()
 
 # ── Internal ──────────────────────────────────────
 func _build() -> void:
+	# Search bar (filterable only)
+	if filterable:
+		var search_m := MarginContainer.new()
+		search_m.add_theme_constant_override("margin_left",   0)
+		search_m.add_theme_constant_override("margin_right",  0)
+		search_m.add_theme_constant_override("margin_top",    0)
+		search_m.add_theme_constant_override("margin_bottom", 8)
+		search_m.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		add_child(search_m)
+
+		_search_input = LineEdit.new()
+		_search_input.placeholder_text = "Search..."
+		_search_input.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+		var normal_s := StyleBoxFlat.new()
+		normal_s.bg_color = UITheme.SURFACE_2
+		normal_s.corner_radius_top_left     = UITheme.RADIUS_MD
+		normal_s.corner_radius_top_right    = UITheme.RADIUS_MD
+		normal_s.corner_radius_bottom_left  = UITheme.RADIUS_MD
+		normal_s.corner_radius_bottom_right = UITheme.RADIUS_MD
+		normal_s.border_width_top = 1; normal_s.border_width_bottom = 1
+		normal_s.border_width_left = 1; normal_s.border_width_right = 1
+		normal_s.border_color = UITheme.BORDER
+		normal_s.content_margin_left = 12; normal_s.content_margin_right = 12
+		normal_s.content_margin_top = 9; normal_s.content_margin_bottom = 9
+		var focus_s := normal_s.duplicate()
+		focus_s.border_color = UITheme.PRIMARY
+		_search_input.add_theme_stylebox_override("normal", normal_s)
+		_search_input.add_theme_stylebox_override("focus",  focus_s)
+		_search_input.add_theme_color_override("font_color", UITheme.TEXT_PRIMARY)
+		_search_input.add_theme_color_override("font_placeholder_color", UITheme.TEXT_MUTED)
+		_search_input.add_theme_color_override("caret_color", UITheme.PRIMARY)
+		_search_input.add_theme_font_size_override("font_size", UITheme.FONT_MD)
+		_search_input.text_changed.connect(_on_search_changed)
+		search_m.add_child(_search_input)
+
 	# Header
 	var hp := PanelContainer.new()
 	hp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -128,8 +171,28 @@ func _sort_by(col: int) -> void:
 		return (sa < sb) if asc else (sa > sb)
 	)
 
+	_apply_filter()
 	_rebuild_header()
 	_rebuild_body()
+
+
+func _on_search_changed(text: String) -> void:
+	_search_text = text
+	_apply_filter()
+	_rebuild_body()
+
+
+func _apply_filter() -> void:
+	if _search_text.strip_edges() == "":
+		_filtered_data = _rows_data.duplicate()
+		return
+	var query := _search_text.to_lower()
+	_filtered_data.clear()
+	for row in _rows_data:
+		for cell in row:
+			if str(cell).to_lower().contains(query):
+				_filtered_data.append(row)
+				break
 
 
 func _rebuild_body() -> void:
@@ -137,11 +200,12 @@ func _rebuild_body() -> void:
 		var child := _body_v.get_child(0)
 		_body_v.remove_child(child)
 		child.queue_free()
-	for i in _rows_data.size():
-		_add_row_ui(_rows_data[i], i)
+	for i in _filtered_data.size():
+		var row: Array = _filtered_data[i]
+		_add_row_ui(row, i)
 
 func _add_row_ui(data: Array, row_idx: int) -> void:
-	var is_last := row_idx == _rows_data.size() - 1
+	var is_last := row_idx == _filtered_data.size() - 1
 	var rp := PanelContainer.new()
 	rp.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
@@ -170,3 +234,4 @@ func _add_row_ui(data: Array, row_idx: int) -> void:
 		l.add_theme_font_size_override("font_size", UITheme.FONT_MD)
 		l.add_theme_color_override("font_color", UITheme.TEXT_PRIMARY)
 		rh.add_child(l)
+
