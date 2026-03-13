@@ -151,7 +151,7 @@ push_warning("警告信息")
 | 节点类型（UI 容器、控件、Timer） | `references/node_reference.md` |
 | UI 布局（容器、锚点、StyleBox、override） | `references/ui_layout.md` |
 | CanvasLayer / 自定义绘制 / 动画 | `references/2d_graphics.md` |
-| UITheme 令牌 / UI helpers / 18 个组件 API | `references/component_library_api.md` |
+| UITheme 令牌 / UI helpers / 28 个组件 API | `references/component_library_api.md` |
 
 ---
 

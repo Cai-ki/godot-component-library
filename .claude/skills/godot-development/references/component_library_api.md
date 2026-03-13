@@ -172,7 +172,7 @@ var row := UI.hbox(parent, 12)
 
 ---
 
-## 组件 API（24 个）
+## 组件 API（28 个）
 
 ### UIButton `extends Button`
 
@@ -287,11 +287,13 @@ enum StatusType { NONE, ONLINE, AWAY, BUSY, OFFLINE }
 ```gdscript
 @export var striped: bool = true      # 斑马纹（奇行 SURFACE_3）
 @export var show_border: bool = true
+@export var sortable: bool = false    # 点击表头排序（▲/▼指示器）
+@export var filterable: bool = false  # 顶部搜索框，实时过滤行
 
 func set_columns(cols: PackedStringArray) -> void
-func add_row(data: Array) -> void          # data 元素用 str() 转文字
+func add_row(data: Array) -> void          # 调用 _rebuild_body()，filterable 时正确过滤
 func clear_rows() -> void
-func set_data(cols: PackedStringArray, rows: Array) -> void   # 一次设置全部
+func set_data(cols: PackedStringArray, rows: Array) -> void   # 一次设置全部（推荐）
 ```
 
 ### UIAlert `extends Control`
@@ -515,16 +517,113 @@ func prev_step() -> void
 # 连接线颜色跟随左侧步骤状态
 ```
 
----
+### UIRadio `extends HBoxContainer`
 
-## 架构要点速查
+```gdscript
+signal toggled(value: bool)   # 仅在 unchecked→checked 时 emit（不 toggle）
+
+@export var checked: bool = false
+@export var label_text: String
+@export var disabled: bool
+@export var accent_color: Color   # 默认 PRIMARY
+
+# 内部 Control + draw_arc() 外圈 + draw_circle() 内点（20×20）
+# 点击行为：只能 check，不能 uncheck（由 UIRadioGroup 管理取消）
+```
+
+### UIRadioGroup `extends VBoxContainer`
+
+```gdscript
+signal selection_changed(index: int)
+
+@export var selected_index: int = -1   # setter 触发 _apply_selection()
+
+func add_radio(radio: UIRadio) -> void   # add_child + 连接 toggled 信号
+
+# 用法：
+var group := UIRadioGroup.new()
+group.selected_index = 0
+for opt in ["Option A", "Option B", "Option C"]:
+    var r := UIRadio.new()
+    r.label_text = opt
+    group.add_radio(r)
+parent.add_child(group)
+group.selection_changed.connect(func(i): print(i))
+```
+
+### UISlider `extends Control`
+
+```gdscript
+signal value_changed(v: float)
+
+@export var value: float = 0.0       # setter: snap + clamp，不 emit
+@export var min_value: float = 0.0
+@export var max_value: float = 100.0
+@export var step: float = 1.0        # 0.0 = 连续无 snap
+@export var accent_color: Color      # 默认 PRIMARY
+@export var disabled: bool
+@export var show_value: bool = false # knob 上方显示数值文字
+
+# extends Control + _draw()；custom_minimum_size = Vector2(120, 28)
+# _gui_input(): MouseButton → 开始拖拽，MouseMotion → 更新值
+```
+
+### UIDrawer `extends Node`
+
+```gdscript
+signal opened
+signal closed
+
+@export var drawer_width: float = 400.0
+@export var show_overlay: bool = true   # 半透明遮罩，点击关闭
+@export var title_text: String
+
+func show_drawer() -> void   # 从右侧滑入（0.3s TRANS_CUBIC）
+func hide_drawer() -> void   # 滑出（0.25s），finished 后 queue_free
+func get_body() -> VBoxContainer   # show_drawer() 后调用填充内容
+
+# Overlay 模式：CanvasLayer(104) _UIDrawerLayer
+# ⚠️ opened 信号内填充时先检查 body.get_child_count() > 0 避免重复
+
+# 用法：
+var drawer := UIDrawer.new()
+drawer.title_text = "Settings"
+parent.add_child(drawer)
+drawer.opened.connect(func():
+    var body := drawer.get_body()
+    if body.get_child_count() > 0: return
+    body.add_child(my_content)
+)
+UI.solid_btn(parent, "Open", UITheme.PRIMARY).pressed.connect(drawer.show_drawer)
+```
+
+### UIThemePresets (`scripts/theme_presets.gd`)
+
+```gdscript
+class_name UIThemePresets extends RefCounted
+
+# 切换主题：重新赋值 UITheme 所有 surface/text/border static var
+# 品牌色 PRIMARY/SUCCESS/DANGER 等保持不变
+
+static func apply_dark_indigo() -> void   # 默认深紫色（#0D0F14 背景）
+static func apply_light() -> void         # 浅色模式（#F0F2F8 背景，深色文字）
+static func apply_midnight() -> void      # 更深蓝黑（#070A12 背景）
+
+# main.gd 中的切换流程：
+# 1. UIThemePresets.apply_xxx()
+# 2. _bg.color = UITheme.BG
+# 3. 重建侧边栏（remove + _build_sidebar）
+# 4. _navigate_to(current_page) 重建当前页
+```
+
+
 
 ### Overlay 组件共同特征
 
 ```
-UIToast / UITooltip / UIContextMenu / UISelect:
+UIToast / UITooltip / UIContextMenu / UISelect / UIDrawer:
 - extends Node（不是 Control，本身无视觉）或 VBoxContainer（UISelect）
-- 在 get_tree().root 按需创建具名 CanvasLayer（层级 100/101/102/103）
+- 在 get_tree().root 按需创建具名 CanvasLayer（层级 100/101/102/103/104）
 - 组件留在原场景树，随页面销毁自动清理
 - 内容面板动态创建在 CanvasLayer 中
 ```
