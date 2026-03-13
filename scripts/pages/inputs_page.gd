@@ -216,18 +216,13 @@ func _checkbox_section(parent: Control) -> void:
 		v.add_theme_constant_override("separation", 3)
 		m.add_child(v)
 
-		var cb := CheckBox.new()
-		cb.text = checks[i][0]
-		cb.button_pressed = checks[i][2]
-		cb.focus_mode = Control.FOCUS_NONE
-		cb.add_theme_color_override("font_color", UITheme.TEXT_PRIMARY)
-		cb.add_theme_color_override("font_hover_color", UITheme.TEXT_PRIMARY)
-		cb.add_theme_color_override("font_pressed_color", UITheme.TEXT_PRIMARY)
-		cb.add_theme_font_size_override("font_size", UITheme.FONT_MD)
+		var cb := UICheckbox.new()
+		cb.label_text = checks[i][0]
+		cb.checked = checks[i][2]
 		v.add_child(cb)
 
 		var desc_row := MarginContainer.new()
-		desc_row.add_theme_constant_override("margin_left", 26)
+		desc_row.add_theme_constant_override("margin_left", 30)
 		v.add_child(desc_row)
 		desc_row.add_child(UI.label(checks[i][1], UITheme.FONT_SM, UITheme.TEXT_MUTED))
 
@@ -269,9 +264,8 @@ func _toggle_section(parent: Control) -> void:
 		text_v.add_child(UI.label(toggles[i][0], UITheme.FONT_MD, UITheme.TEXT_PRIMARY))
 		text_v.add_child(UI.label(toggles[i][1], UITheme.FONT_SM, UITheme.TEXT_MUTED))
 
-		var toggle := CheckButton.new()
-		toggle.button_pressed = toggles[i][2]
-		toggle.focus_mode = Control.FOCUS_NONE
+		var toggle := UISwitch.new()
+		toggle.toggled_on = toggles[i][2]
 		h.add_child(toggle)
 
 		if i < toggles.size() - 1:
