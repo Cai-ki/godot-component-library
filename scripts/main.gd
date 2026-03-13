@@ -373,6 +373,8 @@ func _navigate_to(page_id: String) -> void:
 			AnimationsPage.new().build(content_container)
 		"scene_login":
 			LoginScenePage.new().build(content_container)
+		"scene_dashboard":
+			DashboardScenePage.new().build(content_container)
 
 
 # =============================================
