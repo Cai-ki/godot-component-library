@@ -1,6 +1,6 @@
 # Godot UI Component Library
 
-A production-ready UI component library for **Godot 4.6**, featuring **28 styled components** and 15 interactive showcase pages. Built with the **Dark Indigo** design system — all styling is done purely in GDScript code, no `.tres` theme files. Supports runtime **theme switching** (Dark Indigo / Light / Midnight).
+A production-ready UI component library for **Godot 4.6**, featuring **28 styled components**, **18 interactive showcase pages**, and **3 real-world scene demos** (Login, Dashboard, Settings). Built with the **Dark Indigo** design system — all styling is done purely in GDScript code, no `.tres` theme files. Supports runtime **theme switching** (Dark Indigo / Light / Midnight).
 
 > Goal: Push Godot's native UI as close to HTML/CSS design quality as possible.
 
@@ -10,7 +10,8 @@ A production-ready UI component library for **Godot 4.6**, featuring **28 styled
 - **Pure Code Styling** — Every `StyleBoxFlat`, color, and shadow is set via GDScript
 - **Dark Indigo Design System** — 5 surface layers, 6 status colors with 4 variants each
 - **Runtime Theme Switching** — Dark Indigo / Light / Midnight, instant full-page rebuild
-- **Interactive Showcase** — 15 pages demonstrating every component with live demos
+- **Interactive Showcase** — 18 pages demonstrating every component with live demos
+- **Real-World Scenes** — Login form, admin dashboard, and settings page built entirely from library components
 - **Overlay System** — Toast, Tooltip, Context Menu, Select, and Drawer use layered `CanvasLayer` architecture
 - **Zero Dependencies** — Components only depend on `UITheme`, not on each other
 
@@ -57,6 +58,8 @@ A production-ready UI component library for **Godot 4.6**, featuring **28 styled
 
 **Design** — Color Themes (5 palettes + 5 material styles + live token swatch), Shapes, Layouts, Animations
 
+**Scenes** — Login Form (email/password validation + social login), Dashboard (metrics, charts, table, team cards), Settings (tabbed UI with switches, selects, radio groups, profile form)
+
 ## Quick Start
 
 ```gdscript
@@ -102,9 +105,13 @@ scripts/
   theme_presets.gd               # UIThemePresets — runtime theme switching
   helpers.gd                     # UI — static factory functions
   main.gd                        # Sidebar navigation + content routing + theme switcher
-  pages/                         # 15 showcase pages (class_name, extends RefCounted)
+  pages/                         # 18 showcase pages (class_name, extends RefCounted)
 components/                      # 28 standalone components (one subdirectory each)
 ```
+
+## AI-Assisted Development
+
+This project was built with [Claude Code](https://claude.ai/code) using the [Godot MCP Server](https://github.com/Coding-Solo/godot-mcp) for direct engine integration — running projects, creating scenes, and inspecting debug output all from the CLI.
 
 ## Running
 
