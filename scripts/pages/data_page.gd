@@ -7,6 +7,7 @@ func build(parent: Control) -> void:
 		"UITable, UIAvatar, UIDivider, UITag, UISkeletonLoader, UIContextMenu — data and decoration components.")
 
 	_table_section(parent)
+	_empty_section(parent)
 	_context_menu_section(parent)
 	_avatar_section(parent)
 	_divider_section(parent)
@@ -366,6 +367,44 @@ func _build_real_card(parent: Control, initials: String, color: Color,
 	var bio_lbl := UI.label(bio, UITheme.FONT_SM, UITheme.TEXT_SECONDARY)
 	bio_lbl.autowrap_mode = TextServer.AUTOWRAP_WORD
 	iv.add_child(bio_lbl)
+
+
+# =============================================
+# EMPTY STATES
+# =============================================
+
+func _empty_section(parent: Control) -> void:
+	UI.section(parent, "Empty States  (UIEmpty)")
+	var card_v := UI.card(parent, 24, 24)
+	var row := UI.hbox(card_v, 24)
+
+	# No results
+	var e1 := UIEmpty.new()
+	e1.icon_text = "◇"
+	e1.title_text = "No results found"
+	e1.description_text = "Try adjusting your search or filters to find what you're looking for."
+	e1.action_label = "Clear Filters"
+	e1.custom_minimum_size.y = 200
+	row.add_child(e1)
+
+	# Empty inbox
+	var e2 := UIEmpty.new()
+	e2.icon_text = "✉"
+	e2.title_text = "Inbox empty"
+	e2.description_text = "You have no new messages."
+	e2.accent_color = UITheme.SUCCESS
+	e2.custom_minimum_size.y = 200
+	row.add_child(e2)
+
+	# No data with action
+	var e3 := UIEmpty.new()
+	e3.icon_text = "◈"
+	e3.title_text = "No projects yet"
+	e3.description_text = "Create your first project to get started."
+	e3.action_label = "New Project"
+	e3.accent_color = UITheme.SECONDARY
+	e3.custom_minimum_size.y = 200
+	row.add_child(e3)
 
 
 # =============================================
