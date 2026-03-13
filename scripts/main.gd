@@ -37,6 +37,7 @@ func _build_shell() -> void:
 	_main_hbox = HBoxContainer.new()
 	_main_hbox.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	_main_hbox.add_theme_constant_override("separation", 0)
+	_main_hbox.clip_contents = true
 	root.add_child(_main_hbox)
 
 	_build_sidebar(_main_hbox)
@@ -65,9 +66,24 @@ func _build_sidebar(parent: Control) -> void:
 	margin.add_theme_constant_override("margin_bottom", 16)
 	_sidebar_node.add_child(margin)
 
+	# Outer VBox: scrollable nav area + fixed theme switcher at bottom
+	var outer_vbox := VBoxContainer.new()
+	outer_vbox.add_theme_constant_override("separation", 0)
+	margin.add_child(outer_vbox)
+
+	# Scrollable nav area
+	var scroll := ScrollContainer.new()
+	scroll.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
+	scroll.add_theme_stylebox_override("panel", StyleBoxEmpty.new())
+	outer_vbox.add_child(scroll)
+	# Hide sidebar scrollbar — scroll via mouse wheel only
+	scroll.get_v_scroll_bar().modulate = Color(0, 0, 0, 0)
+
 	var vbox := VBoxContainer.new()
 	vbox.add_theme_constant_override("separation", 2)
-	margin.add_child(vbox)
+	vbox.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	scroll.add_child(vbox)
 
 	# Logo area
 	_build_logo(vbox)
@@ -133,13 +149,28 @@ func _build_sidebar(parent: Control) -> void:
 	for page_data in pages3:
 		_add_nav_button(vbox, page_data[0], page_data[1])
 
-	# ── Theme switcher (bottom) ──────────────────────────────────────────────
-	UI.h_expand(vbox)   # push theme switcher to bottom
+	# Section divider: Scenes
+	UI.spacer(vbox, 8)
 	UI.sep(vbox, 0)
-	UI.spacer(vbox, 12)
-	vbox.add_child(UI.label("THEME", UITheme.FONT_XS, UITheme.TEXT_MUTED))
-	UI.spacer(vbox, 6)
-	_build_theme_switcher(vbox)
+	UI.spacer(vbox, 8)
+	var section4 := UI.label("SCENES", UITheme.FONT_XS, UITheme.TEXT_MUTED)
+	vbox.add_child(section4)
+	UI.spacer(vbox, 4)
+
+	var pages4: Array = [
+		["scene_login",     "⊟  Login Form"],
+		["scene_dashboard", "⊞  Dashboard"],
+		["scene_settings",  "⊠  Settings"],
+	]
+	for page_data in pages4:
+		_add_nav_button(vbox, page_data[0], page_data[1])
+
+	# ── Theme switcher (fixed at bottom) ─────────────────────────────────────
+	UI.sep(outer_vbox, 0)
+	UI.spacer(outer_vbox, 8)
+	outer_vbox.add_child(UI.label("THEME", UITheme.FONT_XS, UITheme.TEXT_MUTED))
+	UI.spacer(outer_vbox, 6)
+	_build_theme_switcher(outer_vbox)
 
 
 func _build_theme_switcher(parent: Control) -> void:
@@ -274,6 +305,9 @@ func _build_content(parent: Control) -> void:
 	scroll.horizontal_scroll_mode = ScrollContainer.SCROLL_MODE_DISABLED
 	parent.add_child(scroll)
 
+	# Style content scrollbar — thin, dark, rounded
+	_style_scrollbar(scroll.get_v_scroll_bar())
+
 	var margin := MarginContainer.new()
 	margin.add_theme_constant_override("margin_left", 40)
 	margin.add_theme_constant_override("margin_right", 40)
@@ -337,6 +371,8 @@ func _navigate_to(page_id: String) -> void:
 			LayoutsPage.new().build(content_container)
 		"animations":
 			AnimationsPage.new().build(content_container)
+		"scene_login":
+			LoginScenePage.new().build(content_container)
 
 
 # =============================================
@@ -367,3 +403,39 @@ func _switch_theme(theme_id: String) -> void:
 
 	# Rebuild current page
 	_navigate_to(current_page)
+
+
+# =============================================
+# SCROLLBAR STYLING
+# =============================================
+
+func _style_scrollbar(bar: ScrollBar) -> void:
+	# Grabber (the draggable thumb)
+	var grabber := StyleBoxFlat.new()
+	grabber.bg_color = UITheme.BORDER
+	grabber.corner_radius_top_left     = 4
+	grabber.corner_radius_top_right    = 4
+	grabber.corner_radius_bottom_left  = 4
+	grabber.corner_radius_bottom_right = 4
+	grabber.content_margin_left  = 3
+	grabber.content_margin_right = 3
+
+	var grabber_hl := grabber.duplicate()
+	grabber_hl.bg_color = UITheme.BORDER_LIGHT
+
+	var grabber_pr := grabber.duplicate()
+	grabber_pr.bg_color = UITheme.BORDER_STRONG
+
+	bar.add_theme_stylebox_override("grabber",            grabber)
+	bar.add_theme_stylebox_override("grabber_highlight",  grabber_hl)
+	bar.add_theme_stylebox_override("grabber_pressed",    grabber_pr)
+
+	# Track (background behind grabber)
+	var track := StyleBoxFlat.new()
+	track.bg_color = Color(0, 0, 0, 0)
+	track.content_margin_left  = 3
+	track.content_margin_right = 3
+	bar.add_theme_stylebox_override("scroll", track)
+
+	# Make bar narrower
+	bar.custom_minimum_size.x = 8
