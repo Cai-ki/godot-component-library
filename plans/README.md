@@ -6,13 +6,13 @@
 
 ## 方向总览
 
-| 方向 | 文件 | 核心内容 | 预估新增组件 | 预估新增页面 |
-|------|------|----------|-------------|-------------|
-| D2 | [direction-2-base-components.md](direction-2-base-components.md) | 缺失的基础组件 | 7 | 1-2 |
-| D3 | [direction-3-data-display.md](direction-3-data-display.md) | 数据展示增强 | 5 | 1-2 |
-| D4 | [direction-4-scenes.md](direction-4-scenes.md) | 更多 Scene 示例 | 0 | 4-6 |
-| D5 | [direction-5-infrastructure.md](direction-5-infrastructure.md) | 基础设施增强 | 0-2 | 1-2 |
-| D6 | [direction-6-dev-tools.md](direction-6-dev-tools.md) | 开发者工具 | 0-1 | 2-3 |
+| 方向 | 文件 | 核心内容 | 预估新增组件 | 预估新增页面 | 状态 |
+|------|------|----------|-------------|-------------|------|
+| D2 | [direction-2-base-components.md](direction-2-base-components.md) | 缺失的基础组件 | 7 | 1-2 | ✅ 已交付 |
+| D3 | [direction-3-data-display.md](direction-3-data-display.md) | 数据展示增强 | 5 | 1-2 | 待开始 |
+| D4 | [direction-4-scenes.md](direction-4-scenes.md) | 更多 Scene 示例 | 0 | 4-6 | 待开始 |
+| D5 | [direction-5-infrastructure.md](direction-5-infrastructure.md) | 基础设施增强 | 0-2 | 1-2 | 待开始 |
+| D6 | [direction-6-dev-tools.md](direction-6-dev-tools.md) | 开发者工具 | 0-1 | 2-3 | 待开始 |
 
 ## 优先级建议
 
