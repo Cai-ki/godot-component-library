@@ -265,3 +265,38 @@ if not signal_name.is_connected(callback):
 ### StyleBoxFlat 阴影只有一个方向
 **原因**: Godot 的 StyleBoxFlat 只支持单方向阴影，无法像 CSS box-shadow 多层。
 **修复**: 用 `shadow_color` 设置彩色实现发光效果，或用 `shadow_offset = Vector2.ZERO` 实现均匀阴影。
+
+---
+
+## 组件开发陷阱（Direction 2）
+
+### clip_children 在嵌套结构下失效
+**原因**: `CLIP_CHILDREN_AND_DRAW` 在 PanelContainer 等嵌套结构中不可靠，子节点溢出仍会渲染。
+**修复**: 改用 visibility 控制 + fade 动画代替裁剪。
+
+### Overlay CanvasLayer 内 Control 无法接收键盘
+**原因**: 即使 `grab_focus()`，CanvasLayer 上的 Control 的 `_gui_input` 也可能不接收按键。
+**修复**: 放弃 Overlay 内键盘导航，或将键盘处理放到原始场景树的 Node 上。
+
+### 浮层内按钮被 slide 遮挡无法点击
+**原因**: 后添加的子节点（slides）覆盖先添加的（arrows），z_index 不一定解决输入顺序问题。
+**修复**: 将按钮移到浮层 Control 之外，作为 HBoxContainer 的普通同级子节点。
+
+### GDScript 三元表达式不能包含 void 调用
+**原因**: `a() if cond else b()` 要求两侧均为表达式，`connect()` 等 void 函数不适用。
+**修复**:
+```gdscript
+# ❌ 编译错误
+target.pressed.connect(func(): toggle()) if target.has_signal("pressed") else \
+    target.gui_input.connect(...)
+
+# ✅ 正确
+if target.has_signal("pressed"):
+    target.pressed.connect(func(): toggle())
+else:
+    target.gui_input.connect(...)
+```
+
+### PanelContainer 子节点位置被容器覆盖
+**原因**: PanelContainer 强制管理子节点的 position/size，手动设置会被覆盖。
+**修复**: 用 `_draw()` 在 PanelContainer 上绘制 indicator（`draw_style_box()`），而非添加 Panel 子节点。
