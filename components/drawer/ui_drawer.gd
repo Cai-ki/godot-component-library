@@ -177,15 +177,14 @@ func _animate_in() -> void:
 		_overlay.create_tween().tween_property(_overlay, "color",
 			Color(0, 0, 0, 0.45), 0.3).set_trans(Tween.TRANS_SINE)
 		
-		# Also fade in the blur itself 
-		if _overlay.get_child_count() > 1:
-			var blur_rect = _overlay.get_child(1) # Index 1 is the blur ColorRect
-			if blur_rect and blur_rect is ColorRect and blur_rect.material:
-				blur_rect.material.set_shader_parameter("lod", 0.0)
-				_overlay.create_tween().tween_method(
-					func(v): blur_rect.material.set_shader_parameter("lod", v),
-					0.0, 2.0, 0.3
-				).set_trans(Tween.TRANS_SINE)
+			# BUG-2 FIX: use name-based lookup instead of hardcoded child index
+		var blur_rect = _overlay.find_child("_blur_rect", false, false)
+		if blur_rect and blur_rect is ColorRect and blur_rect.material:
+			blur_rect.material.set_shader_parameter("lod", 0.0)
+			_overlay.create_tween().tween_method(
+				func(v): blur_rect.material.set_shader_parameter("lod", v),
+				0.0, 2.0, 0.3
+			).set_trans(Tween.TRANS_SINE)
 
 
 func _animate_out() -> void:
@@ -196,14 +195,13 @@ func _animate_out() -> void:
 		_overlay.create_tween().tween_property(_overlay, "color",
 			Color(0, 0, 0, 0.0), 0.25)
 			
-		# Also fade out the blur
-		if _overlay.get_child_count() > 1:
-			var blur_rect = _overlay.get_child(1)
-			if blur_rect and blur_rect is ColorRect and blur_rect.material:
-				_overlay.create_tween().tween_method(
-					func(v): blur_rect.material.set_shader_parameter("lod", v),
-					2.0, 0.0, 0.25
-				)
+		# BUG-2 FIX: use name-based lookup instead of hardcoded child index
+		var blur_rect = _overlay.find_child("_blur_rect", false, false)
+		if blur_rect and blur_rect is ColorRect and blur_rect.material:
+			_overlay.create_tween().tween_method(
+				func(v): blur_rect.material.set_shader_parameter("lod", v),
+				2.0, 0.0, 0.25
+			)
 	tw.finished.connect(_cleanup)
 
 

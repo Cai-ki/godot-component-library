@@ -20,6 +20,7 @@ var _close_btn: Button
 var _body:      VBoxContainer
 var _footer:    HBoxContainer
 var _orig_parent: Node
+var _is_shown: bool = false  # BUG-5 FIX: guard against duplicate hide calls
 
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
@@ -29,6 +30,8 @@ func _ready() -> void:
 
 # ── Public API ────────────────────────────────────
 func show_modal() -> void:
+	if _is_shown: return  # BUG-5 FIX: idempotent guard
+	_is_shown = true
 	var tree := get_tree()
 	_orig_parent = get_parent()
 	if _orig_parent:
@@ -37,6 +40,8 @@ func show_modal() -> void:
 	visible = true
 
 func hide_modal() -> void:
+	if not _is_shown: return  # BUG-5 FIX: prevents duplicate closed signal
+	_is_shown = false
 	visible = false
 	var tree := get_tree()
 	if _orig_parent and tree and get_parent() != _orig_parent:

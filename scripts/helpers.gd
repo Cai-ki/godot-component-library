@@ -613,6 +613,7 @@ static func glass_backdrop(parent: Node, blur_amount: float = 2.0, dimmed_color:
 	
 	# Create the blur rect
 	var blur_rect := ColorRect.new()
+	blur_rect.name = "_blur_rect"  # BUG-2 FIX: named for reliable lookup by consumers (e.g. UIDrawer)
 	blur_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	blur_rect.color = Color.WHITE
 	

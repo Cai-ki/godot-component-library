@@ -81,7 +81,9 @@ func show_toast(message: String, type: ToastType = ToastType.INFO, duration: flo
 	timer.timeout.connect(func():
 		if not is_instance_valid(wrapper):
 			return
-		var tween_out := create_tween()
+		# BUG-1 FIX: Use wrapper.create_tween() so the tween is owned by wrapper,
+		# not by UIToast itself (which may have left the tree during page navigation).
+		var tween_out := wrapper.create_tween()
 		tween_out.tween_property(wrapper, "modulate:a", 0.0, 0.3).set_trans(Tween.TRANS_SINE)
 		tween_out.finished.connect(func():
 			if is_instance_valid(wrapper):

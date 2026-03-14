@@ -23,13 +23,16 @@ var _items: Array = []   # [{type, label, icon, callback, destructive, group, id
 var _overlay: Control
 var _panel: PanelContainer
 var _target: Control
+var _id_counter: int = 0  # BUG-12 FIX: monotonic counter prevents ID reset after clear_items()
 
 
 # ── Public API ────────────────────────────────────────────────
 
 func add_item(label: String, icon: String = "", callback: Callable = Callable(),
 		destructive: bool = false, group: String = "") -> String:
-	var id := "item_%d" % _items.size()
+	# BUG-12 FIX: use monotonic _id_counter so IDs don't reset after clear_items()
+	var id := "item_%d" % _id_counter
+	_id_counter += 1
 	_items.append({type = "item", label = label, icon = icon,
 		callback = callback, destructive = destructive, group = group, id = id})
 	return id
@@ -128,25 +131,14 @@ func _show() -> void:
 	if is_instance_valid(_target):
 		var rect := _target.get_global_rect()
 		_panel.position = Vector2(rect.position.x, rect.position.y + rect.size.y + 6)
-	_clamp_to_screen.call_deferred()
 
-	# Entrance Animation
+	# BUG-8 FIX: schedule clamp first, then animation in a second deferred call,
+	# so tween target reflects the final clamped position (not the pre-clamp position).
 	_panel.modulate.a = 0.0
-	var original_pos_y := _panel.position.y
-	_panel.position.y -= 10
 	_panel.scale = Vector2(0.95, 0.95)
-	# Set pivot to top center for scale
 	_panel.pivot_offset = Vector2(_panel.get_combined_minimum_size().x / 2.0, 0)
-	
-	var t := _panel.create_tween().set_parallel(true)
-	t.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	t.tween_property(_panel, "modulate:a", 1.0, 0.15)
-	t.tween_property(_panel, "scale", Vector2.ONE, 0.25)
-	t.tween_property(_panel, "position:y", original_pos_y, 0.25)
-	
-	# If glass backdrop is requested, we can add it here
-	# UI.glass_backdrop(_panel, 3.0, Color(0,0,0,0.15)) # Sub-panel glass is tricky in Godot containers
-	# For now, stick to the clear dark panel which matches the library aesthetic better than a full-screen blur for a small menu
+	_clamp_to_screen.call_deferred()
+	_start_open_animation.call_deferred()
 
 
 func _build_item(parent_vbox: VBoxContainer, item: Dictionary) -> void:
@@ -245,6 +237,17 @@ func _clamp_to_screen() -> void:
 
 
 # ── Close / Cleanup ──────────────────────────────────────────
+
+# BUG-8 FIX: starts animation AFTER _clamp_to_screen so position is final
+func _start_open_animation() -> void:
+	if not is_instance_valid(_panel): return
+	var target_y := _panel.position.y
+	_panel.position.y = target_y - 10
+	var t := _panel.create_tween().set_parallel(true)
+	t.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	t.tween_property(_panel, "modulate:a", 1.0, 0.15)
+	t.tween_property(_panel, "scale", Vector2.ONE, 0.25)
+	t.tween_property(_panel, "position:y", target_y, 0.25)
 
 func _close() -> void:
 	# Immediate cleanup

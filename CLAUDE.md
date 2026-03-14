@@ -174,12 +174,19 @@ panel.mouse_exited.connect(func():  panel.add_theme_stylebox_override("panel", n
 21. **GDScript 三元表达式不能包含语句**: `a() if cond else b()` 仅限于表达式，不能用于 `connect()` 等 void 调用，改用 if/else 块
 22. **变量名不能与内建函数同名**: `var wrap`, `var snapped` 等会触发 WARNING，改用 `item_wrap`, `new_v` 等无冲突名称
 23. **UICarousel 箭头不能放在 slide_area 内**: 会被 z_index/overlay 问题阻断点击，正确做法是放在外层 HBoxContainer 两侧作为普通按钮
+24. **Tween 必须挂在仍在树中的节点上**: `create_tween()` 的宿主离树后 Tween 立即失效，其 `finished` 回调不会执行。若宿主 Node 可能被销毁（如页面切换），应在被动画的叶节点（如 `wrapper`）上调用 `wrapper.create_tween()`，而非在管理 Node 上调用
+25. **UIModal / UIDrawer 等 Overlay 组件必须幂等**: `show_modal()` / `hide_modal()` 可能被多路信号同时触发（如 backdrop click + close btn）。组件应维护 `_is_shown: bool` 状态标志，同一状态的重复调用须 `return`，防止信号重复 emit 和节点多次 reparent
+26. **UIAccordion 展开高度必须在布局帧后获取**: `body.visible = true` 和 `get_combined_minimum_size()` 在同一帧，布局尚未刷新会返回 0，导致动画目标高度为 0，内容不可见。解法：`await body.get_tree().process_frame` 后再查询高度并启动 Tween
+27. **UIButton.is_loading setter 必须幂等**: `_apply_loading()` 被多次调用时，若每次都用当前 `text` 覆盖 `_saved_text`，前缀 `"⟳  "` 会叠加。应在 `_saved_text == ""` 时才保存，且始终从 `_saved_text` 而非 `text` 构造显示文本
+28. **访问 `UI.glass_backdrop()` 内部节点用名称查找，勿用索引**: `glass_backdrop()` 返回的 `ColorRect` 的子节点 `blur_rect` 已命名为 `"_blur_rect"`，应使用 `overlay.find_child("_blur_rect", false, false)` 而非 `overlay.get_child(1)`（内部结构变动后索引静默失效）
+29. **Overlay 弹出层的入场动画必须在 clamping 之后启动**: `UISelect` / `UIDropdown` 等弹出面板先用 `_clamp_to_screen.call_deferred()` 修正越界位置，再用 `_start_open_animation.call_deferred()` 启动动画；若顺序颠倒，动画目标 y 会是 clamping 前的错误值，面板滑入位置不正确
+30. **UIThemePresets 每个 preset 必须更新所有 SOFT 色**: `apply_slate()` / `apply_stone()` 等自定义主题须同时更新 `PRIMARY_SOFT`、`SECONDARY_SOFT`、`SUCCESS_SOFT`、`WARNING_SOFT`、`DANGER_SOFT`、`INFO_SOFT` 共 6 种 Soft 变体，遗漏会导致 Alert / Badge soft 变体沿用前一主题的透明度
 
 ## Running & Testing
 
 ```bash
-# 通过 MCP 运行
-mcp__godot__run_project(projectPath="D:\\workspace\\godot-project\\projects\\component_library")
+# 通过 MCP 运行（将路径替换为本机实际路径）
+mcp__godot__run_project(projectPath="/Users/caiki/Workspace/CodeSpace/godot/godot-component-library")
 mcp__godot__get_debug_output()
 mcp__godot__stop_project()
 
@@ -190,7 +197,7 @@ mcp__godot__run_project(projectPath="...")
 
 ## Git
 
-- 仓库在项目根目录 `projects/component_library/`
+- 仓库在项目根目录 `godot-component-library/`
 - `.gitignore` 排除 `.godot/` 目录
 - user: caiki <2875028086@qq.com>
 - 提交规范: `feat:` / `fix:` / `refactor:` / `docs:` 前缀，HEREDOC 传 commit message

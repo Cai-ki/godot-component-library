@@ -102,4 +102,6 @@ func _build_panel() -> void:
 	_label = Label.new()
 	_label.add_theme_font_size_override("font_size", UITheme.FONT_SM)
 	_label.add_theme_color_override("font_color", UITheme.TEXT_PRIMARY)
+	# BUG-9 FIX: apply FONT_SANS override to match other components' typography
+	if UITheme.FONT_SANS: _label.add_theme_font_override("font", UITheme.FONT_SANS)
 	_panel.add_child(_label)

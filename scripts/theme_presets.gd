@@ -113,6 +113,11 @@ static func apply_slate() -> void:
 
 	UITheme.PRIMARY_SOFT    = Color(0.22, 0.74, 0.97, 0.1)
 	UITheme.SECONDARY_SOFT  = Color(0.39, 0.4, 0.95, 0.1)
+	# 2.7 FIX: complete all SOFT color updates to match dark_indigo/midnight presets
+	UITheme.SUCCESS_SOFT    = Color(0.176, 0.831, 0.749, 0.1)
+	UITheme.WARNING_SOFT    = Color(0.96, 0.62, 0.04, 0.1)
+	UITheme.DANGER_SOFT     = Color(0.957, 0.247, 0.369, 0.1)
+	UITheme.INFO_SOFT       = Color(0.05, 0.65, 0.91, 0.1)
 
 
 # ── Stone (Modern Neutral Gray) ────────────────────────────────────────────
@@ -140,6 +145,11 @@ static func apply_stone() -> void:
 
 	UITheme.PRIMARY_SOFT    = Color(0.66, 0.64, 0.62, 0.1)
 	UITheme.SECONDARY_SOFT  = Color(0.85, 0.47, 0.02, 0.1)
+	# 2.7 FIX: complete all SOFT color updates to match dark_indigo/midnight presets
+	UITheme.SUCCESS_SOFT    = Color(0.176, 0.831, 0.749, 0.1)
+	UITheme.WARNING_SOFT    = Color(0.96, 0.62, 0.04, 0.1)
+	UITheme.DANGER_SOFT     = Color(0.957, 0.247, 0.369, 0.1)
+	UITheme.INFO_SOFT       = Color(0.05, 0.65, 0.91, 0.1)
 
 
 

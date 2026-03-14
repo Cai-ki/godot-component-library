@@ -140,8 +140,11 @@ func _apply_styles() -> void:
 
 func _apply_loading() -> void:
 	if is_loading:
-		_saved_text = text
-		text = "⟳  " + text
+		# BUG-3 FIX: Only save on first activation (guard against repeated calls).
+		# Always build display text from _saved_text to prevent prefix stacking.
+		if _saved_text == "":
+			_saved_text = text
+		text = "⟳  " + _saved_text
 		disabled = true
 	else:
 		if _saved_text != "":

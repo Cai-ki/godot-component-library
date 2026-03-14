@@ -174,20 +174,16 @@ func _open_dropdown() -> void:
 	var trigger_rect := _trigger.get_global_rect()
 	_dropdown.custom_minimum_size.x = trigger_rect.size.x
 	_dropdown.position = Vector2(trigger_rect.position.x, trigger_rect.position.y + trigger_rect.size.y + 6.0)
-	_clamp_dropdown.call_deferred()
 
-	# Entrance Animation
+	# Entrance Animation — record target_y AFTER scheduling clamp,
+	# then start animation in deferred callback so clamped position is stable.
+	# BUG-6 FIX: run clamping synchronously via call_deferred, then start animation
+	# after another deferred step so tween target reflects the clamped position.
 	_dropdown.modulate.a = 0.0
-	var target_y := _dropdown.position.y
-	_dropdown.position.y = target_y - 12.0
 	_dropdown.scale = Vector2(0.96, 0.96)
 	_dropdown.pivot_offset = Vector2(trigger_rect.size.x / 2.0, 0)
-	
-	var tw := _dropdown.create_tween().set_parallel(true)
-	tw.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
-	tw.tween_property(_dropdown, "modulate:a", 1.0, 0.2)
-	tw.tween_property(_dropdown, "scale", Vector2.ONE, 0.3)
-	tw.tween_property(_dropdown, "position:y", target_y, 0.3)
+	_clamp_dropdown.call_deferred()
+	_start_open_animation.call_deferred()
 
 
 func _build_option(parent: Control, index: int) -> void:
@@ -240,6 +236,18 @@ func _clamp_dropdown() -> void:
 		clampf(_dropdown.position.x, 8.0, vp_size.x - min_sz.x - 8.0),
 		clampf(_dropdown.position.y, 8.0, vp_size.y - min_sz.y - 8.0)
 	)
+
+
+# BUG-6 FIX: animation starts after clamping so target_y is the final clamped position
+func _start_open_animation() -> void:
+	if not is_instance_valid(_dropdown): return
+	var target_y := _dropdown.position.y
+	_dropdown.position.y = target_y - 12.0
+	var tw := _dropdown.create_tween().set_parallel(true)
+	tw.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.tween_property(_dropdown, "modulate:a", 1.0, 0.2)
+	tw.tween_property(_dropdown, "scale", Vector2.ONE, 0.3)
+	tw.tween_property(_dropdown, "position:y", target_y, 0.3)
 
 
 func _close_dropdown() -> void:

@@ -145,8 +145,10 @@ func _set_state(index: int, expanded: bool) -> void:
 	var arrow_t := arrow.create_tween()
 	arrow_t.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	arrow_t.tween_property(arrow, "rotation_degrees", 90.0 if expanded else 0.0, 0.25)
-	arrow_t.parallel().tween_property(arrow, "modulate", 
-		UITheme.PRIMARY_LIGHT if expanded else Color.WHITE, 0.25)
+	# BUG-10 FIX: Use add_theme_color_override instead of modulate so the color
+	# stays theme-aware (Color.WHITE modulate causes arrow to disappear in Light theme).
+	var target_color := UITheme.PRIMARY_LIGHT if expanded else UITheme.TEXT_MUTED
+	arrow.add_theme_color_override("font_color", target_color)
 	
 	# Body Expansion Tween
 	if body.has_meta("tween"):
@@ -161,10 +163,26 @@ func _set_state(index: int, expanded: bool) -> void:
 	if expanded:
 		body.visible = true
 		body.custom_minimum_size.y = 0
+		# BUG-4 FIX: wait one frame so the layout engine can calculate the
+		# body's natural height before we use it as the tween target.
+		body.set_meta("tween", t)  # store early so kill() still works if toggled fast
+		await body.get_tree().process_frame
+		# Re-check: user may have toggled again while we were waiting
+		if not item["expanded"]:
+			return
 		var target_h := body.get_combined_minimum_size().y
-		
-		t.tween_property(body, "custom_minimum_size:y", target_h, 0.3)
-		t.tween_property(body, "modulate:a", 1.0, 0.2)
+		if target_h <= 0:
+			target_h = body.size.y  # fallback
+		# Kill the old tween and create a fresh one after awaiting
+		if body.has_meta("tween"):
+			var old_t2: Tween = body.get_meta("tween")
+			if old_t2 and old_t2.is_valid():
+				old_t2.kill()
+		var t2 := body.create_tween().set_parallel(true)
+		body.set_meta("tween", t2)
+		t2.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		t2.tween_property(body, "custom_minimum_size:y", target_h, 0.3)
+		t2.tween_property(body, "modulate:a", 1.0, 0.2)
 	else:
 		t.tween_property(body, "custom_minimum_size:y", 0.0, 0.3)
 		t.tween_property(body, "modulate:a", 0.0, 0.2)
