@@ -160,7 +160,7 @@ func _rebuild() -> void:
 		var btn := Button.new()
 		btn.text = items[i]
 		btn.flat = true
-		btn.focus_mode = Control.FOCUS_NONE
+		btn.focus_mode = Control.FOCUS_ALL
 		btn.clip_text = true
 		btn.mouse_default_cursor_shape = Control.CURSOR_POINTING_HAND if not disabled else Control.CURSOR_ARROW
 		btn.disabled = disabled
@@ -175,6 +175,14 @@ func _rebuild() -> void:
 			s.content_margin_left = pad_x; s.content_margin_right = pad_x
 			s.content_margin_top = pad_y; s.content_margin_bottom = pad_y
 			btn.add_theme_stylebox_override(state, s)
+		
+		var fo := StyleBoxFlat.new()
+		fo.bg_color = Color.TRANSPARENT
+		fo.border_width_top = 2; fo.border_width_bottom = 2
+		fo.border_width_left = 2; fo.border_width_right = 2
+		fo.border_color = UITheme.PRIMARY_SOFT
+		fo.set_corner_radius_all(_ind_radius)
+		btn.add_theme_stylebox_override("focus", fo)
 
 		var captured_i := i
 		btn.pressed.connect(func():

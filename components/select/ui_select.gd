@@ -131,36 +131,32 @@ func _refresh_display() -> void:
 # ── Dropdown ──────────────────────────────────────────────────────────────────
 
 func _open_dropdown() -> void:
+	if _is_open: return
 	_is_open = true
 	_refresh_display()
 	var layer := _get_or_create_layer()
 
-	# Full-screen overlay — dismisses on outside click
-	_overlay = Control.new()
-	_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# Full-screen overlay with subtle glassmorphism — dismisses on outside click
+	_overlay = UI.glass_backdrop(layer, 1.2, Color(0, 0, 0, 0.15))
 	_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	_overlay.gui_input.connect(func(event: InputEvent):
 		if event is InputEventMouseButton and (event as InputEventMouseButton).pressed:
 			_close_dropdown()
 	)
-	layer.add_child(_overlay)
 
 	# Dropdown panel
 	_dropdown = PanelContainer.new()
 	_dropdown.mouse_filter = Control.MOUSE_FILTER_STOP
 
 	var ps := StyleBoxFlat.new()
-	ps.bg_color                  = UITheme.SURFACE_2
-	ps.corner_radius_top_left    = UITheme.RADIUS_MD
-	ps.corner_radius_top_right   = UITheme.RADIUS_MD
-	ps.corner_radius_bottom_left = UITheme.RADIUS_MD
-	ps.corner_radius_bottom_right = UITheme.RADIUS_MD
+	ps.bg_color                  = Color(UITheme.SURFACE_2.r, UITheme.SURFACE_2.g, UITheme.SURFACE_2.b, 0.82)
+	ps.set_corner_radius_all(UITheme.RADIUS_MD)
 	ps.border_width_top    = 1; ps.border_width_bottom = 1
 	ps.border_width_left   = 1; ps.border_width_right  = 1
 	ps.border_color  = UITheme.BORDER_STRONG
-	ps.shadow_size   = 18
-	ps.shadow_color  = Color(0, 0, 0, 0.35)
-	ps.shadow_offset = Vector2(0, 6)
+	ps.shadow_size   = 24
+	ps.shadow_color  = Color(0, 0, 0, 0.45)
+	ps.shadow_offset = Vector2(0, 8)
 	ps.content_margin_left   = 0; ps.content_margin_right  = 0
 	ps.content_margin_top    = 6; ps.content_margin_bottom = 6
 	_dropdown.add_theme_stylebox_override("panel", ps)
@@ -177,17 +173,21 @@ func _open_dropdown() -> void:
 	# Position below trigger
 	var trigger_rect := _trigger.get_global_rect()
 	_dropdown.custom_minimum_size.x = trigger_rect.size.x
-	_dropdown.position = Vector2(trigger_rect.position.x, trigger_rect.position.y + trigger_rect.size.y + 4.0)
+	_dropdown.position = Vector2(trigger_rect.position.x, trigger_rect.position.y + trigger_rect.size.y + 6.0)
 	_clamp_dropdown.call_deferred()
 
-	# Fade in + slide down
-	var target_y := _dropdown.position.y
-	_dropdown.position.y = target_y - 10.0
+	# Entrance Animation
 	_dropdown.modulate.a = 0.0
+	var target_y := _dropdown.position.y
+	_dropdown.position.y = target_y - 12.0
+	_dropdown.scale = Vector2(0.96, 0.96)
+	_dropdown.pivot_offset = Vector2(trigger_rect.size.x / 2.0, 0)
+	
 	var tw := _dropdown.create_tween().set_parallel(true)
-	tw.tween_property(_dropdown, "modulate:a", 1.0, 0.3).set_trans(Tween.TRANS_SINE)
-	tw.tween_property(_dropdown, "position:y", target_y, 0.3) \
-		.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	tw.tween_property(_dropdown, "modulate:a", 1.0, 0.2)
+	tw.tween_property(_dropdown, "scale", Vector2.ONE, 0.3)
+	tw.tween_property(_dropdown, "position:y", target_y, 0.3)
 
 
 func _build_option(parent: Control, index: int) -> void:
@@ -196,15 +196,13 @@ func _build_option(parent: Control, index: int) -> void:
 	var item_wrap := MarginContainer.new()
 	item_wrap.add_theme_constant_override("margin_left",   4)
 	item_wrap.add_theme_constant_override("margin_right",  4)
-	item_wrap.add_theme_constant_override("margin_top",    0)
-	item_wrap.add_theme_constant_override("margin_bottom", 0)
 	parent.add_child(item_wrap)
 
 	var btn := Button.new()
 	btn.text = ("✓  " if is_selected else "    ") + options[index]
 	btn.flat = true
 	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	btn.focus_mode = Control.FOCUS_NONE
+	btn.focus_mode = Control.FOCUS_ALL
 	btn.custom_minimum_size = Vector2(0, 36)
 	btn.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 
@@ -212,13 +210,17 @@ func _build_option(parent: Control, index: int) -> void:
 
 	var n := _option_style(UITheme.PRIMARY_SOFT if is_selected else Color(0, 0, 0, 0))
 	var h := _option_style(UITheme.PRIMARY_SOFT)
+	var f := _option_style(Color(UITheme.PRIMARY.r, UITheme.PRIMARY.g, UITheme.PRIMARY.b, 0.08))
+	f.border_width_left = 2
+	f.border_color = UITheme.PRIMARY
 
 	btn.add_theme_stylebox_override("normal",  n)
 	btn.add_theme_stylebox_override("hover",   h)
 	btn.add_theme_stylebox_override("pressed", h)
-	btn.add_theme_stylebox_override("focus",   n)
+	btn.add_theme_stylebox_override("focus",   f)
 	btn.add_theme_color_override("font_color",       font_c)
 	btn.add_theme_color_override("font_hover_color", UITheme.PRIMARY_LIGHT)
+	btn.add_theme_color_override("font_focus_color", UITheme.PRIMARY_LIGHT)
 	btn.add_theme_font_size_override("font_size", UITheme.FONT_MD)
 
 	var captured := index
@@ -232,21 +234,37 @@ func _build_option(parent: Control, index: int) -> void:
 
 func _clamp_dropdown() -> void:
 	if not is_instance_valid(_dropdown): return
-	var min_sz  := _dropdown.get_minimum_size()
+	var min_sz  := _dropdown.get_combined_minimum_size()
 	var vp_size := get_tree().root.get_visible_rect().size
 	_dropdown.position = Vector2(
-		clampf(_dropdown.position.x, 4.0, vp_size.x - min_sz.x - 4.0),
-		clampf(_dropdown.position.y, 4.0, vp_size.y - min_sz.y - 4.0)
+		clampf(_dropdown.position.x, 8.0, vp_size.x - min_sz.x - 8.0),
+		clampf(_dropdown.position.y, 8.0, vp_size.y - min_sz.y - 8.0)
 	)
 
 
 func _close_dropdown() -> void:
+	if not _is_open: return
 	_is_open = false
-	if is_instance_valid(_overlay):
-		_overlay.queue_free()
-	_overlay  = null
-	_dropdown = null
 	_refresh_display()
+	
+	if not is_instance_valid(_dropdown):
+		if is_instance_valid(_overlay): _overlay.queue_free()
+		_overlay = null
+		return
+	
+	var d := _dropdown
+	var o := _overlay
+	_dropdown = null
+	_overlay = null
+	
+	var tw := d.create_tween().set_parallel(true)
+	tw.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	tw.tween_property(d, "modulate:a", 0.0, 0.15)
+	tw.tween_property(d, "scale", Vector2(0.96, 0.96), 0.2)
+	tw.tween_property(d, "position:y", d.position.y - 10.0, 0.2)
+	tw.chain().tween_callback(func():
+		if is_instance_valid(o): o.queue_free()
+	)
 
 
 # ── Styles ────────────────────────────────────────────────────────────────────

@@ -56,7 +56,7 @@ func attach(target: Control) -> void:
 
 func toggle() -> void:
 	if is_instance_valid(_panel):
-		_close()
+		_show_exit_animation()
 	else:
 		_show()
 
@@ -66,73 +66,75 @@ func show_dropdown() -> void:
 
 
 func hide_dropdown() -> void:
-	_close()
+	_show_exit_animation()
 
 
 # ── Build ─────────────────────────────────────────────────────
 
 func _show() -> void:
-	_close()
+	if is_instance_valid(_panel):
+		_close() # Animation-less close to swap instantly if needed
+	
 	if _items.size() == 0: return
 	var layer := _get_or_create_layer()
 
-	# Full-screen dismiss overlay
-	_overlay = Control.new()
-	_overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	# Full-screen dismiss overlay with subtle glassmorphism
+	_overlay = UI.glass_backdrop(layer, 1.2, Color(0, 0, 0, 0.15))
 	_overlay.mouse_filter = Control.MOUSE_FILTER_STOP
 	_overlay.gui_input.connect(func(event: InputEvent):
 		if event is InputEventMouseButton and event.pressed:
-			_close()
+			hide_dropdown()
 	)
-	layer.add_child(_overlay)
 
-	# Panel
+	# Panel with Glassmorphism
 	_panel = PanelContainer.new()
 	_panel.mouse_filter = Control.MOUSE_FILTER_STOP
+	
+	# Using UI.style but with semi-transparency for glass feel
 	var ps := StyleBoxFlat.new()
-	ps.bg_color = UITheme.SURFACE_2
+	ps.bg_color = Color(UITheme.SURFACE_2.r, UITheme.SURFACE_2.g, UITheme.SURFACE_2.b, 0.82)
 	ps.set_corner_radius_all(UITheme.RADIUS_MD)
 	ps.border_width_top = 1; ps.border_width_bottom = 1
 	ps.border_width_left = 1; ps.border_width_right = 1
 	ps.border_color = UITheme.BORDER_STRONG
-	ps.shadow_size = 18
-	ps.shadow_color = Color(0, 0, 0, 0.35)
-	ps.shadow_offset = Vector2(0, 6)
+	ps.shadow_size = 24
+	ps.shadow_color = Color(0, 0, 0, 0.45)
+	ps.shadow_offset = Vector2(0, 8)
 	ps.content_margin_left = 0; ps.content_margin_right = 0
 	ps.content_margin_top = 6; ps.content_margin_bottom = 6
 	_panel.add_theme_stylebox_override("panel", ps)
 
-	var vbox := VBoxContainer.new()
-	vbox.add_theme_constant_override("separation", 1)
-	_panel.add_child(vbox)
+	var v_box := VBoxContainer.new()
+	v_box.add_theme_constant_override("separation", 1)
+	_panel.add_child(v_box)
 
 	# Build items
 	var last_group := ""
 	for item in _items:
 		if item.type == "separator":
-			_build_separator(vbox)
+			_build_separator(v_box)
 		else:
 			var grp: String = item.get("group", "")
 			if grp != "" and grp != last_group:
 				if last_group != "":
-					_build_separator(vbox)
-				_build_group_header(vbox, grp)
+					_build_separator(v_box)
+				_build_group_header(v_box, grp)
 				last_group = grp
-			_build_item(vbox, item)
+			_build_item(v_box, item)
 
 	_overlay.add_child(_panel)
 
 	# Position below target
 	if is_instance_valid(_target):
 		var rect := _target.get_global_rect()
-		_panel.position = Vector2(rect.position.x, rect.position.y + rect.size.y + 4)
+		_panel.position = Vector2(rect.position.x, rect.position.y + rect.size.y + 6)
 	_clamp_to_screen.call_deferred()
 
 	# Entrance Animation
 	_panel.modulate.a = 0.0
-	var original_pos := _panel.position
-	_panel.position.y -= 8
-	_panel.scale = Vector2(0.97, 0.97)
+	var original_pos_y := _panel.position.y
+	_panel.position.y -= 10
+	_panel.scale = Vector2(0.95, 0.95)
 	# Set pivot to top center for scale
 	_panel.pivot_offset = Vector2(_panel.get_combined_minimum_size().x / 2.0, 0)
 	
@@ -140,7 +142,11 @@ func _show() -> void:
 	t.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
 	t.tween_property(_panel, "modulate:a", 1.0, 0.15)
 	t.tween_property(_panel, "scale", Vector2.ONE, 0.25)
-	t.tween_property(_panel, "position:y", original_pos.y, 0.25)
+	t.tween_property(_panel, "position:y", original_pos_y, 0.25)
+	
+	# If glass backdrop is requested, we can add it here
+	# UI.glass_backdrop(_panel, 3.0, Color(0,0,0,0.15)) # Sub-panel glass is tricky in Godot containers
+	# For now, stick to the clear dark panel which matches the library aesthetic better than a full-screen blur for a small menu
 
 
 func _build_item(parent_vbox: VBoxContainer, item: Dictionary) -> void:
@@ -152,7 +158,7 @@ func _build_item(parent_vbox: VBoxContainer, item: Dictionary) -> void:
 		btn.text = item.label
 	btn.flat = true
 	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	btn.focus_mode = Control.FOCUS_NONE
+	btn.focus_mode = Control.FOCUS_ALL # Enable keyboard nav
 	btn.custom_minimum_size = Vector2(180, 34)
 
 	var font_color: Color = UITheme.DANGER if item.destructive else UITheme.TEXT_PRIMARY
@@ -168,19 +174,25 @@ func _build_item(parent_vbox: VBoxContainer, item: Dictionary) -> void:
 
 	var h := n.duplicate()
 	h.bg_color = hover_bg
+	
+	var f := n.duplicate()
+	f.bg_color = Color(UITheme.PRIMARY.r, UITheme.PRIMARY.g, UITheme.PRIMARY.b, 0.08)
+	f.border_width_left = 2
+	f.border_color = UITheme.PRIMARY
 
 	btn.add_theme_stylebox_override("normal", n)
 	btn.add_theme_stylebox_override("hover", h)
 	btn.add_theme_stylebox_override("pressed", h)
-	btn.add_theme_stylebox_override("focus", n)
+	btn.add_theme_stylebox_override("focus", f)
 	btn.add_theme_color_override("font_color", font_color)
 	btn.add_theme_color_override("font_hover_color", hover_color)
+	btn.add_theme_color_override("font_focus_color", hover_color)
 	btn.add_theme_font_size_override("font_size", UITheme.FONT_MD)
 
 	var item_id: String = item.id
 	var item_cb: Callable = item.callback
 	btn.pressed.connect(func():
-		_close()
+		hide_dropdown()
 		item_selected.emit(item_id)
 		if item_cb.is_valid():
 			item_cb.call()
@@ -224,22 +236,41 @@ func _build_group_header(vbox: VBoxContainer, group_name: String) -> void:
 
 func _clamp_to_screen() -> void:
 	if not is_instance_valid(_panel): return
-	var panel_size := _panel.get_minimum_size()
+	var panel_size := _panel.get_combined_minimum_size()
 	var vp_size := get_tree().root.get_visible_rect().size
 	_panel.position = Vector2(
-		clampf(_panel.position.x, 4.0, vp_size.x - panel_size.x - 4.0),
-		clampf(_panel.position.y, 4.0, vp_size.y - panel_size.y - 4.0)
+		clampf(_panel.position.x, 8.0, vp_size.x - panel_size.x - 8.0),
+		clampf(_panel.position.y, 8.0, vp_size.y - panel_size.y - 8.0)
 	)
 
 
 # ── Close / Cleanup ──────────────────────────────────────────
 
 func _close() -> void:
+	# Immediate cleanup
 	if is_instance_valid(_overlay):
 		_overlay.queue_free()
 	_overlay = null
 	_panel = null
 
+func _show_exit_animation() -> void:
+	if not is_instance_valid(_panel): 
+		_close()
+		return
+	
+	var p := _panel
+	var o := _overlay
+	_panel = null # Prevent further access
+	_overlay = null
+	
+	var t := p.create_tween().set_parallel(true)
+	t.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+	t.tween_property(p, "modulate:a", 0.0, 0.15)
+	t.tween_property(p, "scale", Vector2(0.95, 0.95), 0.2)
+	t.tween_property(p, "position:y", p.position.y - 12, 0.2)
+	t.chain().tween_callback(func():
+		if is_instance_valid(o): o.queue_free()
+	)
 
 func _get_or_create_layer() -> CanvasLayer:
 	var root := get_tree().root
