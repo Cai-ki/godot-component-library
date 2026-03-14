@@ -1,6 +1,6 @@
 # Godot UI Component Library
 
-A production-ready UI component library for **Godot 4.6**, featuring **43 styled components**, **20 interactive showcase pages**, and **3 real-world scene demos** (Login, Dashboard, Settings). Built with the **Dark Indigo** design system — all styling is done purely in GDScript code, no `.tres` theme files. Supports runtime **theme switching** (Dark Indigo / Light / Midnight).
+A production-ready UI component library for **Godot 4.6**, featuring **43 styled components**, **20 interactive showcase pages**, and **3 real-world scene demos** (Login, Dashboard, Settings). Built with a premium **Dark Indigo** design system — all styling is done purely in GDScript code, no `.tres` theme files. Supports runtime **theme switching** (Indigo / Slate / Stone / Light / Midnight).
 
 > Goal: Push Godot's native UI as close to HTML/CSS design quality as possible.
 
@@ -9,7 +9,7 @@ A production-ready UI component library for **Godot 4.6**, featuring **43 styled
 - **43 Standalone Components** — Copy any component folder + `theme.gd` to your project
 - **Pure Code Styling** — Every `StyleBoxFlat`, color, and shadow is set via GDScript
 - **Dark Indigo Design System** — 5 surface layers, 6 status colors with 4 variants each
-- **Runtime Theme Switching** — Dark Indigo / Light / Midnight, instant full-page rebuild
+- **Runtime Theme Switching** — Indigo / Slate / Stone / Light / Midnight, instant full-page rebuild
 - **Interactive Showcase** — 20 pages demonstrating every component with live demos
 - **Real-World Scenes** — Login form, admin admin dashboard, and settings page built entirely from library components
 - **Overlay System** — Toast, Tooltip, Context Menu, Select, and Drawer use layered `CanvasLayer` architecture
@@ -105,10 +105,12 @@ open_btn.pressed.connect(drawer.show_drawer)
 ## Theme Switching
 
 ```gdscript
-# Switch between three built-in themes at runtime
+# Switch between built-in themes at runtime
+UIThemePresets.apply_dark_indigo()  # Default (Premium Indigo)
+UIThemePresets.apply_slate()        # Professional Blue-Gray
+UIThemePresets.apply_stone()        # Modern Neutral Gray
 UIThemePresets.apply_light()        # Light mode
 UIThemePresets.apply_midnight()     # Deep blue-black
-UIThemePresets.apply_dark_indigo()  # Default (Dark Indigo)
 ```
 
 ## Tech Stack

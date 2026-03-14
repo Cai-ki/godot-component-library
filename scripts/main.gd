@@ -197,6 +197,8 @@ func _build_theme_switcher(parent: Control) -> void:
 		["dark_indigo", "Indigo"],
 		["light",       "Light"],
 		["midnight",    "Night"],
+		["slate",       "Slate"],
+		["stone",       "Stone"],
 	]
 
 	for t in themes:
@@ -411,6 +413,8 @@ func _switch_theme(theme_id: String) -> void:
 		"dark_indigo": UIThemePresets.apply_dark_indigo()
 		"light":       UIThemePresets.apply_light()
 		"midnight":    UIThemePresets.apply_midnight()
+		"slate":       UIThemePresets.apply_slate()
+		"stone":       UIThemePresets.apply_stone()
 
 	# Update background
 	_bg.color = UITheme.BG

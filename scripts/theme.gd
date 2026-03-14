@@ -4,62 +4,62 @@ extends RefCounted
 # =============================================
 # BACKGROUND HIERARCHY
 # =============================================
-static var BG := Color("#0D0F14")
-static var SURFACE_1 := Color("#141720")
-static var SURFACE_2 := Color("#1C1F2E")
-static var SURFACE_3 := Color("#252A3A")
-static var SURFACE_4 := Color("#2E3347")
+static var BG := Color("#0B0C10")
+static var SURFACE_1 := Color("#12141C")
+static var SURFACE_2 := Color("#1A1D27")
+static var SURFACE_3 := Color("#232735")
+static var SURFACE_4 := Color("#2C3144")
 
 # =============================================
 # BORDER COLORS
 # =============================================
-static var BORDER := Color("#2A2D3E")
-static var BORDER_LIGHT := Color("#353849")
-static var BORDER_STRONG := Color("#4A4D60")
+static var BORDER := Color("#1E2235")
+static var BORDER_LIGHT := Color("#2A2F45")
+static var BORDER_STRONG := Color("#3F4660")
 
 # =============================================
 # BRAND COLORS
 # =============================================
-static var PRIMARY := Color("#6C63FF")
-static var PRIMARY_DARK := Color("#5550DD")
-static var PRIMARY_LIGHT := Color("#9B93FF")
-static var PRIMARY_SOFT := Color(0.424, 0.388, 1.0, 0.12)
+static var PRIMARY := Color("#7C69FF")
+static var PRIMARY_DARK := Color("#6355E5")
+static var PRIMARY_LIGHT := Color("#A394FF")
+static var PRIMARY_SOFT := Color(0.486, 0.412, 1.0, 0.12)
 
-static var SECONDARY := Color("#4FC3F7")
-static var SECONDARY_DARK := Color("#039BE5")
-static var SECONDARY_LIGHT := Color("#81D4FA")
-static var SECONDARY_SOFT := Color(0.31, 0.765, 0.97, 0.12)
+static var SECONDARY := Color("#38BDF8")
+static var SECONDARY_DARK := Color("#0EA5E9")
+static var SECONDARY_LIGHT := Color("#7DD3FC")
+static var SECONDARY_SOFT := Color(0.22, 0.741, 0.973, 0.12)
 
 # =============================================
 # STATUS COLORS
 # =============================================
-static var SUCCESS := Color("#4ADE80")
-static var SUCCESS_DARK := Color("#22C55E")
-static var SUCCESS_LIGHT := Color("#86EFAC")
-static var SUCCESS_SOFT := Color(0.29, 0.87, 0.5, 0.12)
+static var SUCCESS := Color("#2DD4BF")
+static var SUCCESS_DARK := Color("#14B8A6")
+static var SUCCESS_LIGHT := Color("#99F6E4")
+static var SUCCESS_SOFT := Color(0.176, 0.831, 0.749, 0.12)
 
-static var WARNING := Color("#FB923C")
-static var WARNING_DARK := Color("#EA580C")
-static var WARNING_LIGHT := Color("#FCA370")
-static var WARNING_SOFT := Color(0.98, 0.57, 0.24, 0.12)
+static var WARNING := Color("#F59E0B")
+static var WARNING_DARK := Color("#D97706")
+static var WARNING_LIGHT := Color("#FCD34D")
+static var WARNING_SOFT := Color(0.96, 0.62, 0.04, 0.12)
 
-static var DANGER := Color("#F87171")
-static var DANGER_DARK := Color("#EF4444")
-static var DANGER_LIGHT := Color("#FCA5A5")
-static var DANGER_SOFT := Color(0.97, 0.44, 0.44, 0.12)
+static var DANGER := Color("#F43F5E")
+static var DANGER_DARK := Color("#E11D48")
+static var DANGER_LIGHT := Color("#FB7185")
+static var DANGER_SOFT := Color(0.957, 0.247, 0.369, 0.12)
 
-static var INFO := Color("#60A5FA")
-static var INFO_DARK := Color("#3B82F6")
-static var INFO_LIGHT := Color("#93C5FD")
-static var INFO_SOFT := Color(0.38, 0.65, 0.98, 0.12)
+static var INFO := Color("#0EA5E9")
+static var INFO_DARK := Color("#0284C7")
+static var INFO_LIGHT := Color("#7DD3FC")
+static var INFO_SOFT := Color(0.05, 0.65, 0.91, 0.12)
 
 # =============================================
 # TEXT COLORS
 # =============================================
-static var TEXT_PRIMARY := Color("#E8E9F3")
-static var TEXT_SECONDARY := Color("#8B90A7")
-static var TEXT_MUTED := Color("#555A72")
-static var TEXT_INVERSE := Color("#0D0F14")
+static var TEXT_PRIMARY := Color("#F8FAFC")
+static var TEXT_SECONDARY := Color("#94A3B8")
+static var TEXT_MUTED := Color("#64748B")
+static var TEXT_INVERSE := Color("#050914")
 
 # =============================================
 # FONTS (Optional: Set these to your loaded font resources)

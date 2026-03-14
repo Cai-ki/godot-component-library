@@ -5,33 +5,34 @@ extends RefCounted
 const THEMES := [
 	{
 		"name": "Indigo",
-		"primary": Color("#6C63FF"), "accent": Color("#9B93FF"),
-		"surface": Color("#141720"), "surface2": Color("#1C1F2E"),
-		"border": Color("#2A2D3E"), "text": Color("#E8E9F3"), "muted": Color("#555A72"),
+		"primary": Color("#7C69FF"), "accent": Color("#A394FF"),
+		"surface": Color("#12141C"), "surface2": Color("#1A1D27"),
+		"border": Color("#1E2235"), "text": Color("#F8FAFC"), "muted": Color("#94A3B8"),
 	},
 	{
 		"name": "Ocean",
-		"primary": Color("#0EA5E9"), "accent": Color("#38BDF8"),
-		"surface": Color("#0C1929"), "surface2": Color("#132840"),
-		"border": Color("#1E3A5F"), "text": Color("#E0F2FE"), "muted": Color("#4B7399"),
+		"primary": Color("#38BDF8"), "accent": Color("#7DD3FC"),
+		"surface": Color("#020617"), "surface2": Color("#0F172A"),
+		"border": Color("#1E293B"), "text": Color("#F1F5F9"), "muted": Color("#64748B"),
 	},
 	{
-		"name": "Emerald",
-		"primary": Color("#10B981"), "accent": Color("#34D399"),
-		"surface": Color("#0D1F17"), "surface2": Color("#142E22"),
-		"border": Color("#1A4034"), "text": Color("#D1FAE5"), "muted": Color("#3D7A5F"),
+		"name": "Slate",
+		"primary": Color("#38BDF8"), "accent": Color("#7DD3FC"),
+		"surface": Color("#0F172A"), "surface2": Color("#1E293B"),
+		"border": Color("#1E293B"), "text": Color("#F1F5F9"), "muted": Color("#94A3B8"),
 	},
 	{
-		"name": "Sunset",
-		"primary": Color("#F59E0B"), "accent": Color("#F97316"),
-		"surface": Color("#1F1510"), "surface2": Color("#2D1F14"),
-		"border": Color("#4A3320"), "text": Color("#FEF3C7"), "muted": Color("#8B6B3D"),
+		"name": "Stone",
+		"primary": Color("#A8A29E"), "accent": Color("#D6D3D1"),
+		"surface": Color("#0C0A09"), "surface2": Color("#1C1917"),
+		"border": Color("#1C1917"), "text": Color("#FAFAF9"), "muted": Color("#57534E"),
 	},
+
 	{
-		"name": "Rose",
-		"primary": Color("#F43F5E"), "accent": Color("#FB7185"),
-		"surface": Color("#1F1018"), "surface2": Color("#2E1826"),
-		"border": Color("#4A2038"), "text": Color("#FFE4E6"), "muted": Color("#8B4060"),
+		"name": "Amber",
+		"primary": Color("#F59E0B"), "accent": Color("#FCD34D"),
+		"surface": Color("#1C1917"), "surface2": Color("#292524"),
+		"border": Color("#44403C"), "text": Color("#FAFAF9"), "muted": Color("#A8A29E"),
 	},
 ]
 

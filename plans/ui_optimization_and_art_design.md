@@ -3,7 +3,7 @@
 这是一份关于当前拥有40余个基础组件（如Button, Modal, Input等）的Godot UI库的视觉与交互升级计划草案。我们可以在此基础上逐步完善这些细节。
 
 ## 1. 整体设计系统规范 (Design System)
-*   **统一色彩管理 (Color Palette)**：定义主色(Primary)、辅色(Secondary)以及功能色(Success, Warning, Error, Info)。必须支持**亮/暗主题 (Light/Dark Mode) 无缝切换**。暗色模式建议采用深灰底色(如 `#121212`)而非纯黑，降低视觉疲劳。
+*   **✅ 统一色彩管理 (Color Palette)**：定义了主色(Primary)、辅色(Secondary)以及功能色(Success, Warning, Error, Info)。已优化为更现代、更具“高级感”的配色方案。支持**亮/暗主题 (Light/Dark Mode) 无缝切换**。暗色模式采用深蓝黑底色(`#0B0C10`)，提升了视觉对比度与深度感。
 *   **现代排版 (Typography)**：统一组件内的字体族 (Font Family)、字号阶梯式缩放和字重 (Weights)。建议默认打包一种现代无衬线字体（如 Inter, Roboto 或 霞鹜文楷/思源黑体等开源字体）。
 *   **圆角与几何 (Shapes & Radiuses)**：从老派的直角风格转换为带有物理隐喻的圆角边缘 (如 4px, 6px, 8px)。保持大组件（Card、Modal）圆角大，内部小组件（Button、Tag）圆角小，遵循内嵌视觉规则。
 
