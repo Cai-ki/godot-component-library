@@ -809,3 +809,173 @@ palette.add_command("Settings", "Open settings", "⚙", "Navigation")
 parent.add_child(palette)
 palette.command_selected.connect(func(id): _handle_command(id))
 ```
+
+---
+
+## 新增组件 API（7 个，Direction 2）
+
+### UINumberInput `extends VBoxContainer`
+
+```gdscript
+signal value_changed(new_value: float)
+
+@export var label_text: String
+@export var value: float = 0.0      # 自动 clamp + snap
+@export var min_value: float = 0.0
+@export var max_value: float = 100.0
+@export var step: float = 1.0       # 0.0 = 连续；< 1.0 = 小数显示
+@export var prefix: String = ""     # 如 "¥"
+@export var suffix: String = ""     # 如 "%"
+@export var disabled: bool
+@export var input_width: float = 80.0
+
+func set_value_no_signal(v: float) -> void
+
+# 长按按钮：初始延迟 0.4s，之后每 0.08s 重复一次
+# 直接键盘输入，Enter 或失焦提交，非法字符恢复上一个值
+```
+
+### UITextArea `extends VBoxContainer`
+
+```gdscript
+signal text_changed(new_text: String)
+
+enum State { DEFAULT, SUCCESS, ERROR, WARNING }
+
+@export var label_text: String
+@export var placeholder: String
+@export var hint_text: String         # 颜色跟随 validation_state
+@export var max_length: int = 0       # 0 = 不限制
+@export var show_counter: bool = false
+@export var min_lines: int = 4
+@export var readonly: bool
+@export var disabled: bool
+@export var validation_state: State
+
+var text: String   # get/set 代理到内部 TextEdit
+
+func clear() -> void
+func grab_focus_input() -> void
+
+# ⚠️ 属性在 add_child 后赋值（_ready 依赖）
+```
+
+### UISegmentedControl `extends PanelContainer`
+
+```gdscript
+signal selection_changed(index: int)
+
+enum Size { SM, MD, LG }
+
+@export var items: PackedStringArray
+@export var selected_index: int = 0
+@export var control_size: Size = Size.MD
+@export var disabled: bool
+@export var full_width: bool = false   # false = SIZE_SHRINK_BEGIN（收缩到内容宽）
+
+func get_selected_text() -> String
+
+# Indicator 通过 _draw() 绘制在 PanelContainer 上，0.2s CUBIC 滑动动画
+# ⚠️ 非 full_width 模式自动 SIZE_SHRINK_BEGIN，避免撑满父容器
+```
+
+### UIRating `extends Control`
+
+```gdscript
+signal rating_changed(new_value: float)
+
+enum Size { SM, MD, LG, XL }
+
+@export var value: float = 0.0        # [0, max_stars]
+@export var max_stars: int = 5
+@export var star_size: Size = Size.MD
+@export var half_stars: bool = true   # 支持 0.5 步长
+@export var readonly: bool
+@export var accent_color: Color       # 默认 WARNING 橙色
+@export var show_value_label: bool    # 右侧显示数值
+
+# extends Control + _draw()，悬停预览效果，custom_minimum_size 自动计算
+```
+
+### UIDropdown `extends Node`
+
+```gdscript
+signal item_selected(id: String)
+
+func add_item(label: String, icon: String = "", callback: Callable = Callable(),
+    destructive: bool = false, group: String = "") -> String   # 返回 item_id
+
+func add_separator() -> void
+func clear_items() -> void
+func attach(target: Control) -> void   # 点击 target 自动 toggle
+func toggle() -> void
+func show_dropdown() -> void
+func hide_dropdown() -> void
+
+# Overlay：CanvasLayer(107) _UIDropdownLayer
+# group 非空时自动显示分组标题；destructive=true 时红色
+# 点击外部自动关闭，淡入动画
+
+# 用法：
+var dd := UIDropdown.new()
+dd.add_item("Edit", "✎")
+dd.add_item("Delete", "✕", Callable(), true)
+dd.attach(my_button)
+parent.add_child(dd)
+```
+
+### UIPopover `extends Node`
+
+```gdscript
+signal opened
+signal closed
+
+enum Position { AUTO, BELOW, ABOVE, LEFT, RIGHT }
+
+@export var position_mode: Position = Position.AUTO
+@export var popover_width: float = 260.0
+
+## 回调函数，打开时接收 body VBoxContainer，向其中添加任意内容
+var content_builder: Callable   # func(body: VBoxContainer) -> void
+
+func attach(target: Control) -> void
+func toggle() -> void
+func show_popover() -> void
+func hide_popover() -> void
+func get_body() -> VBoxContainer   # show_popover() 后有效
+
+# Overlay：CanvasLayer(108) _UIPopoverLayer
+# AUTO 模式优先显示在 target 下方，空间不足时显示上方
+# 点击外部自动关闭，淡入淡出动画
+
+# 用法：
+var pop := UIPopover.new()
+pop.attach(info_btn)
+pop.content_builder = func(body: VBoxContainer):
+    body.add_child(UI.label("Hello!", UITheme.FONT_MD, UITheme.TEXT_PRIMARY))
+parent.add_child(pop)
+```
+
+### UICarousel `extends VBoxContainer`
+
+```gdscript
+signal slide_changed(index: int)
+
+@export var show_arrows: bool = true
+@export var show_indicators: bool = true
+@export var auto_play: bool = false
+@export var interval: float = 4.0      # 自动播放间隔（秒）
+@export var loop: bool = true
+@export var slide_height: float = 200.0
+
+func add_slide(content: Control) -> void
+func go_to(index: int) -> void
+func next_slide() -> void
+func prev_slide() -> void
+func get_current_index() -> int
+func get_slide_count() -> int
+
+# 布局：HBoxContainer [◂] [PanelContainer(frame)] [▸]，箭头在外不受 slide 影响
+# 过渡：淡入淡出 + 轻微视差（15% 位移），无裁剪问题
+# 底部圆点可点击跳转，auto_play 切换后重置计时器
+```

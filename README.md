@@ -1,12 +1,12 @@
 # Godot UI Component Library
 
-A production-ready UI component library for **Godot 4.6**, featuring **36 styled components**, **20 interactive showcase pages**, and **3 real-world scene demos** (Login, Dashboard, Settings). Built with the **Dark Indigo** design system — all styling is done purely in GDScript code, no `.tres` theme files. Supports runtime **theme switching** (Dark Indigo / Light / Midnight).
+A production-ready UI component library for **Godot 4.6**, featuring **43 styled components**, **20 interactive showcase pages**, and **3 real-world scene demos** (Login, Dashboard, Settings). Built with the **Dark Indigo** design system — all styling is done purely in GDScript code, no `.tres` theme files. Supports runtime **theme switching** (Dark Indigo / Light / Midnight).
 
 > Goal: Push Godot's native UI as close to HTML/CSS design quality as possible.
 
 ## Features
 
-- **36 Standalone Components** — Copy any component folder + `theme.gd` to your project
+- **43 Standalone Components** — Copy any component folder + `theme.gd` to your project
 - **Pure Code Styling** — Every `StyleBoxFlat`, color, and shadow is set via GDScript
 - **Dark Indigo Design System** — 5 surface layers, 6 status colors with 4 variants each
 - **Runtime Theme Switching** — Dark Indigo / Light / Midnight, instant full-page rebuild
@@ -55,14 +55,21 @@ A production-ready UI component library for **Godot 4.6**, featuring **36 styled
 | Color Picker | `UIColorPicker` | VBoxContainer | Swatch grid + hex input color selector |
 | Date Picker | `UIDatePicker` | VBoxContainer | Calendar overlay date selector (CanvasLayer 105) |
 | Command Palette | `UICommandPalette` | Node | Ctrl+K global search overlay (CanvasLayer 106) |
+| Number Input | `UINumberInput` | VBoxContainer | +/- stepper with long-press repeat, prefix/suffix |
+| Textarea | `UITextArea` | VBoxContainer | Multi-line input with counter, validation, readonly |
+| Segmented Control | `UISegmentedControl` | PanelContainer | Single-select button group with slide indicator |
+| Rating | `UIRating` | Control | Star rating with half-star and hover preview |
+| Dropdown | `UIDropdown` | Node | Click-triggered menu with groups/separators (CanvasLayer 107) |
+| Popover | `UIPopover` | Node | Click-triggered floating panel with any content (CanvasLayer 108) |
+| Carousel | `UICarousel` | VBoxContainer | Content slider with arrows, dots, and auto-play |
 
 ## Showcase Pages
 
 **Overview** — Landing page with stats, category browser, and quick start guide
 
-**Components** — Buttons, Cards, Form Inputs (with Radio & custom Slider), Badges & Tags, Alerts, Progress
+**Components** — Buttons, Cards, Form Inputs (Text/Textarea/Number/Segmented/Rating/Radio/Slider/Select), Badges & Tags, Alerts, Progress
 
-**Interactive** — Navigation (Tabs/Accordion), Data & Display (Table with filter/sort, Avatar, Divider, Tag, Skeleton, Context Menu), Modals (Modal, Drawer, Toast), Form Validation
+**Interactive** — Navigation (Tabs/Accordion/Dropdown/Popover), Data & Display (Table with filter/sort, Avatar, Divider, Tag, Skeleton, Context Menu, Carousel), Modals (Modal, Drawer, Toast), Form Validation
 
 **Design** — Color Themes (5 palettes + 5 material styles + live token swatch), Shapes, Layouts, Animations
 
@@ -135,7 +142,7 @@ mcp__godot__run_project(projectPath="path/to/component_library")
 
 ## Roadmap
 
-### Direction 1 — Missing Common Components ✅ Completed
+### Direction 1 — Extended Components ✅ Completed
 
 | Component | Class | Status |
 |-----------|-------|--------|
@@ -148,34 +155,44 @@ mcp__godot__run_project(projectPath="path/to/component_library")
 | Date Picker | `UIDatePicker` | ✅ Done |
 | Command Palette | `UICommandPalette` | ✅ Done |
 
-### Direction 2 — Enhance Existing Components
+### Direction 2 — Missing Base Components ✅ Completed
 
-| Component | Improvement |
+| Component | Class | Status |
+|-----------|-------|--------|
+| Number Input | `UINumberInput` | ✅ Done |
+| Textarea | `UITextArea` | ✅ Done |
+| Segmented Control | `UISegmentedControl` | ✅ Done |
+| Rating | `UIRating` | ✅ Done |
+| Dropdown | `UIDropdown` | ✅ Done |
+| Popover | `UIPopover` | ✅ Done |
+| Carousel | `UICarousel` | ✅ Done |
+
+### Direction 3 — Data Visualization
+
+| Component | Description |
 |-----------|-------------|
-| `UITable` | Virtual scroll for large datasets, column resize, multi-row select |
-| `UIInput` | Textarea (multiline) mode, character counter, prefix/suffix icon |
-| `UIButton` | Icon + text combo, icon-only circular variant |
-| `UISelect` | Multi-select mode, search/filter inside dropdown |
-| `UIModal` | Size variants (sm / md / lg / fullscreen) |
+| `UIChart` | Bar / Line / Pie charts via `_draw()` |
+| `UIStatCard` | KPI card with value, trend arrow, sparkline |
+| `UICalendar` | Full month-view calendar component |
+| `UIVirtualList` | Performance-optimized list for large datasets |
 
-### Direction 3 — New Demo Scenes
+### Direction 4 — New Demo Scenes
 
 | Scene | Description |
 |-------|-------------|
 | Chat UI | Message bubbles, input bar, contact list |
 | E-commerce | Product cards, cart panel, pricing tags |
-| Kanban Board | Column + card layout, drag simulation |
-| Analytics | Complex chart mockups, KPI card grid |
-| File Manager | List/grid view toggle, breadcrumb navigation |
+| Kanban Board | Column + card layout |
+| File Manager | Tree view + breadcrumb + context menu |
+| Dashboard Pro | Advanced metrics with charts and timeline |
 
-### Direction 4 — Engineering Quality
+### Direction 5 — Infrastructure
 
 | Area | Task |
 |------|------|
-| Accessibility | Keyboard navigation, consistent `focus_mode` |
-| Godot AddOn | Package as `addons/ui_components/` plugin structure |
-| Light theme polish | Improve contrast ratios for all components in Light mode |
-| Performance | Lazy-build Overview page to reduce first-frame load |
+| Animation System | Unified `UIAnimation` utility class |
+| Responsive Layout | Breakpoint system + collapsible sidebar |
+| Theme Editor | Runtime color customizer using `UIColorPicker` |
 
 ## License
 

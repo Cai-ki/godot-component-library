@@ -1,4 +1,18 @@
-# Direction 2: 缺失的基础组件
+# Direction 2: 缺失的基础组件 ✅ 已交付
+
+> **交付日期**: 2026-03-14 | **新增组件**: 7 个 | **累计组件数**: 43
+
+## 交付清单
+
+| 组件 | 状态 | Demo 位置 |
+|------|------|----------|
+| UINumberInput | ✅ | Form Inputs |
+| UITextArea | ✅ | Form Inputs |
+| UISegmentedControl | ✅ | Form Inputs |
+| UIRating | ✅ | Form Inputs |
+| UIDropdown | ✅ | Navigation |
+| UIPopover | ✅ | Navigation |
+| UICarousel | ✅ | Data & Display |
 
 ## 目标
 
