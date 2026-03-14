@@ -2,6 +2,12 @@
 **extends:** Button
 **Usage:** Copy `ui_button.gd` + `../../scripts/theme.gd` to your project.
 
+**Features:**
+- Modern micro-interactions (Cubic tween scaling on hover and press)
+- Multiple variants & color schemes
+- Pill shapes and configurable sizes
+- Built-in loading states
+
 ```gdscript
 var btn := UIButton.new()
 btn.text = "Click Me"

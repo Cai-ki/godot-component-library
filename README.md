@@ -13,6 +13,7 @@ A production-ready UI component library for **Godot 4.6**, featuring **43 styled
 - **Interactive Showcase** — 20 pages demonstrating every component with live demos
 - **Real-World Scenes** — Login form, admin dashboard, and settings page built entirely from library components
 - **Overlay System** — Toast, Tooltip, Context Menu, Select, and Drawer use layered `CanvasLayer` architecture
+- **Built-in Micro-Interactions** — Smooth cubic tween scaling for hover and press states
 - **Zero Dependencies** — Components only depend on `UITheme`, not on each other
 
 ## Components

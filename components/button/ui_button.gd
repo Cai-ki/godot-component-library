@@ -24,10 +24,17 @@ enum Size { XS, SM, MD, LG, XL }
 	set(v): is_loading = v; if is_inside_tree(): _apply_loading()
 
 var _saved_text: String = ""
+var _tween: Tween
 
 func _ready() -> void:
 	focus_mode = Control.FOCUS_NONE
 	_apply_styles()
+	
+	connect("mouse_entered", _on_hover_in)
+	connect("mouse_exited", _on_hover_out)
+	connect("button_down", _on_press_down)
+	connect("button_up", _on_press_up)
+	connect("resized", _on_resized)
 
 # ── Public API ────────────────────────────────────
 func set_loading(v: bool) -> void:
@@ -75,8 +82,8 @@ func _make_s(bg: Color, bw: int = 0, bc: Color = Color.TRANSPARENT,
 		s.border_color = bc
 	if shadow > 0:
 		s.shadow_size = shadow
-		s.shadow_color = Color(0, 0, 0, 0.22)
-		s.shadow_offset = Vector2(0, shadow * 0.4)
+		s.shadow_color = Color(0, 0, 0, 0.15)
+		s.shadow_offset = Vector2(0, shadow * 0.6)
 	return s
 
 func _apply_styles() -> void:
@@ -134,3 +141,34 @@ func _apply_loading() -> void:
 			text = _saved_text
 			_saved_text = ""
 		disabled = false
+
+# ── Micro-Interactions ────────────────────────────
+func _on_resized() -> void:
+	pass
+
+func _animate_scale(target: Vector2, duration: float = 0.15) -> void:
+	pivot_offset = (size / 2.0).round()
+	if _tween and _tween.is_valid():
+		_tween.kill()
+	_tween = create_tween()
+	_tween.set_trans(Tween.TRANS_CUBIC)
+	_tween.set_ease(Tween.EASE_OUT)
+	_tween.tween_property(self, "scale", target, duration)
+
+func _on_hover_in() -> void:
+	if disabled or is_loading: return
+	_animate_scale(Vector2(1.015, 1.015), 0.45)
+
+func _on_hover_out() -> void:
+	if disabled or is_loading: return
+	_animate_scale(Vector2(1.0, 1.0), 0.45)
+
+func _on_press_down() -> void:
+	if disabled or is_loading: return
+	_animate_scale(Vector2(0.97, 0.97), 0.1)
+
+func _on_press_up() -> void:
+	if disabled or is_loading: return
+	var target = Vector2(1.015, 1.015) if is_hovered() else Vector2(1.0, 1.0)
+	_animate_scale(target, 0.25)
+

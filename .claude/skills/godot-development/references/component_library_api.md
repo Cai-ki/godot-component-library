@@ -188,6 +188,10 @@ enum Size        { XS, SM, MD, LG, XL }
 @export var is_loading: bool   # setter: 禁用按钮并在文字前加 ⟳
 
 func set_loading(v: bool) -> void
+
+> **微交互增强 (Micro-Interactions)**
+> 按钮默认内置悬停和按压的弹性缩放动画。
+> 内部实现使用了 `TRANS_CUBIC` 缓动，并在 `_animate_scale` 时强制 `pivot_offset = (size / 2.0).round()`，避免因为浮点数造成的亚像素抖动（Subpixel Snapping）。在复写或修改时，务必保留 `has_meta("scale_tween")` 的动画拦截机制。
 ```
 
 ### UICard `extends PanelContainer`

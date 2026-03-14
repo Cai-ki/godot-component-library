@@ -11,7 +11,7 @@ var _sidebar_node: PanelContainer
 
 func _ready() -> void:
 	_build_shell()
-	_navigate_to("home")
+	_navigate_to("buttons")
 
 
 # =============================================

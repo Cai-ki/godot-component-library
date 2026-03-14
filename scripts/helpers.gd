@@ -40,6 +40,36 @@ static func style(
 		s.content_margin_bottom = py
 	return s
 
+static func _animate_scale(btn: Button, target: Vector2, duration: float) -> void:
+	btn.pivot_offset = (btn.size / 2.0).round()
+	if btn.has_meta("scale_tween"):
+		var old_t: Tween = btn.get_meta("scale_tween")
+		if old_t and old_t.is_valid():
+			old_t.kill()
+	var t := btn.create_tween()
+	btn.set_meta("scale_tween", t)
+	t.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	t.tween_property(btn, "scale", target, duration)
+
+static func _add_micro_interactions(btn: Button) -> void:
+	btn.mouse_entered.connect(func():
+		if btn.disabled: return
+		_animate_scale(btn, Vector2(1.015, 1.015), 0.45)
+	)
+	btn.mouse_exited.connect(func():
+		if btn.disabled: return
+		_animate_scale(btn, Vector2(1.0, 1.0), 0.45)
+	)
+	btn.button_down.connect(func():
+		if btn.disabled: return
+		_animate_scale(btn, Vector2(0.97, 0.97), 0.1)
+	)
+	btn.button_up.connect(func():
+		if btn.disabled: return
+		var target := Vector2(1.015, 1.015) if btn.is_hovered() else Vector2(1.0, 1.0)
+		_animate_scale(btn, target, 0.25)
+	)
+
 static func style_left_border(
 	bg: Color,
 	border_color: Color,
@@ -69,8 +99,8 @@ static func solid_btn(
 	btn.text = text
 	btn.focus_mode = Control.FOCUS_NONE
 
-	var n := style(color, radius, 0, Color.TRANSPARENT, 4, Color(0, 0, 0, 0.25), Vector2(0, 2), px, py)
-	var h := style(color.lightened(0.15), radius, 0, Color.TRANSPARENT, 8, Color(0, 0, 0, 0.3), Vector2(0, 3), px, py)
+	var n := style(color, radius, 0, Color.TRANSPARENT, 4, Color(0, 0, 0, 0.15), Vector2(0, 4), px, py)
+	var h := style(color.lightened(0.15), radius, 0, Color.TRANSPARENT, 8, Color(0, 0, 0, 0.2), Vector2(0, 6), px, py)
 	var p := style(color.darkened(0.15), radius, 0, Color.TRANSPARENT, 0, Color.TRANSPARENT, Vector2.ZERO, px, py)
 	var d := style(UITheme.SURFACE_3, radius, 0, Color.TRANSPARENT, 0, Color.TRANSPARENT, Vector2.ZERO, px, py)
 
@@ -85,6 +115,7 @@ static func solid_btn(
 	btn.add_theme_color_override("font_disabled_color", UITheme.TEXT_MUTED)
 	btn.add_theme_font_size_override("font_size", font_size)
 
+	_add_micro_interactions(btn)
 	parent.add_child(btn)
 	return btn
 
@@ -118,6 +149,7 @@ static func outline_btn(
 	btn.add_theme_color_override("font_pressed_color", color)
 	btn.add_theme_font_size_override("font_size", font_size)
 
+	_add_micro_interactions(btn)
 	parent.add_child(btn)
 	return btn
 
@@ -151,6 +183,7 @@ static func soft_btn(
 	btn.add_theme_color_override("font_pressed_color", color)
 	btn.add_theme_font_size_override("font_size", font_size)
 
+	_add_micro_interactions(btn)
 	parent.add_child(btn)
 	return btn
 
@@ -184,6 +217,7 @@ static func ghost_btn(
 	btn.add_theme_color_override("font_pressed_color", color)
 	btn.add_theme_font_size_override("font_size", font_size)
 
+	_add_micro_interactions(btn)
 	parent.add_child(btn)
 	return btn
 

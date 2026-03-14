@@ -127,6 +127,10 @@ btn.add_theme_stylebox_override("pressed", pressed_style)
 # Hover 效果(非按钮): mouse_entered/mouse_exited 信号
 panel.mouse_entered.connect(func(): panel.add_theme_stylebox_override("panel", hover_s))
 panel.mouse_exited.connect(func():  panel.add_theme_stylebox_override("panel", normal_s))
+
+# 微交互 (Micro-Interactions):
+# Button相关组件内置了针对悬停和点击的 Scale Tween 动画(如放大到 1.015)。
+# ⚠️ 关键防抖规范：对UI对象（含文本）做 scale 动画前，务必调用 `pivot_offset = (size / 2.0).round()` 进行整数定位（防止亚像素抖动），并使用 `get_meta/set_meta` 在创建新 Tween 前必须杀除(kill) 同属性的旧 Tween。
 ```
 
 ## Conventions
