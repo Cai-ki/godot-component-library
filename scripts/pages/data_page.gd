@@ -12,6 +12,7 @@ func build(parent: Control) -> void:
 	_avatar_section(parent)
 	_divider_section(parent)
 	_tag_section(parent)
+	_carousel_section(parent)
 	_skeleton_section(parent)
 
 
@@ -221,6 +222,92 @@ func _tag_section(parent: Control) -> void:
 		tag.removable = false; tag.pill_shape = true
 		pill_row.add_child(tag)
 	UI.h_expand(pill_row)
+
+
+# =============================================
+# CAROUSEL
+# =============================================
+
+func _carousel_section(parent: Control) -> void:
+	UI.section(parent, "Carousel  (UICarousel)")
+	var card_v := UI.card(parent, 24, 20)
+
+	# Build sample slides
+	var carousel := UICarousel.new()
+	carousel.slide_height = 220.0
+	card_v.add_child(carousel)
+
+	var colors := [UITheme.PRIMARY_SOFT, UITheme.SUCCESS_SOFT, UITheme.WARNING_SOFT, UITheme.DANGER_SOFT]
+	var titles := ["Welcome to the Carousel", "Slide with Components", "Design System", "Get Started"]
+	var descs := [
+		"Swipe through slides with smooth animations.",
+		"Each slide can contain any Godot Control.",
+		"Dark Indigo design system with 3 theme presets.",
+		"Copy components/ + scripts/theme.gd to use.",
+	]
+
+	for i in range(4):
+		var slide := PanelContainer.new()
+		var ss := StyleBoxFlat.new()
+		ss.bg_color = colors[i]
+		ss.content_margin_left = 40; ss.content_margin_right = 40
+		ss.content_margin_top = 30; ss.content_margin_bottom = 30
+		slide.add_theme_stylebox_override("panel", ss)
+
+		var sv := VBoxContainer.new()
+		sv.add_theme_constant_override("separation", 12)
+		sv.alignment = BoxContainer.ALIGNMENT_CENTER
+		sv.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		slide.add_child(sv)
+
+		var t := Label.new()
+		t.text = titles[i]
+		t.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		t.add_theme_font_size_override("font_size", UITheme.FONT_2XL)
+		t.add_theme_color_override("font_color", UITheme.TEXT_PRIMARY)
+		t.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		sv.add_child(t)
+
+		var d := Label.new()
+		d.text = descs[i]
+		d.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		d.add_theme_font_size_override("font_size", UITheme.FONT_MD)
+		d.add_theme_color_override("font_color", UITheme.TEXT_SECONDARY)
+		d.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		sv.add_child(d)
+
+		carousel.add_slide(slide)
+
+	UI.spacer(card_v, 8)
+
+	# Auto-play variant
+	card_v.add_child(UI.label("Auto-play (4s interval)", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var carousel2 := UICarousel.new()
+	carousel2.slide_height = 140.0
+	carousel2.auto_play = true
+	carousel2.interval = 4.0
+	card_v.add_child(carousel2)
+
+	var auto_colors := [UITheme.SECONDARY_SOFT, UITheme.INFO_SOFT, UITheme.PRIMARY_SOFT]
+	var auto_labels := ["Auto Slide 1", "Auto Slide 2", "Auto Slide 3"]
+	for i in range(3):
+		var slide := PanelContainer.new()
+		var ss := StyleBoxFlat.new()
+		ss.bg_color = auto_colors[i]
+		ss.content_margin_left = 20; ss.content_margin_right = 20
+		ss.content_margin_top = 20; ss.content_margin_bottom = 20
+		slide.add_theme_stylebox_override("panel", ss)
+
+		var lbl := Label.new()
+		lbl.text = auto_labels[i]
+		lbl.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
+		lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
+		lbl.add_theme_font_size_override("font_size", UITheme.FONT_XL)
+		lbl.add_theme_color_override("font_color", UITheme.TEXT_PRIMARY)
+		lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+		slide.add_child(lbl)
+
+		carousel2.add_slide(slide)
 
 
 # =============================================

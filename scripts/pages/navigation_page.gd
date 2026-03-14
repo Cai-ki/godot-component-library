@@ -7,6 +7,8 @@ func build(parent: Control) -> void:
 		"UITabs and UIAccordion — modular navigation components ready to drop into any project.")
 
 	_tabs_section(parent)
+	_dropdown_section(parent)
+	_popover_section(parent)
 	_accordion_section(parent)
 
 
@@ -157,6 +159,191 @@ func _tab_team() -> Control:
 
 func _tab_settings() -> Control:
 	return _tab_content("Settings panel — configure component defaults, theme colors, and export options.")
+
+
+# =============================================
+# DROPDOWN
+# =============================================
+
+func _dropdown_section(parent: Control) -> void:
+	UI.section(parent, "Dropdown Menu  (UIDropdown)")
+	var card_v := UI.card(parent, 24, 20)
+
+	var row := UI.hbox(card_v, 16)
+
+	# Basic dropdown
+	var col1 := UI.vbox(row, 6)
+	col1.add_child(UI.label("Basic", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var btn1 := UIButton.new()
+	btn1.text = "Actions  ▾"
+	btn1.variant = UIButton.Variant.OUTLINE
+	btn1.color_scheme = UIButton.ColorScheme.PRIMARY
+	col1.add_child(btn1)
+
+	var dd1 := UIDropdown.new()
+	dd1.add_item("Edit", "✎")
+	dd1.add_item("Duplicate", "◈")
+	dd1.add_item("Archive", "▫")
+	dd1.add_separator()
+	dd1.add_item("Delete", "✕", Callable(), true)
+	dd1.attach(btn1)
+	col1.add_child(dd1)
+
+	# With icons and groups
+	var col2 := UI.vbox(row, 6)
+	col2.add_child(UI.label("Grouped", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var btn2 := UIButton.new()
+	btn2.text = "Navigate  ▾"
+	btn2.variant = UIButton.Variant.SOLID
+	btn2.color_scheme = UIButton.ColorScheme.SECONDARY
+	col2.add_child(btn2)
+
+	var dd2 := UIDropdown.new()
+	dd2.add_item("Dashboard", "📊", Callable(), false, "Pages")
+	dd2.add_item("Settings", "⚙", Callable(), false, "Pages")
+	dd2.add_item("Profile", "👤", Callable(), false, "Pages")
+	dd2.add_item("Documentation", "📖", Callable(), false, "Resources")
+	dd2.add_item("API Reference", "🔗", Callable(), false, "Resources")
+	dd2.attach(btn2)
+	col2.add_child(dd2)
+
+	# With feedback
+	var col3 := UI.vbox(row, 6)
+	col3.add_child(UI.label("With Feedback", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var btn3 := UIButton.new()
+	btn3.text = "Sort By  ▾"
+	btn3.variant = UIButton.Variant.OUTLINE
+	btn3.color_scheme = UIButton.ColorScheme.NEUTRAL
+	col3.add_child(btn3)
+
+	var toast := UIToast.new()
+	col3.add_child(toast)
+
+	var dd3 := UIDropdown.new()
+	dd3.add_item("Name (A-Z)", "↑")
+	dd3.add_item("Name (Z-A)", "↓")
+	dd3.add_item("Date Created", "📅")
+	dd3.add_item("Last Modified", "🕐")
+	dd3.add_item("File Size", "📦")
+	dd3.attach(btn3)
+	col3.add_child(dd3)
+
+	dd3.item_selected.connect(func(id: String):
+		var idx: int = id.split("_")[1].to_int()
+		var names := ["Name (A-Z)", "Name (Z-A)", "Date Created", "Last Modified", "File Size"]
+		if idx >= 0 and idx < names.size():
+			toast.show_toast("Sorted by: %s" % names[idx], UIToast.ToastType.INFO)
+	)
+
+	UI.h_expand(row)
+
+
+# =============================================
+# POPOVER
+# =============================================
+
+func _popover_section(parent: Control) -> void:
+	UI.section(parent, "Popover  (UIPopover)")
+	var card_v := UI.card(parent, 24, 20)
+
+	var row := UI.hbox(card_v, 16)
+
+	# 1. Info popover
+	var col1 := UI.vbox(row, 6)
+	col1.add_child(UI.label("Info Content", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var btn1 := UIButton.new()
+	btn1.text = "User Info"
+	btn1.variant = UIButton.Variant.OUTLINE
+	btn1.color_scheme = UIButton.ColorScheme.PRIMARY
+	col1.add_child(btn1)
+
+	var pop1 := UIPopover.new()
+	pop1.attach(btn1)
+	pop1.content_builder = func(body: VBoxContainer):
+		var header := UI.hbox(body, 10)
+		var av := UIAvatar.new()
+		av.initials = "JD"
+		av.bg_color = UITheme.PRIMARY
+		av.avatar_size = UIAvatar.AvatarSize.MD
+		av.status = UIAvatar.StatusType.ONLINE
+		header.add_child(av)
+		var info := UI.vbox(header, 2)
+		info.add_child(UI.label("John Doe", UITheme.FONT_BASE, UITheme.TEXT_PRIMARY))
+		info.add_child(UI.label("john@example.com", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+		body.add_child(UI.label("Senior Developer at Acme Corp. Working on UI components and design systems.", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	col1.add_child(pop1)
+
+	# 2. Action popover
+	var col2 := UI.vbox(row, 6)
+	col2.add_child(UI.label("With Actions", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var btn2 := UIButton.new()
+	btn2.text = "Share"
+	btn2.variant = UIButton.Variant.SOLID
+	btn2.color_scheme = UIButton.ColorScheme.SUCCESS
+	col2.add_child(btn2)
+
+	var toast := UIToast.new()
+	col2.add_child(toast)
+
+	var pop2 := UIPopover.new()
+	pop2.attach(btn2)
+	pop2.content_builder = func(body: VBoxContainer):
+		body.add_child(UI.label("Share this page", UITheme.FONT_BASE, UITheme.TEXT_PRIMARY))
+		body.add_child(UI.label("Choose how to share:", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+		var actions := UI.vbox(body, 6)
+		for item in [["📋  Copy Link", "Link copied!"], ["📧  Email", "Email draft opened!"], ["💬  Slack", "Shared to Slack!"]]:
+			var ab := UIButton.new()
+			ab.text = item[0]
+			ab.variant = UIButton.Variant.GHOST
+			ab.color_scheme = UIButton.ColorScheme.NEUTRAL
+			actions.add_child(ab)
+			var msg: String = item[1]
+			ab.pressed.connect(func():
+				pop2.hide_popover()
+				toast.show_toast(msg, UIToast.ToastType.SUCCESS)
+			)
+	col2.add_child(pop2)
+
+	# 3. Confirmation popover
+	var col3 := UI.vbox(row, 6)
+	col3.add_child(UI.label("Confirmation", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var btn3 := UIButton.new()
+	btn3.text = "Delete Item"
+	btn3.variant = UIButton.Variant.OUTLINE
+	btn3.color_scheme = UIButton.ColorScheme.DANGER
+	col3.add_child(btn3)
+
+	var toast3 := UIToast.new()
+	col3.add_child(toast3)
+
+	var pop3 := UIPopover.new()
+	pop3.attach(btn3)
+	pop3.popover_width = 280.0
+	pop3.content_builder = func(body: VBoxContainer):
+		body.add_child(UI.label("Are you sure?", UITheme.FONT_BASE, UITheme.TEXT_PRIMARY))
+		body.add_child(UI.label("This action cannot be undone. The item will be permanently removed.", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+		var btn_row := UI.hbox(body, 8)
+		UI.h_expand(btn_row)
+		var cancel := UIButton.new()
+		cancel.text = "Cancel"
+		cancel.variant = UIButton.Variant.GHOST
+		cancel.color_scheme = UIButton.ColorScheme.NEUTRAL
+		cancel.button_size = UIButton.Size.SM
+		btn_row.add_child(cancel)
+		cancel.pressed.connect(func(): pop3.hide_popover())
+		var confirm := UIButton.new()
+		confirm.text = "Delete"
+		confirm.variant = UIButton.Variant.SOLID
+		confirm.color_scheme = UIButton.ColorScheme.DANGER
+		confirm.button_size = UIButton.Size.SM
+		btn_row.add_child(confirm)
+		confirm.pressed.connect(func():
+			pop3.hide_popover()
+			toast3.show_toast("Item deleted", UIToast.ToastType.SUCCESS)
+		)
+	col3.add_child(pop3)
+
+	UI.h_expand(row)
 
 
 # =============================================

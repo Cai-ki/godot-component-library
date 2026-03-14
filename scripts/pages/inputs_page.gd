@@ -14,6 +14,9 @@ func build(parent: Control) -> void:
 	_toggle_section(parent)
 	_radio_section(parent)
 	_slider_section(parent)
+	_number_input_section(parent)
+	_segmented_control_section(parent)
+	_rating_section(parent)
 
 
 # =============================================
@@ -109,52 +112,60 @@ func _textarea_section(parent: Control) -> void:
 	var card_v := UI.card(parent, 24, 20)
 	var row := UI.hbox(card_v, 24)
 
-	var v := UI.vbox(row, 6)
-	v.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	# Editable with counter
+	var v1 := UI.vbox(row, 0)
+	v1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var ta1 := UITextArea.new()
+	ta1.label_text = "Description"
+	ta1.placeholder = "Enter your description here..."
+	ta1.max_length = 500
+	ta1.show_counter = true
+	ta1.hint_text = "Max 500 characters"
+	v1.add_child(ta1)
 
-	v.add_child(UI.label("Description", UITheme.FONT_SM, UITheme.TEXT_PRIMARY))
-
-	var textarea := TextEdit.new()
-	textarea.placeholder_text = "Enter your description here..."
-	textarea.custom_minimum_size = Vector2(0, 120)
-	textarea.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-
-	var n := UI.style(UITheme.SURFACE_2, UITheme.RADIUS_MD, 1, UITheme.BORDER, 0, Color.TRANSPARENT, Vector2.ZERO, 12, 10)
-	var f := UI.style(UITheme.SURFACE_2, UITheme.RADIUS_MD, 2, UITheme.PRIMARY, 0, Color.TRANSPARENT, Vector2.ZERO, 12, 10)
-	textarea.add_theme_stylebox_override("normal", n)
-	textarea.add_theme_stylebox_override("focus", f)
-	textarea.add_theme_color_override("font_color", UITheme.TEXT_PRIMARY)
-	textarea.add_theme_color_override("font_placeholder_color", UITheme.TEXT_MUTED)
-	textarea.add_theme_color_override("caret_color", UITheme.PRIMARY)
-	textarea.add_theme_color_override("selection_color", UITheme.PRIMARY_SOFT)
-	textarea.add_theme_font_size_override("font_size", UITheme.FONT_MD)
-	v.add_child(textarea)
-
-	var hint_row := UI.hbox(v, 0)
-	hint_row.add_child(UI.label("Max 500 characters", UITheme.FONT_XS, UITheme.TEXT_MUTED))
-	UI.h_expand(hint_row)
-	hint_row.add_child(UI.label("0 / 500", UITheme.FONT_XS, UITheme.TEXT_MUTED))
-
-	# Right side: Read-only textarea with value
-	var v2 := UI.vbox(row, 6)
+	# Read-only with prefilled content
+	var v2 := UI.vbox(row, 0)
 	v2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	v2.add_child(UI.label("Read Only", UITheme.FONT_SM, UITheme.TEXT_MUTED))
+	var ta2 := UITextArea.new()
+	ta2.label_text = "Read Only"
+	ta2.readonly = true
+	v2.add_child(ta2)
+	ta2.text = "This is a read-only text area that displays pre-filled content. Users cannot edit this field but can still select and copy the text."
 
-	var textarea2 := TextEdit.new()
-	textarea2.text = "This is a read-only text area that displays pre-filled content. Users cannot edit this field but can still select and copy the text."
-	textarea2.editable = false
-	textarea2.custom_minimum_size = Vector2(0, 120)
-	textarea2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	textarea2.add_theme_stylebox_override("normal", UI.style(
-		UITheme.SURFACE_3, UITheme.RADIUS_MD, 1, UITheme.BORDER, 0, Color.TRANSPARENT, Vector2.ZERO, 12, 10
-	))
-	textarea2.add_theme_stylebox_override("read_only", UI.style(
-		UITheme.SURFACE_3, UITheme.RADIUS_MD, 1, UITheme.BORDER, 0, Color.TRANSPARENT, Vector2.ZERO, 12, 10
-	))
-	textarea2.add_theme_color_override("font_color", UITheme.TEXT_SECONDARY)
-	textarea2.add_theme_color_override("font_readonly_color", UITheme.TEXT_SECONDARY)
-	textarea2.add_theme_font_size_override("font_size", UITheme.FONT_MD)
-	v2.add_child(textarea2)
+	# Second row: validation states
+	var row2 := UI.hbox(card_v, 24)
+
+	var v3 := UI.vbox(row2, 0)
+	v3.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var ta3 := UITextArea.new()
+	ta3.label_text = "Bio (Success)"
+	ta3.placeholder = "Tell us about yourself..."
+	ta3.validation_state = UITextArea.State.SUCCESS
+	ta3.hint_text = "✓  Looks great!"
+	ta3.show_counter = true
+	ta3.max_length = 200
+	ta3.min_lines = 3
+	v3.add_child(ta3)
+	ta3.text = "Godot enthusiast building UI components."
+
+	var v4 := UI.vbox(row2, 0)
+	v4.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var ta4 := UITextArea.new()
+	ta4.label_text = "Notes (Error)"
+	ta4.placeholder = "Add notes..."
+	ta4.validation_state = UITextArea.State.ERROR
+	ta4.hint_text = "✕  This field is required"
+	ta4.min_lines = 3
+	v4.add_child(ta4)
+
+	var v5 := UI.vbox(row2, 0)
+	v5.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var ta5 := UITextArea.new()
+	ta5.label_text = "Disabled"
+	ta5.disabled = true
+	ta5.min_lines = 3
+	v5.add_child(ta5)
+	ta5.text = "This textarea is disabled."
 
 
 # =============================================
@@ -371,4 +382,244 @@ func _labeled_slider(parent: Control, title: String, value: float, suffix: Strin
 
 	slider.value_changed.connect(func(v: float):
 		value_label.text = str(int(v)) + suffix
+	)
+
+
+# =============================================
+# NUMBER INPUTS
+# =============================================
+
+func _number_input_section(parent: Control) -> void:
+	UI.section(parent, "Number Inputs")
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 24)
+
+	# Basic
+	var v1 := UI.vbox(row, 6)
+	v1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var ni1 := UINumberInput.new()
+	ni1.label_text = "Quantity"
+	ni1.value = 5.0
+	ni1.min_value = 0.0
+	ni1.max_value = 99.0
+	v1.add_child(ni1)
+
+	# With prefix/suffix
+	var v2 := UI.vbox(row, 6)
+	v2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var ni2 := UINumberInput.new()
+	ni2.label_text = "Price"
+	ni2.value = 29.99
+	ni2.min_value = 0.0
+	ni2.max_value = 9999.0
+	ni2.step = 0.01
+	ni2.prefix = "¥"
+	v2.add_child(ni2)
+
+	# Decimal step
+	var v3 := UI.vbox(row, 6)
+	v3.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var ni3 := UINumberInput.new()
+	ni3.label_text = "Opacity"
+	ni3.value = 0.5
+	ni3.min_value = 0.0
+	ni3.max_value = 1.0
+	ni3.step = 0.1
+	ni3.suffix = ""
+	v3.add_child(ni3)
+
+	# Disabled
+	var v4 := UI.vbox(row, 6)
+	v4.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var ni4 := UINumberInput.new()
+	ni4.label_text = "Locked"
+	ni4.value = 42.0
+	ni4.disabled = true
+	v4.add_child(ni4)
+
+
+# =============================================
+# SEGMENTED CONTROL
+# =============================================
+
+func _segmented_control_section(parent: Control) -> void:
+	UI.section(parent, "Segmented Control")
+	var card_v := UI.card(parent, 24, 20)
+
+	# Row 1: three sizes side by side, all full_width within their column
+	card_v.add_child(UI.label("Sizes", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var row1 := UI.hbox(card_v, 16)
+
+	var col1 := UI.vbox(row1, 4)
+	col1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col1.add_child(UI.label("Small", UITheme.FONT_XS, UITheme.TEXT_MUTED))
+	var seg_sm := UISegmentedControl.new()
+	seg_sm.items = PackedStringArray(["S", "M", "L", "XL"])
+	seg_sm.selected_index = 1
+	seg_sm.control_size = UISegmentedControl.Size.SM
+	seg_sm.full_width = true
+	col1.add_child(seg_sm)
+
+	var col2 := UI.vbox(row1, 4)
+	col2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col2.add_child(UI.label("Medium (default)", UITheme.FONT_XS, UITheme.TEXT_MUTED))
+	var seg_md := UISegmentedControl.new()
+	seg_md.items = PackedStringArray(["Day", "Week", "Month", "Year"])
+	seg_md.selected_index = 0
+	seg_md.full_width = true
+	col2.add_child(seg_md)
+
+	var col3 := UI.vbox(row1, 4)
+	col3.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col3.add_child(UI.label("Large", UITheme.FONT_XS, UITheme.TEXT_MUTED))
+	var seg_lg := UISegmentedControl.new()
+	seg_lg.items = PackedStringArray(["Overview", "Analytics", "Reports"])
+	seg_lg.selected_index = 2
+	seg_lg.control_size = UISegmentedControl.Size.LG
+	seg_lg.full_width = true
+	col3.add_child(seg_lg)
+
+	UI.spacer(card_v, 8)
+
+	# Row 2: full width
+	card_v.add_child(UI.label("Full Width", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var seg_full := UISegmentedControl.new()
+	seg_full.items = PackedStringArray(["All", "Active", "Completed", "Archived"])
+	seg_full.selected_index = 0
+	seg_full.full_width = true
+	card_v.add_child(seg_full)
+
+	UI.spacer(card_v, 8)
+
+	# Row 3: disabled + interactive side by side
+	var row3 := UI.hbox(card_v, 16)
+
+	var col_dis := UI.vbox(row3, 4)
+	col_dis.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col_dis.add_child(UI.label("Disabled", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var seg_dis := UISegmentedControl.new()
+	seg_dis.items = PackedStringArray(["On", "Off"])
+	seg_dis.selected_index = 0
+	seg_dis.disabled = true
+	seg_dis.full_width = true
+	col_dis.add_child(seg_dis)
+
+	var col_int := UI.vbox(row3, 4)
+	col_int.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	col_int.add_child(UI.label("Interactive", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var seg_interactive := UISegmentedControl.new()
+	seg_interactive.items = PackedStringArray(["List", "Grid", "Table"])
+	seg_interactive.selected_index = 0
+	seg_interactive.full_width = true
+	col_int.add_child(seg_interactive)
+
+	var view_label := Label.new()
+	view_label.text = "→ Currently showing: List view"
+	view_label.add_theme_font_size_override("font_size", UITheme.FONT_MD)
+	view_label.add_theme_color_override("font_color", UITheme.TEXT_SECONDARY)
+	col_int.add_child(view_label)
+
+	seg_interactive.selection_changed.connect(func(_i: int):
+		view_label.text = "→ Currently showing: %s view" % seg_interactive.get_selected_text()
+	)
+
+
+# =============================================
+# RATING
+# =============================================
+
+func _rating_section(parent: Control) -> void:
+	UI.section(parent, "Star Rating")
+	var card_v := UI.card(parent, 24, 20)
+
+	# Row 1: sizes
+	card_v.add_child(UI.label("Sizes", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var row1 := UI.hbox(card_v, 32)
+
+	var col_sm := UI.vbox(row1, 4)
+	col_sm.add_child(UI.label("Small", UITheme.FONT_XS, UITheme.TEXT_MUTED))
+	var r_sm := UIRating.new()
+	r_sm.value = 3.0
+	r_sm.star_size = UIRating.Size.SM
+	col_sm.add_child(r_sm)
+
+	var col_md := UI.vbox(row1, 4)
+	col_md.add_child(UI.label("Medium", UITheme.FONT_XS, UITheme.TEXT_MUTED))
+	var r_md := UIRating.new()
+	r_md.value = 4.0
+	col_md.add_child(r_md)
+
+	var col_lg := UI.vbox(row1, 4)
+	col_lg.add_child(UI.label("Large", UITheme.FONT_XS, UITheme.TEXT_MUTED))
+	var r_lg := UIRating.new()
+	r_lg.value = 3.5
+	r_lg.star_size = UIRating.Size.LG
+	col_lg.add_child(r_lg)
+
+	var col_xl := UI.vbox(row1, 4)
+	col_xl.add_child(UI.label("XL", UITheme.FONT_XS, UITheme.TEXT_MUTED))
+	var r_xl := UIRating.new()
+	r_xl.value = 4.5
+	r_xl.star_size = UIRating.Size.XL
+	col_xl.add_child(r_xl)
+
+	UI.spacer(card_v, 8)
+
+	# Row 2: features
+	var row2 := UI.hbox(card_v, 32)
+
+	# Half star with label
+	var col_half := UI.vbox(row2, 4)
+	col_half.add_child(UI.label("Half Stars + Value", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var r_half := UIRating.new()
+	r_half.value = 3.5
+	r_half.half_stars = true
+	r_half.show_value_label = true
+	r_half.star_size = UIRating.Size.LG
+	col_half.add_child(r_half)
+
+	# Readonly
+	var col_ro := UI.vbox(row2, 4)
+	col_ro.add_child(UI.label("Readonly", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var r_ro := UIRating.new()
+	r_ro.value = 4.0
+	r_ro.readonly = true
+	r_ro.show_value_label = true
+	r_ro.star_size = UIRating.Size.LG
+	col_ro.add_child(r_ro)
+
+	# Custom color
+	var col_custom := UI.vbox(row2, 4)
+	col_custom.add_child(UI.label("Custom Color", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var r_custom := UIRating.new()
+	r_custom.value = 4.0
+	r_custom.accent_color = UITheme.DANGER
+	r_custom.star_size = UIRating.Size.LG
+	col_custom.add_child(r_custom)
+
+	UI.spacer(card_v, 8)
+
+	# Interactive feedback
+	card_v.add_child(UI.label("Interactive", UITheme.FONT_SM, UITheme.TEXT_SECONDARY))
+	var int_row := UI.hbox(card_v, 16)
+	int_row.alignment = BoxContainer.ALIGNMENT_CENTER
+
+	var r_interactive := UIRating.new()
+	r_interactive.value = 0.0
+	r_interactive.star_size = UIRating.Size.XL
+	r_interactive.show_value_label = true
+	int_row.add_child(r_interactive)
+
+	var feedback_lbl := Label.new()
+	feedback_lbl.text = "Click to rate"
+	feedback_lbl.add_theme_font_size_override("font_size", UITheme.FONT_MD)
+	feedback_lbl.add_theme_color_override("font_color", UITheme.TEXT_MUTED)
+	int_row.add_child(feedback_lbl)
+
+	r_interactive.rating_changed.connect(func(v: float):
+		var messages := {1.0: "Poor", 1.5: "Below Average", 2.0: "Fair", 2.5: "Average",
+			3.0: "Good", 3.5: "Above Average", 4.0: "Great", 4.5: "Excellent", 5.0: "Outstanding!"}
+		var key := snappedf(v, 0.5)
+		feedback_lbl.text = messages.get(key, "%.1f stars" % v)
+		feedback_lbl.add_theme_color_override("font_color", UITheme.TEXT_PRIMARY)
 	)
