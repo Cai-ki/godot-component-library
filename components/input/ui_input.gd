@@ -24,7 +24,13 @@ enum State { DEFAULT, SUCCESS, ERROR, WARNING }
 	set(v): disabled = v; if _input: _input.editable = !v; if is_inside_tree(): _refresh_state()
 
 @export var validation_state: State = State.DEFAULT:
-	set(v): validation_state = v; if is_inside_tree(): _refresh_state()
+	set(v):
+		var changed := validation_state != v
+		validation_state = v
+		if is_inside_tree():
+			_refresh_state()
+			if changed and validation_state == State.ERROR:
+				UI.shake(_input)
 
 var _lbl:   Label
 var _input: LineEdit
@@ -51,8 +57,8 @@ func _build() -> void:
 	_lbl = Label.new()
 	_lbl.text = label_text
 	_lbl.visible = label_text != ""
-	_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SM)
 	_lbl.add_theme_color_override("font_color", UITheme.TEXT_PRIMARY)
+	if UITheme.FONT_SANS: _lbl.add_theme_font_override("font", UITheme.FONT_SANS)
 	add_child(_lbl)
 
 	_input = LineEdit.new()
@@ -68,6 +74,7 @@ func _build() -> void:
 	_hint.text = hint_text
 	_hint.visible = hint_text != ""
 	_hint.add_theme_font_size_override("font_size", UITheme.FONT_XS)
+	if UITheme.FONT_SANS: _hint.add_theme_font_override("font", UITheme.FONT_SANS)
 	add_child(_hint)
 
 	_refresh_state()
@@ -97,8 +104,8 @@ func _refresh_state() -> void:
 	_input.add_theme_color_override("font_color",              disabled_c())
 	_input.add_theme_color_override("font_placeholder_color",  UITheme.TEXT_MUTED)
 	_input.add_theme_color_override("caret_color",             UITheme.PRIMARY)
-	_input.add_theme_color_override("selection_color",         UITheme.PRIMARY_SOFT)
 	_input.add_theme_font_size_override("font_size",           UITheme.FONT_MD)
+	if UITheme.FONT_SANS: _input.add_theme_font_override("font", UITheme.FONT_SANS)
 	if _hint:
 		_hint.add_theme_color_override("font_color", hint_c)
 

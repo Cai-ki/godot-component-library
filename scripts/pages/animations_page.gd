@@ -12,6 +12,7 @@ func build(parent: Control) -> void:
 	_stagger_section(parent)
 	_easing_section(parent)
 	_counter_section(parent)
+	_shake_section(parent)
 
 
 # =============================================
@@ -344,3 +345,35 @@ static func _format_number(n: float, decimals: int) -> String:
 	var int_part := int(n)
 	var dec_part := int(abs(n - int_part) * pow(10, decimals))
 	return _format_int(int_part) + "." + str(dec_part)
+
+
+# =============================================
+# 6. SHAKE FEEDBACK
+# =============================================
+
+func _shake_section(parent: Control) -> void:
+	UI.section(parent, "Shake Feedback  (Form Error / Invalid Input)")
+	var card_v := UI.card(parent, 24, 20)
+	
+	var row := UI.hbox(card_v, 20)
+	
+	# Demo 1: Manual Button Shake
+	var v1 := UI.vbox(row, 10)
+	v1.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var b1 := UI.solid_btn(v1, "Click to Shake Me", UITheme.DANGER)
+	b1.pressed.connect(func(): UI.shake(b1))
+	v1.add_child(UI.label("Direct UI.shake() call", UITheme.FONT_XS, UITheme.TEXT_MUTED))
+	
+	# Demo 2: Number Input integration
+	var v2 := UI.vbox(row, 10)
+	v2.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	var ni := UINumberInput.new()
+	ni.label_text = "Try typing 'abc' here"
+	v2.add_child(ni)
+	v2.add_child(UI.label("Automatic on invalid input", UITheme.FONT_XS, UITheme.TEXT_MUTED))
+
+	card_v.add_child(UI.spacer(card_v, 10))
+	card_v.add_child(UI.label(
+		"UI.shake(node, amplitude, duration)  —  Uses high-frequency Sine easing with decay.",
+		UITheme.FONT_XS, UITheme.TEXT_MUTED
+	))

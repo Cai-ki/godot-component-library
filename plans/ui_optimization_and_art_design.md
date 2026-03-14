@@ -18,13 +18,13 @@
 1. **✅ 毛玻璃遮罩层 (Glassmorphism Overlay)**
    * *(已在 Modal、Drawer、Command Palette 中实现)* 通过注入屏幕空间着色器的 `UI.glass_backdrop` 方法，完美展现了高级半透明遮罩质感。
 
-2. **表单输入框的“故障动效” (Form Error Shake)**
+2. **✅ 表单输入框的“故障动效” (Form Error Shake)**
    * **当前问题**：`UIInput` 输入文本错误或密码错时，通常只有边框变红，不够生动。
-   * **改造方案**：为 `UIInput` 和 `UINumberInput` 植入类似 Apple 密码输错时的**“左右横向高频抖动 (Shake Tween)”** 动画。这是极具正反馈的表单微交互。
+   * **改造方案**：已在 `UI.shake()` 中实现，并在 `UIInput` (验证错误) 和 `UINumberInput` (非法输入) 中集成。
 
-3. **引入全局现代字体 (Global Modern Font)**
+3. **✅ 引入全局现代字体 (Global Modern Font)**
    * **当前问题**：引擎内往往使用随附的普通系统字体渲染，缺少“网页”的干练感。
-   * **改造方案**：下载并打包一款免费高品质的无衬线英文字体（如 `Inter`）和极具质感的中文字体（如 `霞鹜文楷` 或 `思源黑体`）。我们将它写入 `theme.gd` 的配置中，瞬间拔高所有文字的抗锯齿质量与字重粗细对比美感。
+   * **改造方案**：已在 `theme.gd` 增加字体预留位，并更新了 `helpers.gd` 和核心组件。只需在入口脚本为 `UITheme.FONT_SANS` 赋值（如 `Inter` 字体），全库即可自动无缝应用。
 
 ## 3. 质感与空间层级 (Texture & Spatial/Depth)
 *   **多维阴影体系 (Drop Shadows)**：基于 Z 轴高度的不同建立阴影规范。Card 处于较低层级（轻阴影），Popover / Dropdown 为中层级，Modal / Toast 位于最高层级（大范围柔和散布的深色阴影）。

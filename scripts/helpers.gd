@@ -40,6 +40,25 @@ static func style(
 		s.content_margin_bottom = py
 	return s
 
+
+static func shake(node: Control, amplitude: float = 8.0, duration: float = 0.4) -> void:
+	if not node or not node.is_inside_tree(): return
+	
+	var original_pos := node.position
+	var t := node.create_tween()
+	t.set_trans(Tween.TRANS_SINE)
+	t.set_ease(Tween.EASE_IN_OUT)
+	
+	var steps := 5
+	for i in range(steps):
+		var offset := amplitude if i % 2 == 0 else -amplitude
+		# Decay amplitude
+		var current_amplitude := offset * (float(steps - i) / steps)
+		t.tween_property(node, "position:x", original_pos.x + current_amplitude, duration / float(steps + 1))
+	
+	t.tween_property(node, "position:x", original_pos.x, duration / float(steps + 1))
+
+
 static func _animate_scale(btn: Button, target: Vector2, duration: float) -> void:
 	btn.pivot_offset = (btn.size / 2.0).round()
 	if btn.has_meta("scale_tween"):
@@ -114,6 +133,7 @@ static func solid_btn(
 	btn.add_theme_color_override("font_pressed_color", font_color)
 	btn.add_theme_color_override("font_disabled_color", UITheme.TEXT_MUTED)
 	btn.add_theme_font_size_override("font_size", font_size)
+	if UITheme.FONT_SANS: btn.add_theme_font_override("font", UITheme.FONT_SANS)
 
 	_add_micro_interactions(btn)
 	parent.add_child(btn)
@@ -179,9 +199,9 @@ static func soft_btn(
 	btn.add_theme_stylebox_override("pressed", p)
 	btn.add_theme_stylebox_override("focus", n)
 	btn.add_theme_color_override("font_color", color)
-	btn.add_theme_color_override("font_hover_color", color.lightened(0.1))
 	btn.add_theme_color_override("font_pressed_color", color)
 	btn.add_theme_font_size_override("font_size", font_size)
+	if UITheme.FONT_SANS: btn.add_theme_font_override("font", UITheme.FONT_SANS)
 
 	_add_micro_interactions(btn)
 	parent.add_child(btn)
@@ -274,6 +294,7 @@ static func label(
 	l.text = text
 	l.add_theme_font_size_override("font_size", size)
 	l.add_theme_color_override("font_color", color)
+	if UITheme.FONT_SANS: l.add_theme_font_override("font", UITheme.FONT_SANS)
 	return l
 
 # =============================================
@@ -455,6 +476,7 @@ static func styled_input(
 	input.add_theme_color_override("caret_color", UITheme.PRIMARY)
 	input.add_theme_color_override("selection_color", UITheme.PRIMARY_SOFT)
 	input.add_theme_font_size_override("font_size", UITheme.FONT_MD)
+	if UITheme.FONT_SANS: input.add_theme_font_override("font", UITheme.FONT_SANS)
 
 	parent.add_child(input)
 	return input

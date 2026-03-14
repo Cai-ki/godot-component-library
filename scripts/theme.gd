@@ -62,6 +62,14 @@ static var TEXT_MUTED := Color("#555A72")
 static var TEXT_INVERSE := Color("#0D0F14")
 
 # =============================================
+# FONTS (Optional: Set these to your loaded font resources)
+# =============================================
+static var FONT_SANS: Font = null
+static var FONT_BOLD: Font = null
+static var FONT_MONO: Font = null
+static var FONT_CHINESE: Font = null
+
+# =============================================
 # FONT SIZES
 # =============================================
 const FONT_XS: int = 11

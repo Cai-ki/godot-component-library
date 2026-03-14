@@ -98,9 +98,9 @@ func _build() -> void:
 	_lbl = Label.new()
 	_lbl.text = label_text
 	_lbl.visible = label_text != ""
-	_lbl.add_theme_font_size_override("font_size", UITheme.FONT_SM)
 	_lbl.add_theme_color_override("font_color", UITheme.TEXT_PRIMARY)
 	_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if UITheme.FONT_SANS: _lbl.add_theme_font_override("font", UITheme.FONT_SANS)
 	add_child(_lbl)
 
 	# Row: [dec] [prefix] [input] [suffix] [inc]
@@ -125,6 +125,7 @@ func _build() -> void:
 	_prefix_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_prefix_lbl.add_theme_font_size_override("font_size", UITheme.FONT_MD)
 	_prefix_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if UITheme.FONT_SANS: _prefix_lbl.add_theme_font_override("font", UITheme.FONT_SANS)
 	_row.add_child(_prefix_lbl)
 
 	# Line edit for value
@@ -144,6 +145,7 @@ func _build() -> void:
 	_suffix_lbl.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
 	_suffix_lbl.add_theme_font_size_override("font_size", UITheme.FONT_MD)
 	_suffix_lbl.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	if UITheme.FONT_SANS: _suffix_lbl.add_theme_font_override("font", UITheme.FONT_SANS)
 	_row.add_child(_suffix_lbl)
 
 	# Increment button
@@ -212,6 +214,7 @@ func _commit_text() -> void:
 			_line_edit.text = _format_value(value)
 	else:
 		_line_edit.text = _format_value(value)
+		UI.shake(_line_edit)
 
 
 func _snap(v: float) -> float:
@@ -255,6 +258,7 @@ func _apply_styles() -> void:
 	_line_edit.add_theme_color_override("caret_color", UITheme.PRIMARY)
 	_line_edit.add_theme_color_override("selection_color", UITheme.PRIMARY_SOFT)
 	_line_edit.add_theme_font_size_override("font_size", UITheme.FONT_MD)
+	if UITheme.FONT_SANS: _line_edit.add_theme_font_override("font", UITheme.FONT_SANS)
 
 	# Button styles
 	_style_btn(_dec_btn, "left")
