@@ -75,10 +75,10 @@ func _hero(parent: Control) -> void:
 func _stats(parent: Control) -> void:
 	var row := UI.hbox(parent, 16)
 
-	_stat(row, "24", "Components",  UITheme.PRIMARY, "◆")
-	_stat(row, "16", "Pages",       UITheme.INFO,    "◈")
-	_stat(row, "5",  "Themes",      UITheme.SUCCESS, "◇")
-	_stat(row, "5",  "Overlays",    UITheme.WARNING, "◉")
+	_stat(row, "43", "Components",  UITheme.PRIMARY, "◆")
+	_stat(row, "20", "Pages",       UITheme.INFO,    "◈")
+	_stat(row, "3",  "Themes",      UITheme.SUCCESS, "◇")
+	_stat(row, "9",  "Overlays",    UITheme.WARNING, "◉")
 
 
 func _stat(parent: Control, value: String, label: String, color: Color, icon: String) -> void:
@@ -162,9 +162,12 @@ func _recent(parent: Control) -> void:
 	UI.section(parent, "Recent Additions")
 	var row := UI.hbox(parent, 16)
 
-	_recent_card(row, "UIToast",       UITheme.SUCCESS, "Non-blocking auto-dismiss notifications with stacking.")
-	_recent_card(row, "UITooltip",     UITheme.INFO,    "Hover-triggered floating hints, auto-positioned above target.")
-	_recent_card(row, "UIContextMenu", UITheme.WARNING, "Right-click menus with destructive item styling and screen clamping.")
+	_recent_card(row, "UINumberInput",      UITheme.PRIMARY,   "Stepper input with long-press repeat, prefix/suffix, decimal steps.")
+	_recent_card(row, "UISegmentedControl", UITheme.INFO,      "Single-select button group with animated sliding indicator.")
+	_recent_card(row, "UIRating",           UITheme.WARNING,   "Star rating with half-star precision and hover preview.")
+	_recent_card(row, "UIDropdown",         UITheme.SUCCESS,   "Click-triggered overlay menu with groups and destructive items.")
+	_recent_card(row, "UIPopover",          UITheme.SECONDARY, "Floating panel with any Control content, auto-positioned.")
+	_recent_card(row, "UICarousel",         UITheme.DANGER,    "Content slider with fade transition, dots, and auto-play.")
 
 
 func _recent_card(parent: Control, title: String, accent: Color, desc: String) -> void:
