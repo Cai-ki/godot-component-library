@@ -11,7 +11,7 @@ var _sidebar_node: PanelContainer
 
 func _ready() -> void:
 	_build_shell()
-	_navigate_to("buttons")
+	_navigate_to("home")
 
 
 # =============================================
@@ -272,13 +272,24 @@ func _add_nav_button(parent: Control, page_id: String, text: String) -> void:
 	btn.text = text
 	btn.flat = true
 	btn.alignment = HORIZONTAL_ALIGNMENT_LEFT
-	btn.custom_minimum_size = Vector2(0, 38)
+	btn.custom_minimum_size = Vector2(0, 42) # Taller for elegance
 	btn.focus_mode = Control.FOCUS_NONE
 
 	_apply_nav_style(btn, false)
 
 	btn.add_theme_font_size_override("font_size", UITheme.FONT_MD)
 	btn.pressed.connect(func(): _navigate_to(page_id))
+
+	# Hover micro-interaction (scale and slide right slightly)
+	btn.mouse_entered.connect(func():
+		btn.pivot_offset = Vector2(0, btn.size.y / 2.0)
+		var t = btn.create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		t.tween_property(btn, "scale", Vector2(1.02, 1.02), 0.25)
+	)
+	btn.mouse_exited.connect(func():
+		var t = btn.create_tween().set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+		t.tween_property(btn, "scale", Vector2.ONE, 0.3)
+	)
 
 	nav_buttons[page_id] = btn
 	parent.add_child(btn)
@@ -288,7 +299,7 @@ func _apply_nav_style(btn: Button, active: bool) -> void:
 	if active:
 		var active_style := UI.style(
 			UITheme.PRIMARY_SOFT, UITheme.RADIUS_MD,
-			0, Color.TRANSPARENT, 0, Color.TRANSPARENT, Vector2.ZERO, 14, 0
+			0, Color.TRANSPARENT, 0, Color.TRANSPARENT, Vector2.ZERO, 16, 0
 		)
 		active_style.border_width_left = 3
 		active_style.border_color = UITheme.PRIMARY
@@ -299,11 +310,11 @@ func _apply_nav_style(btn: Button, active: bool) -> void:
 	else:
 		var normal := UI.style(
 			Color(0, 0, 0, 0), UITheme.RADIUS_MD,
-			0, Color.TRANSPARENT, 0, Color.TRANSPARENT, Vector2.ZERO, 14, 0
+			0, Color.TRANSPARENT, 0, Color.TRANSPARENT, Vector2.ZERO, 16, 0
 		)
 		var hover := UI.style(
 			UITheme.SURFACE_3, UITheme.RADIUS_MD,
-			0, Color.TRANSPARENT, 0, Color.TRANSPARENT, Vector2.ZERO, 14, 0
+			0, Color.TRANSPARENT, 0, Color.TRANSPARENT, Vector2.ZERO, 16, 0
 		)
 		btn.add_theme_stylebox_override("normal", normal)
 		btn.add_theme_stylebox_override("hover", hover)
@@ -350,10 +361,8 @@ func _navigate_to(page_id: String) -> void:
 
 	# Clear content
 	for child in content_container.get_children():
+		content_container.remove_child(child)
 		child.queue_free()
-
-	# Wait a frame for queue_free to process
-	await get_tree().process_frame
 
 	# Load page
 	current_page = page_id

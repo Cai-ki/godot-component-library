@@ -8,6 +8,18 @@ func build(parent: Control) -> void:
 	_categories(parent)
 	_recent(parent)
 	_quick_start(parent)
+	
+	_animate_entrance(parent)
+
+
+func _animate_entrance(parent: Control) -> void:
+	var delay := 0.0
+	for child in parent.get_children():
+		if child is Control and not child.is_queued_for_deletion():
+			child.modulate.a = 0.0
+			var t = child.create_tween().set_trans(Tween.TRANS_SINE).set_ease(Tween.EASE_IN_OUT)
+			t.tween_property(child, "modulate:a", 1.0, 0.4).set_delay(delay)
+			delay += 0.08
 
 
 # =============================================
@@ -18,54 +30,75 @@ func _hero(parent: Control) -> void:
 	var panel := PanelContainer.new()
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	var ps := UI.style(
-		UITheme.SURFACE_1, UITheme.RADIUS_LG,
-		1, UITheme.BORDER, 8, Color(0, 0, 0, 0.2), Vector2(0, 4)
+		UITheme.SURFACE_2, UITheme.RADIUS_LG,
+		1, UITheme.BORDER_STRONG, 16, Color(0, 0, 0, 0.3), Vector2(0, 8)
 	)
+	ps.border_width_top = 2
+	ps.border_color = UITheme.PRIMARY_SOFT
 	panel.add_theme_stylebox_override("panel", ps)
 	parent.add_child(panel)
 
 	var m := MarginContainer.new()
-	m.add_theme_constant_override("margin_left",   32)
-	m.add_theme_constant_override("margin_right",  32)
-	m.add_theme_constant_override("margin_top",    36)
-	m.add_theme_constant_override("margin_bottom", 36)
+	m.add_theme_constant_override("margin_left",   40)
+	m.add_theme_constant_override("margin_right",  40)
+	m.add_theme_constant_override("margin_top",    48)
+	m.add_theme_constant_override("margin_bottom", 48)
 	panel.add_child(m)
 
 	var v := VBoxContainer.new()
-	v.add_theme_constant_override("separation", 12)
+	v.add_theme_constant_override("separation", 16)
 	m.add_child(v)
 
 	# Title row
 	var title_row := HBoxContainer.new()
-	title_row.add_theme_constant_override("separation", 14)
+	title_row.add_theme_constant_override("separation", 24)
 	title_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	v.add_child(title_row)
 
-	var icon := UI.label("⬡", UITheme.FONT_3XL, UITheme.PRIMARY)
+	var icon := UI.label("◈", UITheme.FONT_3XL, UITheme.PRIMARY)
+	icon.add_theme_font_size_override("font_size", 64)
 	title_row.add_child(icon)
 
 	var title_v := VBoxContainer.new()
-	title_v.add_theme_constant_override("separation", 4)
+	title_v.add_theme_constant_override("separation", 6)
 	title_row.add_child(title_v)
-	title_v.add_child(UI.label("UI Component Library", UITheme.FONT_3XL, UITheme.TEXT_PRIMARY))
+	
+	var title_lbl := UI.label("Godot Component Library", UITheme.FONT_3XL, UITheme.TEXT_PRIMARY)
+	title_lbl.add_theme_font_size_override("font_size", 34)
+	title_v.add_child(title_lbl)
 
 	var sub_row := HBoxContainer.new()
-	sub_row.add_theme_constant_override("separation", 10)
+	sub_row.add_theme_constant_override("separation", 12)
 	title_v.add_child(sub_row)
-	sub_row.add_child(UI.label("Dark Indigo Design System for Godot 4.6", UITheme.FONT_BASE, UITheme.TEXT_SECONDARY))
-	UI.soft_badge(sub_row, "v2.0", UITheme.PRIMARY, UITheme.RADIUS_PILL, 10, 3, UITheme.FONT_XS)
+	sub_row.add_child(UI.label("Premium UI Design System for Godot 4.6+", UITheme.FONT_LG, UITheme.TEXT_SECONDARY))
+	UI.soft_badge(sub_row, "v2.0 Beta", UITheme.PRIMARY, UITheme.RADIUS_PILL, 12, 4, UITheme.FONT_SM)
 
 	UI.h_expand(title_row)
 
 	# Description
+	UI.spacer(v, 8)
 	var desc := UI.label(
-		"A production-ready collection of styled UI components, interactive patterns, "
-		+ "and design references — all built entirely in GDScript without .tres theme files.",
+		"Elevate your Godot projects with a production-ready collection of styled UI components, interactive patterns, and dynamic layouts. Built purely in GDScript to be highly performant and customizable.",
 		UITheme.FONT_MD, UITheme.TEXT_MUTED
 	)
 	desc.autowrap_mode = TextServer.AUTOWRAP_WORD
 	desc.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
-	v.add_child(desc)
+	desc.custom_minimum_size = Vector2(650, 0)
+	
+	var center_desc := CenterContainer.new()
+	center_desc.add_child(desc)
+	v.add_child(center_desc)
+	
+	UI.spacer(v, 16)
+	
+	# Buttons
+	var action_row := HBoxContainer.new()
+	action_row.add_theme_constant_override("separation", 16)
+	action_row.alignment = BoxContainer.ALIGNMENT_CENTER
+	v.add_child(action_row)
+	
+	var btn_start = UI.solid_btn(action_row, "Explore Components", UITheme.PRIMARY, Color.WHITE, UITheme.RADIUS_MD, 24, 12, UITheme.FONT_MD)
+	UI.outline_btn(action_row, "View on GitHub", UITheme.TEXT_SECONDARY, UITheme.RADIUS_MD, 24, 12, UITheme.FONT_MD)
 
 
 # =============================================
