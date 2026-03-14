@@ -128,9 +128,19 @@ func _show() -> void:
 		_panel.position = Vector2(rect.position.x, rect.position.y + rect.size.y + 4)
 	_clamp_to_screen.call_deferred()
 
-	# Fade in
+	# Entrance Animation
 	_panel.modulate.a = 0.0
-	_panel.create_tween().tween_property(_panel, "modulate:a", 1.0, 0.12).set_trans(Tween.TRANS_SINE)
+	var original_pos := _panel.position
+	_panel.position.y -= 8
+	_panel.scale = Vector2(0.97, 0.97)
+	# Set pivot to top center for scale
+	_panel.pivot_offset = Vector2(_panel.get_combined_minimum_size().x / 2.0, 0)
+	
+	var t := _panel.create_tween().set_parallel(true)
+	t.set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_OUT)
+	t.tween_property(_panel, "modulate:a", 1.0, 0.15)
+	t.tween_property(_panel, "scale", Vector2.ONE, 0.25)
+	t.tween_property(_panel, "position:y", original_pos.y, 0.25)
 
 
 func _build_item(parent_vbox: VBoxContainer, item: Dictionary) -> void:

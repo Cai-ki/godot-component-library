@@ -27,7 +27,7 @@ var _saved_text: String = ""
 var _tween: Tween
 
 func _ready() -> void:
-	focus_mode = Control.FOCUS_NONE
+	focus_mode = Control.FOCUS_ALL
 	_apply_styles()
 	
 	connect("mouse_entered", _on_hover_in)
@@ -120,11 +120,18 @@ func _apply_styles() -> void:
 			n  = _make_s(c); h = n.duplicate(); pr = n.duplicate()
 			fc = Color.WHITE; hc = Color.WHITE
 
+	var fo := _make_s(Color.TRANSPARENT, 2, UITheme.PRIMARY_LIGHT if variant == Variant.SOLID else c)
+	fo.expand_margin_left = 2; fo.expand_margin_right = 2
+	fo.expand_margin_top = 2; fo.expand_margin_bottom = 2
+	# For solid buttons, ensure the ring is outside. For others, can be subtle.
+	if variant == Variant.SOLID:
+		fo.bg_color = Color(c.r, c.g, c.b, 0.4) # Slight glow
+	
 	var dis := _make_s(UITheme.SURFACE_3)
 	add_theme_stylebox_override("normal",   n)
 	add_theme_stylebox_override("hover",    h)
 	add_theme_stylebox_override("pressed",  pr)
-	add_theme_stylebox_override("focus",    n)
+	add_theme_stylebox_override("focus",    fo)
 	add_theme_stylebox_override("disabled", dis)
 	add_theme_color_override("font_color",          fc)
 	add_theme_color_override("font_hover_color",    hc)

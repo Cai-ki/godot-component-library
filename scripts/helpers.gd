@@ -116,17 +116,21 @@ static func solid_btn(
 ) -> Button:
 	var btn := Button.new()
 	btn.text = text
-	btn.focus_mode = Control.FOCUS_NONE
+	btn.focus_mode = Control.FOCUS_ALL
 
 	var n := style(color, radius, 0, Color.TRANSPARENT, 4, Color(0, 0, 0, 0.15), Vector2(0, 4), px, py)
 	var h := style(color.lightened(0.15), radius, 0, Color.TRANSPARENT, 8, Color(0, 0, 0, 0.2), Vector2(0, 6), px, py)
 	var p := style(color.darkened(0.15), radius, 0, Color.TRANSPARENT, 0, Color.TRANSPARENT, Vector2.ZERO, px, py)
 	var d := style(UITheme.SURFACE_3, radius, 0, Color.TRANSPARENT, 0, Color.TRANSPARENT, Vector2.ZERO, px, py)
 
+	var fo := style(color, radius, 2, UITheme.PRIMARY_LIGHT, 0, Color.TRANSPARENT, Vector2.ZERO, px, py)
+	fo.expand_margin_left = 2; fo.expand_margin_right = 2
+	fo.expand_margin_top = 2; fo.expand_margin_bottom = 2
+
 	btn.add_theme_stylebox_override("normal", n)
 	btn.add_theme_stylebox_override("hover", h)
 	btn.add_theme_stylebox_override("pressed", p)
-	btn.add_theme_stylebox_override("focus", n)
+	btn.add_theme_stylebox_override("focus", fo)
 	btn.add_theme_stylebox_override("disabled", d)
 	btn.add_theme_color_override("font_color", font_color)
 	btn.add_theme_color_override("font_hover_color", font_color)
@@ -160,10 +164,14 @@ static func outline_btn(
 	var h := style(bg_hover, radius, 1, color.lightened(0.2), 0, Color.TRANSPARENT, Vector2.ZERO, px, py)
 	var p := style(bg_pressed, radius, 1, color, 0, Color.TRANSPARENT, Vector2.ZERO, px, py)
 
+	var fo := style(bg_hover, radius, 2, color, 0, Color.TRANSPARENT, Vector2.ZERO, px, py)
+	fo.expand_margin_left = 2; fo.expand_margin_right = 2
+	fo.expand_margin_top = 2; fo.expand_margin_bottom = 2
+
 	btn.add_theme_stylebox_override("normal", n)
 	btn.add_theme_stylebox_override("hover", h)
 	btn.add_theme_stylebox_override("pressed", p)
-	btn.add_theme_stylebox_override("focus", n)
+	btn.add_theme_stylebox_override("focus", fo)
 	btn.add_theme_color_override("font_color", color)
 	btn.add_theme_color_override("font_hover_color", color.lightened(0.15))
 	btn.add_theme_color_override("font_pressed_color", color)
@@ -468,6 +476,8 @@ static func styled_input(
 
 	var n := style(UITheme.SURFACE_2, UITheme.RADIUS_MD, 1, UITheme.BORDER, 0, Color.TRANSPARENT, Vector2.ZERO, 12, 10)
 	var f := style(UITheme.SURFACE_2, UITheme.RADIUS_MD, 2, UITheme.PRIMARY, 0, Color.TRANSPARENT, Vector2.ZERO, 12, 10)
+	f.expand_margin_left = 1; f.expand_margin_right = 1
+	f.expand_margin_top = 1; f.expand_margin_bottom = 1
 
 	input.add_theme_stylebox_override("normal", n)
 	input.add_theme_stylebox_override("focus", f)

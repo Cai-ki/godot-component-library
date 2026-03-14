@@ -10,7 +10,7 @@
 ## 2. 交互动效与反馈 (Micro-Interactions)
 *   **缓动过渡 (State Transitions)**：拒绝原生的“瞬间切图”。Hover、Pressed 和 Focus 状态的切换应依赖于 Godot 的 `Tween` 实现透明度、颜色的毫秒级平滑过渡（推荐 `0.15s - 0.2s`）。
 *   **物理隐喻反馈 (Tactile Feedback)**：✅ *(已在 UIButton 实现)* 通过微型形变（按下时 `scale` 至 `0.97`）或涟漪效果 (Ripple effect) 给用用户强烈的“按击实感”。防抖使用了像素取整与旧 Tween 拦截技术。
-*   **展开与折叠 (Expand/Collapse)**：针对 Accordion (折叠面板)、Dropdown (下拉菜单)、Tree (树形控件)，需要利用动画进行高度和平移像素的顺滑展开，而非瞬间闪现。
+*   **展开与折叠 (Expand/Collapse)**：✅ 已优化。针对 `UIAccordion` (折叠面板)、`UIDropdown` (下拉菜单) 实现了基于 `Tween` 的像素级顺滑展开及透明度过渡，拒绝“瞬间闪现”。
 
 ### 🔥 下一步高优推荐方向 (Next High-Impact Steps)
 如果我们想要马上看到显著的页面视觉或交互提升，我强烈建议在此基础上优先推进以下三个点：
@@ -32,7 +32,7 @@
 
 ## 4. 易用性与细节状态 (Accessibility & State)
 *   **禁用模式 (Disabled States)**：统一的禁用滤镜/透明度降级，并更改鼠标光标为不可用。
-*   **无障碍焦点 (Focus Rings)**：为了兼容手柄和键盘 UI 导航，所有可交互组件必须有一致的外发光圈 (Focus Ring) 视觉提示。
+*   **无障碍焦点 (Focus Rings)**：✅ 已实现。为了兼容手柄和键盘 UI 导航，`UIButton`, `UIInput`, `UIAccordion` 等所有可交互组件现已拥有一致的外发光圈 (Focus Ring) 视觉提示。
 *   **错误振动 (Error Shake)**：对于 Input, Number Input 等组件，遇到校验错误时除了外框变红，可以搭配轻微的横向抖动特效。
 
 ## 5. 美术资源 (Art Assets)

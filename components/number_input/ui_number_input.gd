@@ -111,7 +111,7 @@ func _build() -> void:
 	# Decrement button
 	_dec_btn = Button.new()
 	_dec_btn.text = "−"
-	_dec_btn.focus_mode = Control.FOCUS_NONE
+	_dec_btn.focus_mode = Control.FOCUS_ALL
 	_dec_btn.custom_minimum_size = Vector2(36, 36)
 	_dec_btn.pressed.connect(func(): _step_value(-1))
 	_dec_btn.button_down.connect(func(): _start_repeat(-1))
@@ -151,7 +151,7 @@ func _build() -> void:
 	# Increment button
 	_inc_btn = Button.new()
 	_inc_btn.text = "+"
-	_inc_btn.focus_mode = Control.FOCUS_NONE
+	_inc_btn.focus_mode = Control.FOCUS_ALL
 	_inc_btn.custom_minimum_size = Vector2(36, 36)
 	_inc_btn.pressed.connect(func(): _step_value(1))
 	_inc_btn.button_down.connect(func(): _start_repeat(1))
@@ -295,6 +295,12 @@ func _style_btn(btn: Button, side: String) -> void:
 		s.border_color = UITheme.BORDER
 
 		btn.add_theme_stylebox_override(state, s)
+
+	var fo := btn.get_theme_stylebox("normal").duplicate()
+	fo.border_color = UITheme.PRIMARY_LIGHT
+	fo.expand_margin_left = 1; fo.expand_margin_right = 1
+	fo.expand_margin_top = 1; fo.expand_margin_bottom = 1
+	btn.add_theme_stylebox_override("focus", fo)
 
 	btn.add_theme_font_size_override("font_size", UITheme.FONT_LG)
 	var fc := UITheme.TEXT_MUTED if btn.disabled else UITheme.TEXT_PRIMARY

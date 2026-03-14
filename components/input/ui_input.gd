@@ -96,6 +96,8 @@ func _refresh_state() -> void:
 	var n := _input_style(bg, bw, border_c)
 	var f_bc := UITheme.PRIMARY if validation_state == State.DEFAULT else border_c
 	var f := _input_style(bg, 2, f_bc)
+	f.expand_margin_left = 1; f.expand_margin_right = 1
+	f.expand_margin_top = 1; f.expand_margin_bottom = 1
 	var ro := _input_style(UITheme.SURFACE_3, 1, UITheme.BORDER)
 
 	_input.add_theme_stylebox_override("normal",    n)

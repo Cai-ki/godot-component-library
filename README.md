@@ -14,7 +14,8 @@ A production-ready UI component library for **Godot 4.6**, featuring **43 styled
 - **Real-World Scenes** — Login form, admin admin dashboard, and settings page built entirely from library components
 - **Overlay System** — Toast, Tooltip, Context Menu, Select, and Drawer use layered `CanvasLayer` architecture
 - **Glassmorphism Overlays** — Custom blur shaders for Modal, Drawer, and Command Palette backdrops
-- **Built-in Micro-Interactions** — Smooth cubic tween scaling and high-frequency shake feedback
+- **Built-in Micro-Interactions** — Smooth cubic tween scaling, expansion animations, and high-frequency shake feedback
+- **Focus Ring System** — Consistent visual cues for keyboard and controller navigation
 - **Global Typography System** — Centralized font management in `UITheme` with automatic injection
 - **Zero Dependencies** — Components only depend on `UITheme`, not on each other
 
@@ -191,7 +192,8 @@ mcp__godot__run_project(projectPath="path/to/component_library")
 
 ### Direction 5 — Infrastructure
 
-| Animation System | Unified `UIAnimation` utility class + `UI.shake()` logic | ✅ Done |
+| Animation System | Unified `UIAnimation` logic + `shake` + `expansion` | ✅ Done |
+| Accessibility | Global Focus Ring system for keyboard/controller | ✅ Done |
 | Typography | Global modern font support (Inter/Roboto) architecture | ✅ Done |
 | Responsive Layout | Breakpoint system + collapsible sidebar | |
 | Theme Editor | Runtime color customizer using `UIColorPicker` | |
