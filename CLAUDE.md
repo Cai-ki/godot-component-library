@@ -131,6 +131,10 @@ panel.mouse_exited.connect(func():  panel.add_theme_stylebox_override("panel", n
 # 微交互 (Micro-Interactions):
 # Button相关组件内置了针对悬停和点击的 Scale Tween 动画(如放大到 1.015)。
 # ⚠️ 关键防抖规范：对UI对象（含文本）做 scale 动画前，务必调用 `pivot_offset = (size / 2.0).round()` 进行整数定位（防止亚像素抖动），并使用 `get_meta/set_meta` 在创建新 Tween 前必须杀除(kill) 同属性的旧 Tween。
+
+# 遮罩与毛玻璃 (Glassmorphism):
+# Modal, Drawer, Command Palette 等悬浮层不要使用单纯的半透明 ColorRect，而是统一使用 `UI.glass_backdrop` 方法。
+# 示例：`var overlay = UI.glass_backdrop(layer, 2.0, Color(0, 0, 0, 0.45))`
 ```
 
 ## Conventions

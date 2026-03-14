@@ -49,16 +49,12 @@ func get_footer() -> HBoxContainer: return _footer
 
 # ── Internal ──────────────────────────────────────
 func _build() -> void:
-	# Backdrop
-	var backdrop := ColorRect.new()
-	backdrop.color = Color(0, 0, 0, 0.65)
-	backdrop.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	backdrop.mouse_filter = Control.MOUSE_FILTER_STOP
+	# Backdrop with Glassmorphism
+	var backdrop = UI.glass_backdrop(self, 2.0, Color(0, 0, 0, 0.45))
 	backdrop.gui_input.connect(func(e):
 		if e is InputEventMouseButton and e.pressed and e.button_index == MOUSE_BUTTON_LEFT:
 			hide_modal()
 	)
-	add_child(backdrop)
 
 	# Center
 	var center := CenterContainer.new()

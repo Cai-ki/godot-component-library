@@ -79,24 +79,38 @@ func show_palette() -> void:
 func hide_palette() -> void:
 	if not _is_open: return
 	_is_open = false
-	_cleanup()
+	
+	if is_instance_valid(_panel) and _layer and is_instance_valid(_layer):
+		var t := create_tween()
+		t.set_parallel(true)
+		t.tween_property(_panel, "modulate:a", 0.0, 0.15)
+		t.tween_property(_panel, "position:y", _panel.position.y + 10, 0.15).set_trans(Tween.TRANS_CUBIC).set_ease(Tween.EASE_IN)
+		
+		var overlay = _layer.get_node_or_null("_cp_overlay")
+		if overlay:
+			t.tween_property(overlay, "modulate:a", 0.0, 0.15)
+		t.chain().tween_callback(_cleanup)
+	else:
+		_cleanup()
 
 
 func _build() -> void:
 	_layer = _get_or_create_layer()
 
-	# Overlay background
-	var overlay := ColorRect.new()
+	# Overlay background with Glassmorphism
+	var overlay = UI.glass_backdrop(_layer, 2.0, Color(0, 0, 0, 0.4))
 	overlay.name = "_cp_overlay"
-	overlay.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
-	overlay.color = Color(0, 0, 0, 0.4)
 	overlay.gui_input.connect(func(event: InputEvent):
 		if event is InputEventMouseButton:
 			var mb := event as InputEventMouseButton
 			if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
 				hide_palette()
 	)
-	_layer.add_child(overlay)
+	
+	# Start completely transparent and fade in
+	overlay.modulate.a = 0.0
+	var overlay_t := overlay.create_tween()
+	overlay_t.tween_property(overlay, "modulate:a", 1.0, 0.15)
 
 	# Center wrapper
 	var center_wrapper := Control.new()

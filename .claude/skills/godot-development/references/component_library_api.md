@@ -170,6 +170,16 @@ UI.section(parent, "Section Title")
 var row := UI.hbox(parent, 12)
 ```
 
+### 毛玻璃遮罩特效 (Glassmorphism Overlay)
+
+```gdscript
+# 在悬浮组件背后附加一个带高斯模糊和可选暗色的遮罩层幕布（返回 ColorRect 容器）
+UI.glass_backdrop(parent: Node, blur_amount: float = 2.0, dimmed_color: Color = Color(0,0,0,0.35)) -> ColorRect
+
+# 获取静态缓存的毛玻璃 GLSL 着色器（供 ShaderMaterial 使用）
+UI.get_glass_shader() -> Shader
+```
+
 ---
 
 ## 组件 API（36 个）

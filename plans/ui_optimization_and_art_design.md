@@ -9,8 +9,22 @@
 
 ## 2. 交互动效与反馈 (Micro-Interactions)
 *   **缓动过渡 (State Transitions)**：拒绝原生的“瞬间切图”。Hover、Pressed 和 Focus 状态的切换应依赖于 Godot 的 `Tween` 实现透明度、颜色的毫秒级平滑过渡（推荐 `0.15s - 0.2s`）。
-*   **物理隐喻反馈 (Tactile Feedback)**：通过微型形变（按下时 `scale` 至 `0.97`）或涟漪效果 (Ripple effect) 给用用户强烈的“按击实感”。
+*   **物理隐喻反馈 (Tactile Feedback)**：✅ *(已在 UIButton 实现)* 通过微型形变（按下时 `scale` 至 `0.97`）或涟漪效果 (Ripple effect) 给用用户强烈的“按击实感”。防抖使用了像素取整与旧 Tween 拦截技术。
 *   **展开与折叠 (Expand/Collapse)**：针对 Accordion (折叠面板)、Dropdown (下拉菜单)、Tree (树形控件)，需要利用动画进行高度和平移像素的顺滑展开，而非瞬间闪现。
+
+### 🔥 下一步高优推荐方向 (Next High-Impact Steps)
+如果我们想要马上看到显著的页面视觉或交互提升，我强烈建议在此基础上优先推进以下三个点：
+
+1. **✅ 毛玻璃遮罩层 (Glassmorphism Overlay)**
+   * *(已在 Modal、Drawer、Command Palette 中实现)* 通过注入屏幕空间着色器的 `UI.glass_backdrop` 方法，完美展现了高级半透明遮罩质感。
+
+2. **表单输入框的“故障动效” (Form Error Shake)**
+   * **当前问题**：`UIInput` 输入文本错误或密码错时，通常只有边框变红，不够生动。
+   * **改造方案**：为 `UIInput` 和 `UINumberInput` 植入类似 Apple 密码输错时的**“左右横向高频抖动 (Shake Tween)”** 动画。这是极具正反馈的表单微交互。
+
+3. **引入全局现代字体 (Global Modern Font)**
+   * **当前问题**：引擎内往往使用随附的普通系统字体渲染，缺少“网页”的干练感。
+   * **改造方案**：下载并打包一款免费高品质的无衬线英文字体（如 `Inter`）和极具质感的中文字体（如 `霞鹜文楷` 或 `思源黑体`）。我们将它写入 `theme.gd` 的配置中，瞬间拔高所有文字的抗锯齿质量与字重粗细对比美感。
 
 ## 3. 质感与空间层级 (Texture & Spatial/Depth)
 *   **多维阴影体系 (Drop Shadows)**：基于 Z 轴高度的不同建立阴影规范。Card 处于较低层级（轻阴影），Popover / Dropdown 为中层级，Modal / Toast 位于最高层级（大范围柔和散布的深色阴影）。

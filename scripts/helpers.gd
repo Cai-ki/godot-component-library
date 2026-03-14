@@ -547,3 +547,50 @@ static func alert(
 		outer_h.add_child(close_btn)
 
 	return panel
+
+# =============================================
+# GLASSMORPHISM (BLUR) FACTORY
+# =============================================
+
+static var _glass_shader_val: Shader = null
+
+static func get_glass_shader() -> Shader:
+	if not _glass_shader_val:
+		var code := """
+shader_type canvas_item;
+uniform float lod: hint_range(0.0, 5) = 2.0;
+uniform sampler2D screen_texture : hint_screen_texture, filter_linear_mipmap;
+void fragment() {
+    vec4 color = textureLod(screen_texture, SCREEN_UV, lod);
+    COLOR = color;
+}
+"""
+		_glass_shader_val = Shader.new()
+		_glass_shader_val.code = code
+	return _glass_shader_val
+
+static func glass_backdrop(parent: Node, blur_amount: float = 2.0, dimmed_color: Color = Color(0,0,0,0.35)) -> ColorRect:
+	var container := ColorRect.new()
+	container.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	container.color = dimmed_color
+	
+	# Create back buffer copy to grab the screen before blurring
+	var bbc := BackBufferCopy.new()
+	bbc.copy_mode = BackBufferCopy.COPY_MODE_VIEWPORT
+	container.add_child(bbc)
+	
+	# Create the blur rect
+	var blur_rect := ColorRect.new()
+	blur_rect.set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	blur_rect.color = Color.WHITE
+	
+	var mat := ShaderMaterial.new()
+	mat.shader = get_glass_shader()
+	mat.set_shader_parameter("lod", blur_amount)
+	blur_rect.material = mat
+	blur_rect.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	
+	container.add_child(blur_rect)
+	
+	parent.add_child(container)
+	return container
