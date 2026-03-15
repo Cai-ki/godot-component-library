@@ -274,9 +274,9 @@ if not signal_name.is_connected(callback):
 **原因**: `CLIP_CHILDREN_AND_DRAW` 在 PanelContainer 等嵌套结构中不可靠，子节点溢出仍会渲染。
 **修复**: 改用 visibility 控制 + fade 动画代替裁剪。
 
-### Overlay CanvasLayer 内 Control 无法接收键盘
-**原因**: 即使 `grab_focus()`，CanvasLayer 上的 Control 的 `_gui_input` 也可能不接收按键。
-**修复**: 放弃 Overlay 内键盘导航，或将键盘处理放到原始场景树的 Node 上。
+### Overlay CanvasLayer 内 Control 无法稳定接收键盘
+**原因**: 即使 `grab_focus()`，CanvasLayer 上的 Control 的 `_gui_input` 仍可能漏掉按键事件。
+**修复**: 不要把键盘逻辑绑定在 Overlay 子节点的 `_gui_input`。在组件宿主（`Node` / `VBoxContainer`）启用 `set_process_unhandled_input(true)`，统一在 `_unhandled_input()` 处理 `Esc/↑/↓/Enter`，Overlay 内按钮仅负责焦点与点击行为。
 
 ### 浮层内按钮被 slide 遮挡无法点击
 **原因**: 后添加的子节点（slides）覆盖先添加的（arrows），z_index 不一定解决输入顺序问题。

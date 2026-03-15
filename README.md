@@ -140,6 +140,19 @@ tools/                           # Utility scripts (e.g. skill sync)
 - `UISelect` is safe to configure before `add_child()` (its exported setters are null-guarded before `_ready()`).
 - `UIPopover.hide_popover()` is idempotent, so repeated close triggers only emit one `closed` event per open cycle.
 
+## Keyboard Accessibility Baseline
+
+- `UISelect`: `Enter` / `Space` open-select, `Up/Down` move option, `Esc` close.
+- `UIDropdown`: `Up/Down` move focus, `Enter` trigger item, `Esc` close.
+- `UICommandPalette`: `Ctrl/Cmd+K` toggle, `Up/Down` navigate results, `Enter` execute, `Esc` close.
+- `UITabs`: `Left/Right/Home/End` switch tabs, `Enter/Space` activate focused tab.
+- `UIAccordion`: `Up/Down` move header focus, `Right` expand, `Left` collapse, `Enter/Space` toggle.
+- `UIModal`: `Esc` close.
+- `UIDrawer`: `Esc` close, initial focus goes to close button when opened.
+
+Implementation rule for overlays:
+- Handle keyboard events in the component host (`_unhandled_input`) rather than relying only on overlay child `_gui_input`.
+
 ## AI-Assisted Development
 
 This project was built with [Claude Code](https://claude.ai/code) using the [Godot MCP Server](https://github.com/Coding-Solo/godot-mcp) for direct engine integration — running projects, creating scenes, and inspecting debug output all from the CLI.

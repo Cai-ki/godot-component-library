@@ -170,7 +170,7 @@ panel.mouse_exited.connect(func():  panel.add_theme_stylebox_override("panel", n
 17. **整数除法警告用 floori() 代替**: `var k: int = y / 100` 仍会触发 "Integer division" WARNING。改用 `var k: int = floori(y / 100.0)` 明确表达意图并消除警告
 18. **UISegmentedControl indicator 用 _draw()**: 不能用 Panel 子节点做 indicator，PanelContainer 会接管子节点位置。改用 `_draw()` 在 PanelContainer 自身上绘制滑块矩形
 19. **clip_children 不可靠**: Godot 4.6 中 `clip_children = CLIP_CHILDREN_AND_DRAW` 在某些嵌套结构下失效，改用 visibility 控制或 fade 动画代替裁剪
-20. **Overlay 内的 Control 不接收键盘事件**: CanvasLayer 上的 Control 即使 grab_focus 也无法可靠接收 key input，键盘导航功能在 Overlay 组件中较难实现
+20. **Overlay 组件键盘事件应在“宿主节点”统一处理**: CanvasLayer 内 Control 的 `_gui_input` 对按键并不总是可靠。推荐在组件宿主（`Node` / `VBoxContainer`）开启 `set_process_unhandled_input(true)`，由 `_unhandled_input()` 处理 `Esc/↑/↓/Enter`，焦点只用于视觉与激活状态
 21. **GDScript 三元表达式不能包含语句**: `a() if cond else b()` 仅限于表达式，不能用于 `connect()` 等 void 调用，改用 if/else 块
 22. **变量名不能与内建函数同名**: `var wrap`, `var snapped` 等会触发 WARNING，改用 `item_wrap`, `new_v` 等无冲突名称
 23. **UICarousel 箭头不能放在 slide_area 内**: 会被 z_index/overlay 问题阻断点击，正确做法是放在外层 HBoxContainer 两侧作为普通按钮
