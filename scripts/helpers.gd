@@ -627,3 +627,31 @@ static func glass_backdrop(parent: Node, blur_amount: float = 2.0, dimmed_color:
 	
 	parent.add_child(container)
 	return container
+
+static func ensure_overlay_layer(root: Node, layer_name: String, layer_index: int) -> CanvasLayer:
+	for child in root.get_children():
+		if child is CanvasLayer and child.name == layer_name:
+			return child as CanvasLayer
+	var layer := CanvasLayer.new()
+	layer.name = layer_name
+	layer.layer = layer_index
+	root.add_child(layer)
+	return layer
+
+static func clamp_control_to_viewport(ctrl: Control, size_hint: Vector2 = Vector2.ZERO, padding: float = 8.0) -> void:
+	if not is_instance_valid(ctrl):
+		return
+	var panel_size := size_hint
+	if panel_size.length_squared() <= 0.0:
+		panel_size = ctrl.get_combined_minimum_size()
+	var vp_size := ctrl.get_tree().root.get_visible_rect().size
+	ctrl.position = Vector2(
+		clampf(ctrl.position.x, padding, vp_size.x - panel_size.x - padding),
+		clampf(ctrl.position.y, padding, vp_size.y - panel_size.y - padding)
+	)
+
+static func clamp_position_to_viewport(pos: Vector2, panel_size: Vector2, viewport_size: Vector2, padding: float = 8.0) -> Vector2:
+	return Vector2(
+		clampf(pos.x, padding, viewport_size.x - panel_size.x - padding),
+		clampf(pos.y, padding, viewport_size.y - panel_size.y - padding)
+	)

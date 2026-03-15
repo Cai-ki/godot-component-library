@@ -235,11 +235,7 @@ func _build_option(parent: Control, index: int) -> void:
 func _clamp_dropdown() -> void:
 	if not is_instance_valid(_dropdown): return
 	var min_sz  := _dropdown.get_combined_minimum_size()
-	var vp_size := get_tree().root.get_visible_rect().size
-	_dropdown.position = Vector2(
-		clampf(_dropdown.position.x, 8.0, vp_size.x - min_sz.x - 8.0),
-		clampf(_dropdown.position.y, 8.0, vp_size.y - min_sz.y - 8.0)
-	)
+	UI.clamp_control_to_viewport(_dropdown, min_sz, 8.0)
 
 
 # BUG-6 FIX: animation starts after clamping so target_y is the final clamped position
@@ -311,12 +307,4 @@ func _option_style(bg: Color) -> StyleBoxFlat:
 # ── Layer ─────────────────────────────────────────────────────────────────────
 
 func _get_or_create_layer() -> CanvasLayer:
-	var root := get_tree().root
-	for child in root.get_children():
-		if child.name == &"_UISelectLayer":
-			return child as CanvasLayer
-	var layer := CanvasLayer.new()
-	layer.name  = &"_UISelectLayer"
-	layer.layer = 103   # above UIContextMenu (102)
-	root.add_child(layer)
-	return layer
+	return UI.ensure_overlay_layer(get_tree().root, "_UISelectLayer", 103)

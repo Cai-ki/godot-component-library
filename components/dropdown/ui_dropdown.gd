@@ -229,11 +229,7 @@ func _build_group_header(vbox: VBoxContainer, group_name: String) -> void:
 func _clamp_to_screen() -> void:
 	if not is_instance_valid(_panel): return
 	var panel_size := _panel.get_combined_minimum_size()
-	var vp_size := get_tree().root.get_visible_rect().size
-	_panel.position = Vector2(
-		clampf(_panel.position.x, 8.0, vp_size.x - panel_size.x - 8.0),
-		clampf(_panel.position.y, 8.0, vp_size.y - panel_size.y - 8.0)
-	)
+	UI.clamp_control_to_viewport(_panel, panel_size, 8.0)
 
 
 # ── Close / Cleanup ──────────────────────────────────────────
@@ -276,15 +272,7 @@ func _show_exit_animation() -> void:
 	)
 
 func _get_or_create_layer() -> CanvasLayer:
-	var root := get_tree().root
-	for child in root.get_children():
-		if child.name == LAYER_NAME:
-			return child as CanvasLayer
-	var layer := CanvasLayer.new()
-	layer.name = LAYER_NAME
-	layer.layer = LAYER_INDEX
-	root.add_child(layer)
-	return layer
+	return UI.ensure_overlay_layer(get_tree().root, LAYER_NAME, LAYER_INDEX)
 
 
 func _exit_tree() -> void:

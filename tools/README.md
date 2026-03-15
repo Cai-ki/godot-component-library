@@ -28,3 +28,21 @@ Usage:
 ```bash
 tools/docs_consistency_check.sh
 ```
+
+## `smoke_check.sh`
+
+Purpose:
+- Run a fast local quality gate before commit/push.
+
+Steps:
+- Skill sync consistency check.
+- Docs consistency check.
+- Optional Godot headless startup probe.
+
+Usage:
+```bash
+tools/smoke_check.sh
+
+# skip Godot probe
+SKIP_GODOT_PROBE=1 tools/smoke_check.sh
+```

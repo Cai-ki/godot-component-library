@@ -167,8 +167,7 @@ func _position_panel() -> void:
 			pos.y = target_rect.position.y
 
 	# Clamp to viewport
-	pos.x = clampf(pos.x, 8.0, vp.x - panel_size.x - 8.0)
-	pos.y = clampf(pos.y, 8.0, vp.y - panel_size.y - 8.0)
+	pos = UI.clamp_position_to_viewport(pos, panel_size, vp, 8.0)
 
 	_panel.position = pos
 
@@ -185,15 +184,7 @@ func _close() -> void:
 
 
 func _get_or_create_layer() -> CanvasLayer:
-	var root := get_tree().root
-	for child in root.get_children():
-		if child.name == LAYER_NAME:
-			return child as CanvasLayer
-	var layer := CanvasLayer.new()
-	layer.name = LAYER_NAME
-	layer.layer = LAYER_INDEX
-	root.add_child(layer)
-	return layer
+	return UI.ensure_overlay_layer(get_tree().root, LAYER_NAME, LAYER_INDEX)
 
 
 func _exit_tree() -> void:
