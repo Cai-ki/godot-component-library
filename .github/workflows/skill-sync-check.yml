@@ -1,0 +1,17 @@
+name: Skill Sync Check
+
+on:
+  pull_request:
+  push:
+    branches:
+      - main
+
+jobs:
+  sync-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Verify .claude and .agents skill sync
+        run: tools/sync_godot_skill.sh check

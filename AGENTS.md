@@ -201,3 +201,4 @@ mcp__godot__run_project(projectPath="...")
 - `.gitignore` 排除 `.godot/` 目录
 - user: caiki <2875028086@qq.com>
 - 提交规范: `feat:` / `fix:` / `refactor:` / `docs:` 前缀，HEREDOC 传 commit message
+- Skill 文档单一主源为 `.claude/skills/godot-development/`；`.agents/skills/godot-development/` 通过 `tools/sync_godot_skill.sh` 同步维护
