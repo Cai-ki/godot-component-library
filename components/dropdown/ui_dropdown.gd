@@ -24,6 +24,12 @@ var _overlay: Control
 var _panel: PanelContainer
 var _target: Control
 var _id_counter: int = 0  # BUG-12 FIX: monotonic counter prevents ID reset after clear_items()
+var _item_buttons: Array[Button] = []
+var _focused_button_index: int = -1
+
+
+func _ready() -> void:
+	set_process_unhandled_input(true)
 
 
 # ── Public API ────────────────────────────────────────────────
@@ -79,6 +85,8 @@ func _show() -> void:
 		_close() # Animation-less close to swap instantly if needed
 	
 	if _items.size() == 0: return
+	_item_buttons.clear()
+	_focused_button_index = -1
 	var layer := _get_or_create_layer()
 
 	# Full-screen dismiss overlay with subtle glassmorphism
@@ -139,6 +147,7 @@ func _show() -> void:
 	_panel.pivot_offset = Vector2(_panel.get_combined_minimum_size().x / 2.0, 0)
 	_clamp_to_screen.call_deferred()
 	_start_open_animation.call_deferred()
+	_focus_first_item.call_deferred()
 
 
 func _build_item(parent_vbox: VBoxContainer, item: Dictionary) -> void:
@@ -195,6 +204,7 @@ func _build_item(parent_vbox: VBoxContainer, item: Dictionary) -> void:
 	item_wrap.add_theme_constant_override("margin_right", 4)
 	item_wrap.add_child(btn)
 	parent_vbox.add_child(item_wrap)
+	_item_buttons.append(btn)
 
 
 func _build_separator(vbox: VBoxContainer) -> void:
@@ -251,6 +261,8 @@ func _close() -> void:
 		_overlay.queue_free()
 	_overlay = null
 	_panel = null
+	_item_buttons.clear()
+	_focused_button_index = -1
 
 func _show_exit_animation() -> void:
 	if not is_instance_valid(_panel): 
@@ -269,6 +281,8 @@ func _show_exit_animation() -> void:
 	t.tween_property(p, "position:y", p.position.y - 12, 0.2)
 	t.chain().tween_callback(func():
 		if is_instance_valid(o): o.queue_free()
+		_item_buttons.clear()
+		_focused_button_index = -1
 	)
 
 func _get_or_create_layer() -> CanvasLayer:
@@ -277,3 +291,48 @@ func _get_or_create_layer() -> CanvasLayer:
 
 func _exit_tree() -> void:
 	_close()
+
+
+func _focus_first_item() -> void:
+	if _item_buttons.is_empty(): return
+	_focused_button_index = 0
+	_item_buttons[0].grab_focus()
+
+
+func _move_focus(delta: int) -> void:
+	if _item_buttons.is_empty(): return
+	if _focused_button_index < 0:
+		_focused_button_index = 0
+	else:
+		_focused_button_index = clampi(_focused_button_index + delta, 0, _item_buttons.size() - 1)
+	_item_buttons[_focused_button_index].grab_focus()
+
+
+func _activate_focused_item() -> void:
+	var focused_ctrl := get_viewport().gui_get_focus_owner()
+	if focused_ctrl is Button:
+		(focused_ctrl as Button).emit_signal("pressed")
+		return
+	if _item_buttons.is_empty(): return
+	if _focused_button_index < 0 or _focused_button_index >= _item_buttons.size():
+		_focused_button_index = 0
+	_item_buttons[_focused_button_index].emit_signal("pressed")
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not is_instance_valid(_panel): return
+	if not (event is InputEventKey): return
+	var ke := event as InputEventKey
+	if not ke.pressed or ke.echo: return
+	if ke.keycode == KEY_ESCAPE:
+		hide_dropdown()
+		get_viewport().set_input_as_handled()
+	elif ke.keycode == KEY_DOWN:
+		_move_focus(1)
+		get_viewport().set_input_as_handled()
+	elif ke.keycode == KEY_UP:
+		_move_focus(-1)
+		get_viewport().set_input_as_handled()
+	elif ke.keycode == KEY_ENTER or ke.keycode == KEY_KP_ENTER:
+		_activate_focused_item()
+		get_viewport().set_input_as_handled()

@@ -41,6 +41,8 @@ var _caret_lbl: Label
 var _overlay:   Control
 var _dropdown:  PanelContainer
 var _is_open:   bool = false
+var _option_buttons: Array[Button] = []
+var _highlighted_index: int = -1
 
 var selected_value: String:
 	get: return options[selected_index] \
@@ -75,6 +77,7 @@ func _build() -> void:
 	_trigger = PanelContainer.new()
 	_trigger.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	_trigger.mouse_filter = Control.MOUSE_FILTER_STOP
+	_trigger.focus_mode = Control.FOCUS_ALL
 
 	var row := HBoxContainer.new()
 	row.add_theme_constant_override("separation", 8)
@@ -105,8 +108,24 @@ func _on_trigger_input(event: InputEvent) -> void:
 	if event is InputEventMouseButton:
 		var mb := event as InputEventMouseButton
 		if mb.button_index == MOUSE_BUTTON_LEFT and mb.pressed:
+			_trigger.grab_focus()
 			if _is_open: _close_dropdown()
 			else:        _open_dropdown()
+	elif event is InputEventKey:
+		var ke := event as InputEventKey
+		if not ke.pressed or ke.echo: return
+		if ke.keycode == KEY_DOWN or ke.keycode == KEY_UP:
+			_open_dropdown()
+			get_viewport().set_input_as_handled()
+		elif ke.keycode == KEY_ENTER or ke.keycode == KEY_KP_ENTER or ke.keycode == KEY_SPACE:
+			if _is_open:
+				_activate_highlighted_option()
+			else:
+				_open_dropdown()
+			get_viewport().set_input_as_handled()
+		elif ke.keycode == KEY_ESCAPE and _is_open:
+			_close_dropdown()
+			get_viewport().set_input_as_handled()
 
 
 func _on_hover(hovered: bool) -> void:
@@ -137,6 +156,8 @@ func _refresh_display() -> void:
 func _open_dropdown() -> void:
 	if _is_open: return
 	_is_open = true
+	_option_buttons.clear()
+	_highlighted_index = -1
 	_refresh_display()
 	var layer := _get_or_create_layer()
 
@@ -188,6 +209,7 @@ func _open_dropdown() -> void:
 	_dropdown.pivot_offset = Vector2(trigger_rect.size.x / 2.0, 0)
 	_clamp_dropdown.call_deferred()
 	_start_open_animation.call_deferred()
+	_focus_initial_option.call_deferred()
 
 
 func _build_option(parent: Control, index: int) -> void:
@@ -229,7 +251,51 @@ func _build_option(parent: Control, index: int) -> void:
 		selected_index = captured
 		selection_changed.emit(captured, options[captured])
 	)
+	btn.gui_input.connect(func(event: InputEvent):
+		_on_option_input(event, captured)
+	)
 	item_wrap.add_child(btn)
+	_option_buttons.append(btn)
+
+
+func _focus_initial_option() -> void:
+	if not _is_open or _option_buttons.is_empty(): return
+	_highlighted_index = selected_index if selected_index >= 0 and selected_index < _option_buttons.size() else 0
+	_option_buttons[_highlighted_index].grab_focus()
+
+
+func _move_highlight(delta: int) -> void:
+	if _option_buttons.is_empty(): return
+	if _highlighted_index < 0:
+		_highlighted_index = 0
+	else:
+		_highlighted_index = clampi(_highlighted_index + delta, 0, _option_buttons.size() - 1)
+	_option_buttons[_highlighted_index].grab_focus()
+
+
+func _activate_highlighted_option() -> void:
+	if _option_buttons.is_empty(): return
+	if _highlighted_index < 0 or _highlighted_index >= _option_buttons.size():
+		_highlighted_index = 0
+	var btn := _option_buttons[_highlighted_index]
+	btn.emit_signal("pressed")
+
+
+func _on_option_input(event: InputEvent, index: int) -> void:
+	if not (event is InputEventKey): return
+	var ke := event as InputEventKey
+	if not ke.pressed or ke.echo: return
+	_highlighted_index = index
+	if ke.keycode == KEY_DOWN:
+		_move_highlight(1)
+		get_viewport().set_input_as_handled()
+	elif ke.keycode == KEY_UP:
+		_move_highlight(-1)
+		get_viewport().set_input_as_handled()
+	elif ke.keycode == KEY_ESCAPE:
+		_close_dropdown()
+		_trigger.grab_focus.call_deferred()
+		get_viewport().set_input_as_handled()
 
 
 func _clamp_dropdown() -> void:
@@ -253,6 +319,8 @@ func _start_open_animation() -> void:
 func _close_dropdown() -> void:
 	if not _is_open: return
 	_is_open = false
+	_option_buttons.clear()
+	_highlighted_index = -1
 	_refresh_display()
 	
 	if not is_instance_valid(_dropdown):
@@ -308,3 +376,14 @@ func _option_style(bg: Color) -> StyleBoxFlat:
 
 func _get_or_create_layer() -> CanvasLayer:
 	return UI.ensure_overlay_layer(get_tree().root, "_UISelectLayer", 103)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not _is_open: return
+	if not (event is InputEventKey): return
+	var ke := event as InputEventKey
+	if not ke.pressed or ke.echo: return
+	if ke.keycode == KEY_ESCAPE:
+		_close_dropdown()
+		_trigger.grab_focus.call_deferred()
+		get_viewport().set_input_as_handled()

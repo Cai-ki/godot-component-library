@@ -25,6 +25,7 @@ var _search_input: LineEdit
 var _results_vbox: VBoxContainer
 var _selected_index: int = 0
 var _filtered: Array[Dictionary] = []
+var _visible_start: int = 0
 
 const LAYER_NAME := "_UICommandPaletteLayer"
 const LAYER_Z := 106
@@ -73,6 +74,7 @@ func show_palette() -> void:
 	if _is_open: return
 	_is_open = true
 	_selected_index = 0
+	_visible_start = 0
 	_build()
 
 
@@ -230,6 +232,7 @@ func _cleanup() -> void:
 
 func _on_search_changed(text: String) -> void:
 	_selected_index = 0
+	_visible_start = 0
 	_apply_filter(text)
 
 
@@ -246,7 +249,7 @@ func _on_search_key(event: InputEvent) -> void:
 		_selected_index = maxi(_selected_index - 1, 0)
 		_update_selection()
 		get_viewport().set_input_as_handled()
-	elif ke.keycode == KEY_ENTER:
+	elif ke.keycode == KEY_ENTER or ke.keycode == KEY_KP_ENTER:
 		if _selected_index >= 0 and _selected_index < _filtered.size():
 			var cmd: Dictionary = _filtered[_selected_index]
 			var cmd_id: String = cmd["id"]
@@ -265,6 +268,12 @@ func _apply_filter(query: String) -> void:
 		var group_str: String = cmd.get("group", "")
 		if q.is_empty() or label_str.to_lower().contains(q) or desc_str.to_lower().contains(q) or group_str.to_lower().contains(q):
 			_filtered.append(cmd)
+	if _filtered.is_empty():
+		_selected_index = 0
+		_visible_start = 0
+	else:
+		_selected_index = clampi(_selected_index, 0, _filtered.size() - 1)
+		_ensure_selection_visible()
 
 	_rebuild_results()
 
@@ -293,8 +302,8 @@ func _rebuild_results() -> void:
 		empty_margin.add_child(empty_lbl)
 		return
 
-	var visible_count := mini(_filtered.size(), MAX_VISIBLE)
-	for i in visible_count:
+	var visible_end := mini(_visible_start + MAX_VISIBLE, _filtered.size())
+	for i in range(_visible_start, visible_end):
 		_build_result_item(i)
 
 
@@ -376,7 +385,20 @@ func _build_result_item(index: int) -> void:
 
 
 func _update_selection() -> void:
+	_ensure_selection_visible()
 	_rebuild_results()
+
+
+func _ensure_selection_visible() -> void:
+	if _filtered.is_empty():
+		_visible_start = 0
+		return
+	if _selected_index < _visible_start:
+		_visible_start = _selected_index
+	elif _selected_index >= _visible_start + MAX_VISIBLE:
+		_visible_start = _selected_index - MAX_VISIBLE + 1
+	var max_start := maxi(0, _filtered.size() - MAX_VISIBLE)
+	_visible_start = clampi(_visible_start, 0, max_start)
 
 
 func _get_or_create_layer() -> CanvasLayer:
