@@ -11,6 +11,7 @@ var _items: Array[Dictionary] = []
 
 func _ready() -> void:
 	add_theme_constant_override("separation", 4)
+	set_process_unhandled_input(true)
 
 # ── Public API ────────────────────────────────────
 func add_item(header: String, content: Control, expanded: bool = false) -> int:
@@ -192,3 +193,41 @@ func _set_state(index: int, expanded: bool) -> void:
 		)
 	
 	item_toggled.emit(index, expanded)
+
+
+func _get_focused_item_index() -> int:
+	var focused_ctrl := get_viewport().gui_get_focus_owner()
+	for i in _items.size():
+		var btn: Button = _items[i]["btn"]
+		if btn == focused_ctrl:
+			return i
+	return -1
+
+
+func _focus_item(index: int) -> void:
+	if index < 0 or index >= _items.size(): return
+	var btn: Button = _items[index]["btn"]
+	btn.grab_focus()
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not (event is InputEventKey): return
+	var ke := event as InputEventKey
+	if not ke.pressed or ke.echo: return
+	var focused_idx := _get_focused_item_index()
+	if focused_idx < 0: return
+	if ke.keycode == KEY_DOWN:
+		_focus_item(mini(focused_idx + 1, _items.size() - 1))
+		get_viewport().set_input_as_handled()
+	elif ke.keycode == KEY_UP:
+		_focus_item(maxi(focused_idx - 1, 0))
+		get_viewport().set_input_as_handled()
+	elif ke.keycode == KEY_RIGHT:
+		_set_state(focused_idx, true)
+		get_viewport().set_input_as_handled()
+	elif ke.keycode == KEY_LEFT:
+		_set_state(focused_idx, false)
+		get_viewport().set_input_as_handled()
+	elif ke.keycode == KEY_ENTER or ke.keycode == KEY_KP_ENTER or ke.keycode == KEY_SPACE:
+		_toggle(focused_idx)
+		get_viewport().set_input_as_handled()

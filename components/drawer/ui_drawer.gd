@@ -26,10 +26,14 @@ var _overlay: ColorRect
 var _panel:   PanelContainer
 var _body:    VBoxContainer
 var _title_lbl: Label
+var _close_btn: Button
 var _visible: bool = false
 
 
 # ── Public API ────────────────────────────────────────────────────────────────
+
+func _ready() -> void:
+	set_process_unhandled_input(true)
 
 func show_drawer() -> void:
 	if _visible: return
@@ -115,26 +119,26 @@ func _build() -> void:
 	header_h.add_child(_title_lbl)
 
 	# Close button
-	var close_btn := Button.new()
-	close_btn.text = "✕"
-	close_btn.flat = true
-	close_btn.focus_mode = Control.FOCUS_NONE
-	close_btn.custom_minimum_size = Vector2(32, 32)
+	_close_btn = Button.new()
+	_close_btn.text = "✕"
+	_close_btn.flat = true
+	_close_btn.focus_mode = Control.FOCUS_ALL
+	_close_btn.custom_minimum_size = Vector2(32, 32)
 	var ns := StyleBoxFlat.new()
 	ns.bg_color = Color(0, 0, 0, 0)
 	var hs := StyleBoxFlat.new()
 	hs.bg_color = UITheme.SURFACE_3
 	for r_name in ["corner_radius_top_left","corner_radius_top_right","corner_radius_bottom_left","corner_radius_bottom_right"]:
 		hs.set(r_name, UITheme.RADIUS_SM)
-	close_btn.add_theme_stylebox_override("normal",  ns)
-	close_btn.add_theme_stylebox_override("hover",   hs)
-	close_btn.add_theme_stylebox_override("pressed", hs)
-	close_btn.add_theme_stylebox_override("focus",   ns)
-	close_btn.add_theme_color_override("font_color", UITheme.TEXT_SECONDARY)
-	close_btn.add_theme_color_override("font_hover_color", UITheme.TEXT_PRIMARY)
-	close_btn.add_theme_font_size_override("font_size", UITheme.FONT_MD)
-	close_btn.pressed.connect(hide_drawer)
-	header_h.add_child(close_btn)
+	_close_btn.add_theme_stylebox_override("normal",  ns)
+	_close_btn.add_theme_stylebox_override("hover",   hs)
+	_close_btn.add_theme_stylebox_override("pressed", hs)
+	_close_btn.add_theme_stylebox_override("focus",   ns)
+	_close_btn.add_theme_color_override("font_color", UITheme.TEXT_SECONDARY)
+	_close_btn.add_theme_color_override("font_hover_color", UITheme.TEXT_PRIMARY)
+	_close_btn.add_theme_font_size_override("font_size", UITheme.FONT_MD)
+	_close_btn.pressed.connect(hide_drawer)
+	header_h.add_child(_close_btn)
 
 	# Separator
 	var sep := ColorRect.new()
@@ -163,6 +167,7 @@ func _build() -> void:
 	body_margin.add_child(_body)
 
 	_animate_in()
+	_close_btn.grab_focus.call_deferred()
 
 
 func _animate_in() -> void:
@@ -211,6 +216,7 @@ func _cleanup() -> void:
 	_overlay = null
 	_panel   = null
 	_body    = null
+	_close_btn = null
 	closed.emit()
 
 
@@ -218,3 +224,13 @@ func _cleanup() -> void:
 
 func _get_or_create_layer() -> CanvasLayer:
 	return UI.ensure_overlay_layer(get_tree().root, "_UIDrawerLayer", 104)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not _visible: return
+	if not (event is InputEventKey): return
+	var ke := event as InputEventKey
+	if not ke.pressed or ke.echo: return
+	if ke.keycode == KEY_ESCAPE:
+		hide_drawer()
+		get_viewport().set_input_as_handled()

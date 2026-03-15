@@ -13,6 +13,7 @@ var _nav_row: HBoxContainer
 
 func _ready() -> void:
 	add_theme_constant_override("separation", 0)
+	set_process_unhandled_input(true)
 	_build_nav()
 
 # ── Public API ────────────────────────────────────
@@ -130,3 +131,40 @@ func _update_indicator() -> void:
 	t.tween_property(indicator, "size:x", target_w, 0.25)
 	t.tween_property(indicator, "position:y", target_y, 0.25)
 	t.tween_property(indicator, "size:y", 2, 0.25)
+
+
+func _get_focused_tab_index() -> int:
+	var focused_ctrl := get_viewport().gui_get_focus_owner()
+	for i in _btns.size():
+		if _btns[i] == focused_ctrl:
+			return i
+	return -1
+
+
+func _focus_tab(index: int) -> void:
+	if index < 0 or index >= _btns.size(): return
+	_btns[index].grab_focus()
+	set_active_tab(index)
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not (event is InputEventKey): return
+	var ke := event as InputEventKey
+	if not ke.pressed or ke.echo: return
+	var focused_idx := _get_focused_tab_index()
+	if focused_idx < 0: return
+	if ke.keycode == KEY_RIGHT:
+		_focus_tab(mini(focused_idx + 1, _btns.size() - 1))
+		get_viewport().set_input_as_handled()
+	elif ke.keycode == KEY_LEFT:
+		_focus_tab(maxi(focused_idx - 1, 0))
+		get_viewport().set_input_as_handled()
+	elif ke.keycode == KEY_HOME:
+		_focus_tab(0)
+		get_viewport().set_input_as_handled()
+	elif ke.keycode == KEY_END:
+		_focus_tab(_btns.size() - 1)
+		get_viewport().set_input_as_handled()
+	elif ke.keycode == KEY_ENTER or ke.keycode == KEY_KP_ENTER or ke.keycode == KEY_SPACE:
+		set_active_tab(focused_idx)
+		get_viewport().set_input_as_handled()

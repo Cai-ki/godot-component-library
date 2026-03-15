@@ -26,6 +26,7 @@ var _is_shown: bool = false  # BUG-5 FIX: guard against duplicate hide calls
 func _ready() -> void:
 	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
 	mouse_filter = Control.MOUSE_FILTER_STOP
+	set_process_unhandled_input(true)
 	visible = false
 	_build()
 
@@ -135,3 +136,13 @@ func _margin(parent: Control, l: int, r: int, t: int, b: int) -> MarginContainer
 	m.add_theme_constant_override("margin_top",  t); m.add_theme_constant_override("margin_bottom", b)
 	parent.add_child(m)
 	return m
+
+
+func _unhandled_input(event: InputEvent) -> void:
+	if not _is_shown: return
+	if not (event is InputEventKey): return
+	var ke := event as InputEventKey
+	if not ke.pressed or ke.echo: return
+	if ke.keycode == KEY_ESCAPE:
+		hide_modal()
+		get_viewport().set_input_as_handled()
