@@ -1,4 +1,4 @@
-name: Skill Sync Check
+name: Docs And Skill Checks
 
 on:
   pull_request:
@@ -7,7 +7,7 @@ on:
       - main
 
 jobs:
-  sync-check:
+  checks:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
@@ -15,3 +15,6 @@ jobs:
 
       - name: Verify .claude and .agents skill sync
         run: tools/sync_godot_skill.sh check
+
+      - name: Verify docs consistency
+        run: tools/docs_consistency_check.sh

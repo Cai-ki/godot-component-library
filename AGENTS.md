@@ -4,7 +4,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 ## Project Overview
 
-Godot 4.6 UI 组件库，包含 **43 个**独立可复用组件 + **20 页**交互式展示应用。
+Godot 4.6 UI 组件库，包含 **41 个**独立可复用组件 + **20 页**交互式展示应用。
 Dark Indigo 设计系统，目标是超越 Godot 原生 UI 风格，尽可能接近 HTML/CSS 的设计效果。
 支持运行时五主题切换（Dark Indigo / Slate / Stone / Light / Midnight）。
 
@@ -25,7 +25,7 @@ scripts/
   helpers.gd                  <- UI: 静态工厂函数（style/button/card/badge/alert/progress）
   main.gd                     <- 主场景：侧边栏导航 + 内容区路由 + 主题切换
   pages/                      <- 20 个展示页面（每页一个 class_name, extends RefCounted）
-components/                   <- 43 个独立组件（每个组件一个子目录）
+components/                   <- 41 个独立组件（每个组件一个子目录）
 plans/                        <- 未来方向规划（D2~D6）
 ```
 
