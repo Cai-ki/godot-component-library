@@ -171,10 +171,7 @@ func _clamp_to_screen(pos: Vector2) -> void:
 		return
 	var panel_size := _panel.get_minimum_size()
 	var vp_size    := get_tree().root.get_visible_rect().size
-	_panel.position = Vector2(
-		clampf(pos.x, 4.0, vp_size.x - panel_size.x - 4.0),
-		clampf(pos.y, 4.0, vp_size.y - panel_size.y - 4.0)
-	)
+	_panel.position = UI.clamp_position_to_viewport(pos, panel_size, vp_size, 4.0)
 
 
 # ── Close ────────────────────────────────────────────────────────────────────
@@ -189,12 +186,4 @@ func _close() -> void:
 # ── Layer ────────────────────────────────────────────────────────────────────
 
 func _get_or_create_layer() -> CanvasLayer:
-	var root := get_tree().root
-	for child in root.get_children():
-		if child.name == &"_UIContextMenuLayer":
-			return child as CanvasLayer
-	var layer := CanvasLayer.new()
-	layer.name  = &"_UIContextMenuLayer"
-	layer.layer = 102   # above UITooltip(101) and UIToast(100)
-	root.add_child(layer)
-	return layer
+	return UI.ensure_overlay_layer(get_tree().root, "_UIContextMenuLayer", 102)

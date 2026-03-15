@@ -217,12 +217,4 @@ func _cleanup() -> void:
 # ── Layer ─────────────────────────────────────────────────────────────────────
 
 func _get_or_create_layer() -> CanvasLayer:
-	var root := get_tree().root
-	for child in root.get_children():
-		if child.name == &"_UIDrawerLayer":
-			return child as CanvasLayer
-	var layer := CanvasLayer.new()
-	layer.name  = &"_UIDrawerLayer"
-	layer.layer = 104
-	root.add_child(layer)
-	return layer
+	return UI.ensure_overlay_layer(get_tree().root, "_UIDrawerLayer", 104)

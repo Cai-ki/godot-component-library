@@ -380,15 +380,7 @@ func _update_selection() -> void:
 
 
 func _get_or_create_layer() -> CanvasLayer:
-	var root := get_tree().root
-	for child in root.get_children():
-		if child.name == LAYER_NAME:
-			return child as CanvasLayer
-	var layer := CanvasLayer.new()
-	layer.name = LAYER_NAME
-	layer.layer = LAYER_Z
-	root.add_child(layer)
-	return layer
+	return UI.ensure_overlay_layer(get_tree().root, LAYER_NAME, LAYER_Z)
 
 
 func _exit_tree() -> void:

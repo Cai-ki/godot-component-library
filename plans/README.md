@@ -2,7 +2,7 @@
 
 ## 当前状态
 
-36 组件 | 20 页 | 3 主题（Dark Indigo / Light / Midnight）| 全代码驱动
+41 组件 | 20 页 | 5 主题（Dark Indigo / Slate / Stone / Light / Midnight）| 全代码驱动
 
 ## 方向总览
 
