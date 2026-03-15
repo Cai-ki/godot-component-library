@@ -54,6 +54,7 @@ var selected_value: String:
 func _ready() -> void:
 	add_theme_constant_override("separation", 6)
 	size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	set_process_unhandled_input(true)
 	_build()
 
 
