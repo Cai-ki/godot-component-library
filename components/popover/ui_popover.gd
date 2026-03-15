@@ -31,6 +31,7 @@ var _overlay: Control
 var _panel: PanelContainer
 var _target: Control
 var _body: VBoxContainer
+var _is_open: bool = false
 
 
 # ── Public API ────────────────────────────────────────────────
@@ -56,6 +57,7 @@ func toggle() -> void:
 func show_popover() -> void:
 	_close()
 	if not is_instance_valid(_target): return
+	_is_open = true
 	var layer := _get_or_create_layer()
 
 	# Full-screen transparent dismiss
@@ -107,6 +109,10 @@ func show_popover() -> void:
 
 
 func hide_popover() -> void:
+	if not _is_open:
+		return
+	_is_open = false
+
 	if is_instance_valid(_panel):
 		var panel_ref := _panel
 		var overlay_ref := _overlay
@@ -170,6 +176,7 @@ func _position_panel() -> void:
 # ── Cleanup ───────────────────────────────────────────────────
 
 func _close() -> void:
+	_is_open = false
 	if is_instance_valid(_overlay):
 		_overlay.queue_free()
 	_overlay = null

@@ -73,7 +73,7 @@ func _build_nav() -> void:
 	nav_wrap.add_child(indicator)
 	set_meta("indicator", indicator)
 
-func _tab_style(active: bool) -> Array[StyleBoxFlat]:  # [normal, hover]
+func _tab_style(_tab_active: bool) -> Array[StyleBoxFlat]:  # [normal, hover]
 	var n := StyleBoxFlat.new()
 	n.bg_color = Color(0, 0, 0, 0)
 	n.corner_radius_top_left    = UITheme.RADIUS_SM

@@ -5,6 +5,7 @@ class_name UIModal
 extends Control
 
 signal closed
+@warning_ignore("unused_signal")
 signal confirmed
 
 @export var title_text: String = "Modal":

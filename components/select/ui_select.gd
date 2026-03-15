@@ -16,7 +16,11 @@ extends VBoxContainer
 signal selection_changed(index: int, value: String)
 
 @export var label_text: String = "":
-	set(v): label_text = v; if _lbl: _lbl.text = v; _lbl.visible = v != ""
+	set(v):
+		label_text = v
+		if _lbl:
+			_lbl.text = v
+			_lbl.visible = v != ""
 
 @export var placeholder: String = "Select...":
 	set(v): placeholder = v; if is_inside_tree(): _refresh_display()

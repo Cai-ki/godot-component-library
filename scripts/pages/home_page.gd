@@ -97,7 +97,7 @@ func _hero(parent: Control) -> void:
 	action_row.alignment = BoxContainer.ALIGNMENT_CENTER
 	v.add_child(action_row)
 	
-	var btn_start = UI.solid_btn(action_row, "Explore Components", UITheme.PRIMARY, Color.WHITE, UITheme.RADIUS_MD, 24, 12, UITheme.FONT_MD)
+	var _btn_start := UI.solid_btn(action_row, "Explore Components", UITheme.PRIMARY, Color.WHITE, UITheme.RADIUS_MD, 24, 12, UITheme.FONT_MD)
 	UI.outline_btn(action_row, "View on GitHub", UITheme.TEXT_SECONDARY, UITheme.RADIUS_MD, 24, 12, UITheme.FONT_MD)
 
 
@@ -147,7 +147,8 @@ func _stat(parent: Control, value: String, label: String, color: Color, icon: St
 
 func _categories(parent: Control) -> void:
 	UI.section(parent, "Browse by Category")
-	var row := UI.hbox(parent, 16)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 16)
 
 	_category_card(row, "COMPONENTS", UITheme.PRIMARY, [
 		["◉", "Buttons"],  ["⊞", "Cards"],      ["⊟", "Form Inputs"],
@@ -193,7 +194,8 @@ func _category_card(parent: Control, title: String, accent: Color, items: Array)
 
 func _recent(parent: Control) -> void:
 	UI.section(parent, "Recent Additions")
-	var row := UI.hbox(parent, 16)
+	var card_v := UI.card(parent, 24, 20)
+	var row := UI.hbox(card_v, 16)
 
 	_recent_card(row, "UINumberInput",      UITheme.PRIMARY,   "Stepper input with long-press repeat, prefix/suffix, decimal steps.")
 	_recent_card(row, "UISegmentedControl", UITheme.INFO,      "Single-select button group with animated sliding indicator.")
