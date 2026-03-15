@@ -11,7 +11,7 @@ A production-ready UI component library for **Godot 4.6**, featuring **43 styled
 - **Dark Indigo Design System** — 5 surface layers, 6 status colors with 4 variants each
 - **Runtime Theme Switching** — Indigo / Slate / Stone / Light / Midnight, instant full-page rebuild
 - **Interactive Showcase** — 20 pages demonstrating every component with live demos
-- **Real-World Scenes** — Login form, admin admin dashboard, and settings page built entirely from library components
+- **Real-World Scenes** — Login form, admin dashboard, and settings page built entirely from library components
 - **Overlay System** — Toast, Tooltip, Context Menu, Select, Drawer, Dropdown, and Popover use layered `CanvasLayer` architecture
 - **Glassmorphism Overlays** — Custom blur shaders for Modal, Drawer, and Command Palette backdrops
 - **Built-in Micro-Interactions** — Smooth cubic tween scaling, expansion animations, and high-frequency shake feedback
@@ -132,6 +132,7 @@ scripts/
   main.gd                        # Sidebar navigation + content routing + theme switcher
   pages/                         # 20 showcase pages (class_name, extends RefCounted)
 components/                      # 43 standalone components (one subdirectory each)
+tools/                           # Utility scripts (e.g. skill sync)
 ```
 
 ## Implementation Notes

@@ -6,7 +6,7 @@ This file provides guidance to Codex (Codex.ai/code) when working with code in t
 
 Godot 4.6 UI 组件库，包含 **43 个**独立可复用组件 + **20 页**交互式展示应用。
 Dark Indigo 设计系统，目标是超越 Godot 原生 UI 风格，尽可能接近 HTML/CSS 的设计效果。
-支持运行时三主题切换（Dark Indigo / Light / Midnight）。
+支持运行时五主题切换（Dark Indigo / Slate / Stone / Light / Midnight）。
 
 ## Tech Stack
 
@@ -21,7 +21,7 @@ project.godot
 scenes/main.tscn              <- 入口场景，仅挂载 scripts/main.gd
 scripts/
   theme.gd                    <- UITheme: 设计令牌（颜色/间距/圆角/字号）
-  theme_presets.gd            <- UIThemePresets: 三主题静态切换函数（dark_indigo/light/midnight）
+  theme_presets.gd            <- UIThemePresets: 五主题静态切换函数（dark_indigo/slate/stone/light/midnight）
   helpers.gd                  <- UI: 静态工厂函数（style/button/card/badge/alert/progress）
   main.gd                     <- 主场景：侧边栏导航 + 内容区路由 + 主题切换
   pages/                      <- 20 个展示页面（每页一个 class_name, extends RefCounted）
